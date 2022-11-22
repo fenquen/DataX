@@ -69,7 +69,7 @@ public abstract class AbstractTaskPluginCollector extends TaskPluginCollector {
             this.communication.increaseCounter(
                     CommunicationTool.WRITE_FAILED_BYTES, dirtyRecord.getByteSize());
         } else {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.RUNTIME_ERROR,
                     String.format("不知道的插件类型[%s].", this.pluginType));
         }

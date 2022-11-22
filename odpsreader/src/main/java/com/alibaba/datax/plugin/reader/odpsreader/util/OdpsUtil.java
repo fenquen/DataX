@@ -21,8 +21,6 @@ import com.aliyun.odps.tunnel.TableTunnel;
 import com.aliyun.odps.type.TypeInfo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +41,7 @@ public final class OdpsUtil {
 
         if (null == originalConfig.getList(Key.COLUMN) ||
                 originalConfig.getList(Key.COLUMN, String.class).isEmpty()) {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.REQUIRED_VALUE,
+            throw DataXException.build(OdpsReaderErrorCode.REQUIRED_VALUE,
                     MESSAGE_SOURCE.message("odpsutil.1"));
         }
 
@@ -53,7 +51,7 @@ public final class OdpsUtil {
         int maxRetryTime = originalConfig.getInt(Key.MAX_RETRY_TIME,
                 OdpsUtil.MAX_RETRY_TIME);
         if (maxRetryTime < 1 || maxRetryTime > OdpsUtil.MAX_RETRY_TIME) {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(OdpsReaderErrorCode.ILLEGAL_VALUE,
                     MESSAGE_SOURCE.message("odpsutil.2", OdpsUtil.MAX_RETRY_TIME));
         }
         MAX_RETRY_TIME = maxRetryTime;
@@ -87,7 +85,7 @@ public final class OdpsUtil {
                 account = new AliyunAccount(accessId, accessKey);
             }
         } else {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.ACCOUNT_TYPE_ERROR,
+            throw DataXException.build(OdpsReaderErrorCode.ACCOUNT_TYPE_ERROR,
                     MESSAGE_SOURCE.message("odpsutil.3", accountType));
         }
 
@@ -165,7 +163,7 @@ public final class OdpsUtil {
 
     public static String formatPartition(String partition) {
         if (StringUtils.isBlank(partition)) {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(OdpsReaderErrorCode.ILLEGAL_VALUE,
                     MESSAGE_SOURCE.message("odpsutil.4"));
         } else {
             return partition.trim().replaceAll(" *= *", "=")
@@ -251,7 +249,7 @@ public final class OdpsUtil {
                 continue;
             }
             // not exist column
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     OdpsReaderErrorCode.ILLEGAL_VALUE,
                     MESSAGE_SOURCE.message("odpsutil.5", column));
 
@@ -297,7 +295,7 @@ public final class OdpsUtil {
                 }
             }, DataXCaseEnvUtil.getRetryTimes(MAX_RETRY_TIME), DataXCaseEnvUtil.getRetryInterval(1000), DataXCaseEnvUtil.getRetryExponential(true));
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.CREATE_DOWNLOADSESSION_FAIL, e);
+            throw DataXException.build(OdpsReaderErrorCode.CREATE_DOWNLOADSESSION_FAIL, e);
         }
     }
 
@@ -318,7 +316,7 @@ public final class OdpsUtil {
                 }
             }, DataXCaseEnvUtil.getRetryTimes(MAX_RETRY_TIME), DataXCaseEnvUtil.getRetryInterval(1000), DataXCaseEnvUtil.getRetryExponential(true));
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.GET_DOWNLOADSESSION_FAIL, e);
+            throw DataXException.build(OdpsReaderErrorCode.GET_DOWNLOADSESSION_FAIL, e);
         }
     }
 
@@ -341,7 +339,7 @@ public final class OdpsUtil {
                 }
             }, DataXCaseEnvUtil.getRetryTimes(MAX_RETRY_TIME), DataXCaseEnvUtil.getRetryInterval(1000), DataXCaseEnvUtil.getRetryExponential(true));
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.CREATE_DOWNLOADSESSION_FAIL, e);
+            throw DataXException.build(OdpsReaderErrorCode.CREATE_DOWNLOADSESSION_FAIL, e);
         }
     }
 
@@ -363,7 +361,7 @@ public final class OdpsUtil {
                 }
             }, DataXCaseEnvUtil.getRetryTimes(MAX_RETRY_TIME), DataXCaseEnvUtil.getRetryInterval(1000), DataXCaseEnvUtil.getRetryExponential(true));
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.GET_DOWNLOADSESSION_FAIL, e);
+            throw DataXException.build(OdpsReaderErrorCode.GET_DOWNLOADSESSION_FAIL, e);
         }
     }
 
@@ -380,7 +378,7 @@ public final class OdpsUtil {
                 }
             }, DataXCaseEnvUtil.getRetryTimes(MAX_RETRY_TIME), DataXCaseEnvUtil.getRetryInterval(1000), DataXCaseEnvUtil.getRetryExponential(true));
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.OPEN_RECORD_READER_FAILED,
+            throw DataXException.build(OdpsReaderErrorCode.OPEN_RECORD_READER_FAILED,
                     MESSAGE_SOURCE.message("odpsutil.6"), e);
         }
     }
@@ -399,7 +397,7 @@ public final class OdpsUtil {
                 }
             }, DataXCaseEnvUtil.getRetryTimes(MAX_RETRY_TIME), DataXCaseEnvUtil.getRetryInterval(1000), DataXCaseEnvUtil.getRetryExponential(true));
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.OPEN_RECORD_READER_FAILED,
+            throw DataXException.build(OdpsReaderErrorCode.OPEN_RECORD_READER_FAILED,
                     MESSAGE_SOURCE.message("odpsutil.6"), e);
         }
     }
@@ -411,23 +409,23 @@ public final class OdpsUtil {
     public static void throwDataXExceptionWhenReloadTable(Exception e, String tableName) {
         if (e.getMessage() != null) {
             if (e.getMessage().contains(OdpsExceptionMsg.ODPS_PROJECT_NOT_FOUNT)) {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.ODPS_PROJECT_NOT_FOUNT,
+                throw DataXException.build(OdpsReaderErrorCode.ODPS_PROJECT_NOT_FOUNT,
                         MESSAGE_SOURCE.message("odpsutil.7", tableName), e);
             } else if (e.getMessage().contains(OdpsExceptionMsg.ODPS_TABLE_NOT_FOUNT)) {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.ODPS_TABLE_NOT_FOUNT,
+                throw DataXException.build(OdpsReaderErrorCode.ODPS_TABLE_NOT_FOUNT,
                         MESSAGE_SOURCE.message("odpsutil.8", tableName), e);
             } else if (e.getMessage().contains(OdpsExceptionMsg.ODPS_ACCESS_KEY_ID_NOT_FOUND)) {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.ODPS_ACCESS_KEY_ID_NOT_FOUND,
+                throw DataXException.build(OdpsReaderErrorCode.ODPS_ACCESS_KEY_ID_NOT_FOUND,
                         MESSAGE_SOURCE.message("odpsutil.9", tableName), e);
             } else if (e.getMessage().contains(OdpsExceptionMsg.ODPS_ACCESS_KEY_INVALID)) {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.ODPS_ACCESS_KEY_INVALID,
+                throw DataXException.build(OdpsReaderErrorCode.ODPS_ACCESS_KEY_INVALID,
                         MESSAGE_SOURCE.message("odpsutil.10", tableName), e);
             } else if (e.getMessage().contains(OdpsExceptionMsg.ODPS_ACCESS_DENY)) {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.ODPS_ACCESS_DENY,
+                throw DataXException.build(OdpsReaderErrorCode.ODPS_ACCESS_DENY,
                         MESSAGE_SOURCE.message("odpsutil.11", tableName), e);
             }
         }
-        throw DataXException.asDataXException(OdpsReaderErrorCode.ILLEGAL_VALUE,
+        throw DataXException.build(OdpsReaderErrorCode.ILLEGAL_VALUE,
                 MESSAGE_SOURCE.message("odpsutil.12", tableName), e);
     }
 
@@ -477,7 +475,7 @@ public final class OdpsUtil {
         } catch (Exception e) {
             String errMessage = String.format("Retry %s times to exectue sql :[%s] failed! Exception: %s",
                 retryTimes, e.getMessage());
-            throw DataXException.asDataXException(OdpsReaderErrorCode.RUN_SQL_ODPS_EXCEPTION, errMessage, e);
+            throw DataXException.build(OdpsReaderErrorCode.RUN_SQL_ODPS_EXCEPTION, errMessage, e);
         }
     }
 
@@ -499,13 +497,13 @@ public final class OdpsUtil {
             instance.waitForSuccess();
             status = instance.getTaskStatus().get(taskName);
             if (!Instance.TaskStatus.Status.SUCCESS.equals(status.getStatus())) {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.RUN_SQL_FAILED,
+                throw DataXException.build(OdpsReaderErrorCode.RUN_SQL_FAILED,
                     MESSAGE_SOURCE.message("odpsutil.13", sql));
             }
         } catch (DataXException e) {
             throw e;
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.RUN_SQL_ODPS_EXCEPTION,
+            throw DataXException.build(OdpsReaderErrorCode.RUN_SQL_ODPS_EXCEPTION,
                 MESSAGE_SOURCE.message("odpsutil.14", sql), e);
         }
     }

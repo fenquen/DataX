@@ -1,7 +1,6 @@
 package com.alibaba.datax.dataxservice.face.domain.enums;
 
 public enum ExecuteMode implements EnumStrVal {
-
     STANDALONE("standalone"),
     LOCAL("local"),
     DISTRIBUTE("distribute");

@@ -69,7 +69,7 @@ public enum DataBaseType {
             case Oscar:
                 break;
             default:
-                throw DataXException.asDataXException(DBUtilErrorCode.UNSUPPORTED_TYPE, "unsupported database type.");
+                throw DataXException.build(DBUtilErrorCode.UNSUPPORTED_TYPE, "unsupported database type.");
         }
 
         return result;
@@ -120,7 +120,7 @@ public enum DataBaseType {
                 }
                 break;
             default:
-                throw DataXException.asDataXException(DBUtilErrorCode.UNSUPPORTED_TYPE, "unsupported database type.");
+                throw DataXException.build(DBUtilErrorCode.UNSUPPORTED_TYPE, "unsupported database type.");
         }
 
         return result;
@@ -147,7 +147,7 @@ public enum DataBaseType {
             case Oscar:
                 break;
             default:
-                throw DataXException.asDataXException(DBUtilErrorCode.UNSUPPORTED_TYPE, "unsupported database type.");
+                throw DataXException.build(DBUtilErrorCode.UNSUPPORTED_TYPE, "unsupported database type.");
         }
 
         return result;
@@ -172,7 +172,7 @@ public enum DataBaseType {
             case Oscar:
                 break;
             default:
-                throw DataXException.asDataXException(DBUtilErrorCode.UNSUPPORTED_TYPE, "unsupported database type");
+                throw DataXException.build(DBUtilErrorCode.UNSUPPORTED_TYPE, "unsupported database type");
         }
 
         return result;
@@ -198,7 +198,7 @@ public enum DataBaseType {
             case Oscar:
                 break;
             default:
-                throw DataXException.asDataXException(DBUtilErrorCode.UNSUPPORTED_TYPE, "unsupported database type");
+                throw DataXException.build(DBUtilErrorCode.UNSUPPORTED_TYPE, "unsupported database type");
         }
 
         return result;
@@ -215,6 +215,7 @@ public enum DataBaseType {
         if (mysql.matches()) {
             return mysql.group(1);
         }
+
         Matcher oracle = oraclePattern.matcher(jdbcUrl);
         if (oracle.matches()) {
             return oracle.group(1);

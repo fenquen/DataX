@@ -51,7 +51,7 @@ public class DigestTransformer extends Transformer {
                 throw new RuntimeException("dx_digest paras index 2 must be toUpperCase or toLowerCase");
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_ILLEGAL_PARAMETER, "paras:" + Arrays.asList(paras) + " => " + e.getMessage());
+            throw DataXException.build(TransformerErrorCode.TRANSFORMER_ILLEGAL_PARAMETER, "paras:" + Arrays.asList(paras) + " => " + e.getMessage());
         }
 
         Column column = record.getColumn(columnIndex);
@@ -79,7 +79,7 @@ public class DigestTransformer extends Transformer {
             record.setColumn(columnIndex, new StringColumn(newValue));
 
         } catch (Exception e) {
-            throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_RUN_EXCEPTION, e.getMessage(), e);
+            throw DataXException.build(TransformerErrorCode.TRANSFORMER_RUN_EXCEPTION, e.getMessage(), e);
         }
         return record;
     }

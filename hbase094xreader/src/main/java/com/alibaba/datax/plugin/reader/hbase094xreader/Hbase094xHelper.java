@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HConstants;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.HTable;
@@ -34,7 +33,7 @@ public class Hbase094xHelper {
 
     public static org.apache.hadoop.conf.Configuration getHbaseConf(String hbaseConf) {
         if (StringUtils.isBlank(hbaseConf)) {
-            throw DataXException.asDataXException(Hbase094xReaderErrorCode.REQUIRED_VALUE, "读 Hbase 时需要配置 hbaseConfig，其内容为 Hbase 连接信息，请联系 Hbase PE 获取该信息.");
+            throw DataXException.build(Hbase094xReaderErrorCode.REQUIRED_VALUE, "读 Hbase 时需要配置 hbaseConfig，其内容为 Hbase 连接信息，请联系 Hbase PE 获取该信息.");
         }
         org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
 
@@ -46,7 +45,7 @@ public class Hbase094xHelper {
                 conf.set(entry.getKey(), entry.getValue());
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(Hbase094xReaderErrorCode.GET_HBASE_CONFIGURATION_ERROR, e);
+            throw DataXException.build(Hbase094xReaderErrorCode.GET_HBASE_CONFIGURATION_ERROR, e);
         }
         return conf;
     }
@@ -66,7 +65,7 @@ public class Hbase094xHelper {
 
             return htable;
         } catch (Exception e) {
-            throw DataXException.asDataXException(Hbase094xReaderErrorCode.GET_HBASE_TABLE_ERROR, e);
+            throw DataXException.build(Hbase094xReaderErrorCode.GET_HBASE_TABLE_ERROR, e);
         } finally {
             Hbase094xHelper.closeAdmin(admin);
         }
@@ -85,7 +84,7 @@ public class Hbase094xHelper {
                     + " 不可用, 请检查您的配置 或者 联系 Hbase 管理员.");
         }
         if(admin.isTableDisabled(htable.getTableName())){
-            throw DataXException.asDataXException(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "HBase源头表" + Bytes.toString(htable.getTableName())
+            throw DataXException.build(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "HBase源头表" + Bytes.toString(htable.getTableName())
                     + "is disabled, 请检查您的配置 或者 联系 Hbase 管理员.");
         }
     }
@@ -96,7 +95,7 @@ public class Hbase094xHelper {
             if(null != admin)
                 admin.close();
         } catch (IOException e) {
-            throw DataXException.asDataXException(Hbase094xReaderErrorCode.CLOSE_HBASE_ADMIN_ERROR, e);
+            throw DataXException.build(Hbase094xReaderErrorCode.CLOSE_HBASE_ADMIN_ERROR, e);
         }
     }
 
@@ -105,7 +104,7 @@ public class Hbase094xHelper {
             if(null != table)
                 table.close();
         } catch (IOException e) {
-            throw DataXException.asDataXException(Hbase094xReaderErrorCode.CLOSE_HBASE_TABLE_ERROR, e);
+            throw DataXException.build(Hbase094xReaderErrorCode.CLOSE_HBASE_TABLE_ERROR, e);
         }
     }
 
@@ -227,7 +226,7 @@ public class Hbase094xHelper {
             if( !Hbase094xHelper.isRowkeyColumn(columnName)){
                 String[] cfAndQualifier = columnName.split(":");
                 if ( cfAndQualifier.length != 2) {
-                    throw DataXException.asDataXException(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 中，column 的列配置格式应该是：列族:列名. 您配置的列错误：" + columnName);
+                    throw DataXException.build(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 中，column 的列配置格式应该是：列族:列名. 您配置的列错误：" + columnName);
                 }
                 familyQualifier = StringUtils.join(cfAndQualifier[0].trim(),":",cfAndQualifier[1].trim());
             }else{
@@ -250,7 +249,7 @@ public class Hbase094xHelper {
 			/* 如果用户配置了 startRowkey 和 endRowkey，需要确保：startRowkey <= endRowkey */
         if (startRowkeyByte.length != 0 && endRowkeyByte.length != 0
                 && Bytes.compareTo(startRowkeyByte, endRowkeyByte) > 0) {
-            throw DataXException.asDataXException(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 中 startRowkey 不得大于 endRowkey.");
+            throw DataXException.build(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 中 startRowkey 不得大于 endRowkey.");
         }
 
         HTable htable = Hbase094xHelper.getTable(configuration);
@@ -260,14 +259,14 @@ public class Hbase094xHelper {
         try {
             Pair<byte[][], byte[][]> regionRanges = htable.getStartEndKeys();
             if (null == regionRanges) {
-                throw DataXException.asDataXException(Hbase094xReaderErrorCode.SPLIT_ERROR, "获取源头 Hbase 表的 rowkey 范围失败.");
+                throw DataXException.build(Hbase094xReaderErrorCode.SPLIT_ERROR, "获取源头 Hbase 表的 rowkey 范围失败.");
             }
             resultConfigurations = Hbase094xHelper.doSplit(configuration, startRowkeyByte, endRowkeyByte,
                     regionRanges);
             LOG.info("HBaseReader split job into {} tasks.", resultConfigurations.size());
             return resultConfigurations;
         } catch (Exception e) {
-            throw DataXException.asDataXException(Hbase094xReaderErrorCode.SPLIT_ERROR, "切分源头 Hbase 表失败.", e);
+            throw DataXException.build(Hbase094xReaderErrorCode.SPLIT_ERROR, "切分源头 Hbase 表失败.", e);
         } finally {
             Hbase094xHelper.closeTable(htable);
         }
@@ -374,7 +373,7 @@ public class Hbase094xHelper {
         //非必选参数处理
         String encoding = originalConfig.getString(Key.ENCODING, Constant.DEFAULT_ENCODING);
         if (!Charset.isSupported(encoding)) {
-            throw DataXException.asDataXException(Hbase094xReaderErrorCode.ILLEGAL_VALUE, String.format("Hbasereader 不支持您所配置的编码:[%s]", encoding));
+            throw DataXException.build(Hbase094xReaderErrorCode.ILLEGAL_VALUE, String.format("Hbasereader 不支持您所配置的编码:[%s]", encoding));
         }
         originalConfig.set(Key.ENCODING, encoding);
         // 处理 range 的配置
@@ -405,7 +404,7 @@ public class Hbase094xHelper {
         String mode = originalConfig.getNecessaryValue(Key.MODE,Hbase094xReaderErrorCode.REQUIRED_VALUE);
         List<Map> column = originalConfig.getList(Key.COLUMN, Map.class);
         if (column == null || column.isEmpty()) {
-            throw DataXException.asDataXException(Hbase094xReaderErrorCode.REQUIRED_VALUE, "您配置的column为空,Hbase必须配置 column，其形式为：column:[{\"name\": \"cf0:column0\",\"type\": \"string\"},{\"name\": \"cf1:column1\",\"type\": \"long\"}]");
+            throw DataXException.build(Hbase094xReaderErrorCode.REQUIRED_VALUE, "您配置的column为空,Hbase必须配置 column，其形式为：column:[{\"name\": \"cf0:column0\",\"type\": \"string\"},{\"name\": \"cf1:column1\",\"type\": \"long\"}]");
         }
         ModeType modeType = ModeType.getByTypeName(mode);
         switch (modeType) {
@@ -425,7 +424,7 @@ public class Hbase094xHelper {
                 break;
             }
             default:
-                throw DataXException.asDataXException(Hbase094xReaderErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(Hbase094xReaderErrorCode.ILLEGAL_VALUE,
                         String.format("Hbase11xReader不支持该 mode 类型:%s", mode));
         }
         return mode;

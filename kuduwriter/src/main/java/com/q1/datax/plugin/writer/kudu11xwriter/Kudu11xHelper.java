@@ -1,6 +1,5 @@
 package com.q1.datax.plugin.writer.kudu11xwriter;
 
-import com.alibaba.datax.common.element.Column;
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.fastjson.JSON;
@@ -10,10 +9,8 @@ import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Schema;
 import org.apache.kudu.Type;
 import org.apache.kudu.client.*;
-import org.apache.kudu.shaded.org.checkerframework.checker.units.qual.K;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.rmi.runtime.Log;
 
 import java.nio.charset.Charset;
 import java.util.*;
@@ -33,7 +30,7 @@ public class Kudu11xHelper {
 
     public static Map<String, Object> getKuduConfiguration(String kuduConfig) {
         if (StringUtils.isBlank(kuduConfig)) {
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.REQUIRED_VALUE,
+            throw DataXException.build(Kudu11xWriterErrorcode.REQUIRED_VALUE,
                     "Connection configuration information required.");
         }
         Map<String, Object> kConfiguration;
@@ -43,7 +40,7 @@ public class Kudu11xHelper {
             kConfiguration.put(Key.KUDU_ADMIN_TIMEOUT, kConfiguration.getOrDefault(Key.KUDU_ADMIN_TIMEOUT, Constant.ADMIN_TIMEOUTMS));
             kConfiguration.put(Key.KUDU_SESSION_TIMEOUT, kConfiguration.getOrDefault(Key.KUDU_SESSION_TIMEOUT, Constant.SESSION_TIMEOUTMS));
         } catch (Exception e) {
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.GET_KUDU_CONNECTION_ERROR, e);
+            throw DataXException.build(Kudu11xWriterErrorcode.GET_KUDU_CONNECTION_ERROR, e);
         }
 
         return kConfiguration;
@@ -59,7 +56,7 @@ public class Kudu11xHelper {
                     .defaultOperationTimeoutMs((Long) conf.get(Key.KUDU_SESSION_TIMEOUT))
                     .build();
         } catch (Exception e) {
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.GET_KUDU_CONNECTION_ERROR, e);
+            throw DataXException.build(Kudu11xWriterErrorcode.GET_KUDU_CONNECTION_ERROR, e);
         }
         return kuduClient;
     }
@@ -90,7 +87,7 @@ public class Kudu11xHelper {
 
 
         } catch (Exception e) {
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.GET_KUDU_TABLE_ERROR, e);
+            throw DataXException.build(Kudu11xWriterErrorcode.GET_KUDU_TABLE_ERROR, e);
         }
         return table;
     }
@@ -109,7 +106,7 @@ public class Kudu11xHelper {
             tableOptions.setNumReplicas(numReplicas);
             kuduClient.createTable(tableName, schema, tableOptions);
         } catch (Exception e) {
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.GREATE_KUDU_TABLE_ERROR, e);
+            throw DataXException.build(Kudu11xWriterErrorcode.GREATE_KUDU_TABLE_ERROR, e);
         } finally {
             AtomicInteger i = new AtomicInteger(10);
             while (i.get() > 0) {
@@ -186,7 +183,7 @@ public class Kudu11xHelper {
         try {
             return kuduClient.tableExists(tableName);
         } catch (Exception e) {
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.GET_KUDU_CONNECTION_ERROR, e);
+            throw DataXException.build(Kudu11xWriterErrorcode.GET_KUDU_CONNECTION_ERROR, e);
         } finally {
             Kudu11xHelper.closeClient(kuduClient);
         }
@@ -209,7 +206,7 @@ public class Kudu11xHelper {
         List<ColumnSchema> columnSchemas = new ArrayList<>();
         Schema schema = null;
         if (columns == null || columns.isEmpty()) {
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.REQUIRED_VALUE, "column is not defined，eg：column:[{\"name\": \"cf0:column0\",\"type\": \"string\"},{\"name\": \"cf1:column1\",\"type\": \"long\"}]");
+            throw DataXException.build(Kudu11xWriterErrorcode.REQUIRED_VALUE, "column is not defined，eg：column:[{\"name\": \"cf0:column0\",\"type\": \"string\"},{\"name\": \"cf1:column1\",\"type\": \"long\"}]");
         }
         try {
             for (Configuration column : columns) {
@@ -233,7 +230,7 @@ public class Kudu11xHelper {
             }
             schema = new Schema(columnSchemas);
         } catch (Exception e) {
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.REQUIRED_VALUE, e);
+            throw DataXException.build(Kudu11xWriterErrorcode.REQUIRED_VALUE, e);
         }
         return schema;
     }
@@ -293,7 +290,7 @@ public class Kudu11xHelper {
         configuration.getNecessaryValue(Key.TABLE, Kudu11xWriterErrorcode.REQUIRED_VALUE);
         String encoding = configuration.getString(Key.ENCODING, Constant.DEFAULT_ENCODING);
         if (!Charset.isSupported(encoding)) {
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.ILLEGAL_VALUE,
+            throw DataXException.build(Kudu11xWriterErrorcode.ILLEGAL_VALUE,
                     String.format("Encoding is not supported:[%s] .", encoding));
         }
         configuration.set(Key.ENCODING, encoding);
@@ -334,11 +331,11 @@ public class Kudu11xHelper {
             goalColumns.add(col);
         }
         if (indexFlag != 0 && indexFlag != columns.size()) {
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.ILLEGAL_VALUE,
+            throw DataXException.build(Kudu11xWriterErrorcode.ILLEGAL_VALUE,
                     "\"index\" either has values for all of them, or all of them are null!");
         }
         if (primaryKeyFlag > 1){
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.ILLEGAL_VALUE,
+            throw DataXException.build(Kudu11xWriterErrorcode.ILLEGAL_VALUE,
                     "\"primaryKey\" must be written in the front！");
         }
         configuration.set(Key.COLUMN, goalColumns);
@@ -360,7 +357,7 @@ public class Kudu11xHelper {
                 LOG.info(String.format("table  %s has been deleted.", userTable));
             }
         } catch (KuduException e) {
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.DELETE_KUDU_ERROR, e);
+            throw DataXException.build(Kudu11xWriterErrorcode.DELETE_KUDU_ERROR, e);
         } finally {
             Kudu11xHelper.closeClient(kuduClient);
         }

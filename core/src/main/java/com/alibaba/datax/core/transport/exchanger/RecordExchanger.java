@@ -54,7 +54,7 @@ public class RecordExchanger extends TransformerExchanger implements RecordSende
                             CoreConstant.DATAX_CORE_TRANSPORT_RECORD_CLASS,
                             "com.alibaba.datax.core.transport.record.DefaultRecord"));
 		} catch (ClassNotFoundException e) {
-			throw DataXException.asDataXException(
+			throw DataXException.build(
 					FrameworkErrorCode.CONFIG_ERROR, e);
 		}
 	}
@@ -62,7 +62,7 @@ public class RecordExchanger extends TransformerExchanger implements RecordSende
 	@Override
 	public Record getFromReader() {
 		if(shutdown){
-			throw DataXException.asDataXException(CommonErrorCode.SHUT_DOWN_TASK, "");
+			throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK, "");
 		}
 		Record record = this.channel.pull();
 		return (record instanceof TerminateRecord ? null : record);
@@ -73,7 +73,7 @@ public class RecordExchanger extends TransformerExchanger implements RecordSende
 		try {
 			return RECORD_CLASS.newInstance();
 		} catch (Exception e) {
-			throw DataXException.asDataXException(
+			throw DataXException.build(
 					FrameworkErrorCode.CONFIG_ERROR, e);
 		}
 	}
@@ -81,7 +81,7 @@ public class RecordExchanger extends TransformerExchanger implements RecordSende
 	@Override
 	public void sendToWriter(Record record) {
 		if(shutdown){
-			throw DataXException.asDataXException(CommonErrorCode.SHUT_DOWN_TASK, "");
+			throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK, "");
 		}
 		record = doTransformer(record);
 		if (record == null) {
@@ -99,7 +99,7 @@ public class RecordExchanger extends TransformerExchanger implements RecordSende
 	@Override
 	public void terminate() {
 		if(shutdown){
-			throw DataXException.asDataXException(CommonErrorCode.SHUT_DOWN_TASK, "");
+			throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK, "");
 		}
 		this.channel.pushTerminate(TerminateRecord.get());
 		//和channel的统计保持同步

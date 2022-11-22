@@ -48,7 +48,7 @@ public class BinaryFileWriterUtil {
             outputStream.flush();
             LOG.info("End write!!!");
         } catch (IOException e) {
-            throw DataXException.asDataXException(UnstructuredStorageReaderErrorCode.READ_FILE_IO_ERROR, e);
+            throw DataXException.build(UnstructuredStorageReaderErrorCode.READ_FILE_IO_ERROR, e);
         }
     }
 
@@ -66,7 +66,7 @@ public class BinaryFileWriterUtil {
         Set<String> supportedWriteModes = Sets.newHashSet(TRUNCATE, NOCONFLICT);
         if (!supportedWriteModes.contains(writeMode)) {
             throw DataXException
-                    .asDataXException(
+                    .build(
                             BinaryFileWriterErrorCode.ILLEGAL_VALUE,
                             String.format("Synchronous binary format file, only supports truncate and nonConflict modes, does not support the writeMode mode you configured: %s", writeMode));
         }
@@ -83,7 +83,7 @@ public class BinaryFileWriterUtil {
             if (!sourceFileNameSet.contains(fileName)) {
                 sourceFileNameSet.add(fileName);
             } else {
-                throw DataXException.asDataXException(BinaryFileWriterErrorCode.REPEATED_FILE_NAME,
+                throw DataXException.build(BinaryFileWriterErrorCode.REPEATED_FILE_NAME,
                         String.format("Source File Name [%s] is repeated!", fileName));
             }
         }

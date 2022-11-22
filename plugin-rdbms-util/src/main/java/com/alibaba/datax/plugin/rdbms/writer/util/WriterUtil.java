@@ -21,14 +21,13 @@ public final class WriterUtil {
     private static final Logger LOG = LoggerFactory.getLogger(WriterUtil.class);
 
     //TODO 切分报错
-    public static List<Configuration> doSplit(Configuration simplifiedConf,
-                                              int adviceNumber) {
+    public static List<Configuration> doSplit(Configuration simplifiedConf, int adviceNumber) {
 
-        List<Configuration> splitResultConfigs = new ArrayList<Configuration>();
+        List<Configuration> splitResultConfigs = new ArrayList<>();
 
         int tableNumber = simplifiedConf.getInt(Constant.TABLE_NUMBER_MARK);
 
-        //处理单表的情况
+        // 处理单表的情况
         if (tableNumber == 1) {
             //由于在之前的  master prepare 中已经把 table,jdbcUrl 提取出来，所以这里处理十分简单
             for (int j = 0; j < adviceNumber; j++) {
@@ -39,8 +38,8 @@ public final class WriterUtil {
         }
 
         if (tableNumber != adviceNumber) {
-            throw DataXException.asDataXException(DBUtilErrorCode.CONF_ERROR,
-                    String.format("您的配置文件中的列配置信息有误. 您要写入的目的端的表个数是:%s , 但是根据系统建议需要切分的份数是：%s. 请检查您的配置并作出修改.",
+            throw DataXException.build(DBUtilErrorCode.CONF_ERROR,
+                    String.format("要写入的目的端的表个数是:%s , 但是根据系统建议需要切分的份数是：%s. 请检查您的配置并作出修改.",
                             tableNumber, adviceNumber));
         }
 
@@ -114,7 +113,7 @@ public final class WriterUtil {
                 || writeMode.trim().toLowerCase().startsWith("update");
 
         if (!isWriteModeLegal) {
-            throw DataXException.asDataXException(DBUtilErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(DBUtilErrorCode.ILLEGAL_VALUE,
                     String.format("您所配置的 writeMode:%s 错误. 因为DataX 目前仅支持replace,update 或 insert 方式. 请检查您的配置并作出修改.", writeMode));
         }
         // && writeMode.trim().toLowerCase().startsWith("replace")

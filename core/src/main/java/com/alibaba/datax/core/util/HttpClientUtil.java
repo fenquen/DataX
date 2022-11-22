@@ -147,7 +147,7 @@ public class HttpClientUtil {
                 }
             }, retryTimes, retryInterval, true, HTTP_TIMEOUT_INMILLIONSECONDS + 1000, asyncExecutor);
         } catch (Exception e) {
-            throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR, e);
+            throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR, e);
         }
     }
 
@@ -158,13 +158,13 @@ public class HttpClientUtil {
                 public String call() throws Exception {
                     String result = executeAndGet(httpRequestBase);
                     if(result!=null && result.startsWith("{\"result\":-1")){
-                        throw DataXException.asDataXException(FrameworkErrorCode.CALL_REMOTE_FAILED, "远程接口返回-1,将重试");
+                        throw DataXException.build(FrameworkErrorCode.CALL_REMOTE_FAILED, "远程接口返回-1,将重试");
                     }
                     return result;
                 }
             }, retryTimes, retryInterval, true, HTTP_TIMEOUT_INMILLIONSECONDS + 1000, asyncExecutor);
         } catch (Exception e) {
-            throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR, e);
+            throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR, e);
         }
     }
 

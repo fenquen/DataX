@@ -62,7 +62,7 @@ public class OssInputStream extends InputStream {
                 }
             }, this.retryTimes, 5000, false);
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     OssReaderErrorCode.RUNTIME_EXCEPTION,e.getMessage(), e);
         }
     }
@@ -82,7 +82,7 @@ public class OssInputStream extends InputStream {
                 }
             }, this.retryTimes, 5000, false);
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     OssReaderErrorCode.RUNTIME_EXCEPTION, e.getMessage(), e);
         }
     }
@@ -114,7 +114,7 @@ public class OssInputStream extends InputStream {
             }, this.retryTimes,5000, false);
             return cbyte;
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     OssReaderErrorCode.RUNTIME_EXCEPTION, e.getMessage(), e);
         }
     }

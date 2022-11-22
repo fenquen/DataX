@@ -58,7 +58,7 @@ public class TSDBWriter extends Writer {
             try {
                 DB_TYPE = SourceDBType.valueOf(sourceDbType);
             } catch (Exception e) {
-                throw DataXException.asDataXException(TSDBWriterErrorCode.REQUIRED_VALUE,
+                throw DataXException.build(TSDBWriterErrorCode.REQUIRED_VALUE,
                         "The parameter [" + Key.SOURCE_DB_TYPE +
                                 "] is invalid, which should be one of [" + Arrays.toString(SourceDBType.values()) + "].");
             }
@@ -67,7 +67,7 @@ public class TSDBWriter extends Writer {
             if (DB_TYPE == SourceDBType.TSDB) {
                 String address = originalConfig.getString(Key.ENDPOINT);
                 if (StringUtils.isBlank(address)) {
-                    throw DataXException.asDataXException(TSDBWriterErrorCode.REQUIRED_VALUE,
+                    throw DataXException.build(TSDBWriterErrorCode.REQUIRED_VALUE,
                             "The parameter [" + Key.ENDPOINT + "] is not set.");
                 }
 
@@ -108,7 +108,7 @@ public class TSDBWriter extends Writer {
                 String endpoint = originalConfig.getString(Key.ENDPOINT);
                 String[] split = endpoint.split(":");
                 if (split.length != 3) {
-                    throw DataXException.asDataXException(TSDBWriterErrorCode.REQUIRED_VALUE,
+                    throw DataXException.build(TSDBWriterErrorCode.REQUIRED_VALUE,
                             "The parameter [" + Key.ENDPOINT + "] is invalid, which should be [http://IP:Port].");
                 }
                 String ip = split[1].substring(2);
@@ -213,7 +213,7 @@ public class TSDBWriter extends Writer {
                 List<String> columnType = writerSliceConfig.getList(Key.COLUMN_TYPE, String.class);
                 Set<String> typeSet = new HashSet<String>(columnType);
                 if (columnName.size() != columnType.size()) {
-                    throw DataXException.asDataXException(TSDBWriterErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(TSDBWriterErrorCode.ILLEGAL_VALUE,
                             "The parameter [" + Key.COLUMN_TYPE + "] should has same length with [" + Key.COLUMN + "].");
                 }
 
@@ -231,19 +231,19 @@ public class TSDBWriter extends Writer {
                 if (fieldSize == 0) {
                     // compatible with previous usage of TSDB_METRIC_NUM and TSDB_METRIC_STRING
                     if (!typeSet.contains(TSDBModel.TSDB_METRIC_NUM) && !typeSet.contains(TSDBModel.TSDB_METRIC_STRING)) {
-                        throw DataXException.asDataXException(TSDBWriterErrorCode.ILLEGAL_VALUE,
+                        throw DataXException.build(TSDBWriterErrorCode.ILLEGAL_VALUE,
                                 "The parameter [" + Key.COLUMN_TYPE + "] is invalid, must set at least one of "
                                         + TSDBModel.TSDB_FIELD_DOUBLE + ", " + TSDBModel.TSDB_FIELD_STRING + " or " + TSDBModel.TSDB_FIELD_BOOL + ".");
                     }
                 }
 
                 if (tagSize == 0) {
-                    throw DataXException.asDataXException(TSDBWriterErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(TSDBWriterErrorCode.ILLEGAL_VALUE,
                             "The parameter [" + Key.COLUMN_TYPE + "] is invalid, must set " + TSDBModel.TSDB_TAG + ". ");
                 }
 
                 if (timeSize != 1) {
-                    throw DataXException.asDataXException(TSDBWriterErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(TSDBWriterErrorCode.ILLEGAL_VALUE,
                             "The parameter [" + Key.COLUMN_TYPE + "] is invalid, must set one and only one "
                                     + TSDBModel.TSDB_TIMESTAMP + ".");
                 }
@@ -252,7 +252,7 @@ public class TSDBWriter extends Writer {
                     // check source db type
                     tableName = writerSliceConfig.getString(Key.TABLE);
                     if (StringUtils.isBlank(tableName)) {
-                        throw DataXException.asDataXException(TSDBWriterErrorCode.ILLEGAL_VALUE,
+                        throw DataXException.build(TSDBWriterErrorCode.ILLEGAL_VALUE,
                                 "The parameter [" + Key.TABLE + "] h must set when use multi field input.");
                     }
                 }
@@ -292,7 +292,7 @@ public class TSDBWriter extends Writer {
                         batchPut(lastRecord, "[" + dps.substring(0, dps.length() - 1) + "]");
                     }
                 } catch (Exception e) {
-                    throw DataXException.asDataXException(TSDBWriterErrorCode.RUNTIME_EXCEPTION, e);
+                    throw DataXException.build(TSDBWriterErrorCode.RUNTIME_EXCEPTION, e);
                 }
             } else if (DB_TYPE == SourceDBType.RDB) {
                 // for rdb
@@ -326,7 +326,7 @@ public class TSDBWriter extends Writer {
                             return 0;
                         }
                         getTaskPluginCollector().collectDirtyRecord(record, "Put data points failed!");
-                        throw DataXException.asDataXException(TSDBWriterErrorCode.RUNTIME_EXCEPTION,
+                        throw DataXException.build(TSDBWriterErrorCode.RUNTIME_EXCEPTION,
                                 "Put data points failed!");
                     }
                 }, retrySize, 60000L, true);
@@ -334,7 +334,7 @@ public class TSDBWriter extends Writer {
                 if (ignoreWriteError) {
                     LOG.warn("Ignore write exceptions and continue writing.");
                 } else {
-                    throw DataXException.asDataXException(TSDBWriterErrorCode.RETRY_WRITER_EXCEPTION, e);
+                    throw DataXException.build(TSDBWriterErrorCode.RETRY_WRITER_EXCEPTION, e);
                 }
             }
         }
@@ -374,7 +374,7 @@ public class TSDBWriter extends Writer {
                 }
                 if (summaryResult.getFailed() > 0) {
                     LOG.error("write TSDB failed num:" + summaryResult.getFailed());
-                    throw DataXException.asDataXException(TSDBWriterErrorCode.RUNTIME_EXCEPTION, "Write TSDB failed", new Exception());
+                    throw DataXException.build(TSDBWriterErrorCode.RUNTIME_EXCEPTION, "Write TSDB failed", new Exception());
                 }
             }
             return size;

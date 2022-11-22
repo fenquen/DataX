@@ -32,7 +32,7 @@ public final class OriginalConfPretreatmentUtil {
 		// 检查batchSize 配置（选填，如果未填写，则设置为默认值）
 		int batchSize = originalConfig.getInt(Key.BATCH_SIZE, Constant.DEFAULT_BATCH_SIZE);
 		if (batchSize < 1) {
-			throw DataXException.asDataXException(DBUtilErrorCode.ILLEGAL_VALUE, String.format(
+			throw DataXException.build(DBUtilErrorCode.ILLEGAL_VALUE, String.format(
 					"您的batchSize配置有误. 您所配置的写入数据库表的 batchSize:%s 不能小于1. 推荐配置范围为：[256-1024] (保持128的倍数), 该值越大, 内存溢出可能性越大. 请检查您的配置并作出修改.",
 					batchSize));
 		}
@@ -51,13 +51,13 @@ public final class OriginalConfPretreatmentUtil {
 
 			String jdbcUrl = connConf.getString(Key.JDBC_URL);
 			if (StringUtils.isBlank(jdbcUrl)) {
-				throw DataXException.asDataXException(DBUtilErrorCode.REQUIRED_VALUE, "您未配置的写入数据库表的 jdbcUrl.");
+				throw DataXException.build(DBUtilErrorCode.REQUIRED_VALUE, "您未配置的写入数据库表的 jdbcUrl.");
 			}
 
 			List<String> tables = connConf.getList(Key.TABLE, String.class);
 
 			if (null == tables || tables.isEmpty()) {
-				throw DataXException.asDataXException(DBUtilErrorCode.REQUIRED_VALUE,
+				throw DataXException.build(DBUtilErrorCode.REQUIRED_VALUE,
 						"您未配置写入数据库表的表名称. 根据配置DataX找不到您配置的表. 请检查您的配置并作出修改.");
 			}
 
@@ -66,7 +66,7 @@ public final class OriginalConfPretreatmentUtil {
 					.expandTableConf(DATABASE_TYPE, tables);
 
 			if (null == expandedTables || expandedTables.isEmpty()) {
-				throw DataXException.asDataXException(DBUtilErrorCode.CONF_ERROR,
+				throw DataXException.build(DBUtilErrorCode.CONF_ERROR,
 						"您配置的写入数据库表名称错误. DataX找不到您配置的表，请检查您的配置并作出修改.");
 			}
 

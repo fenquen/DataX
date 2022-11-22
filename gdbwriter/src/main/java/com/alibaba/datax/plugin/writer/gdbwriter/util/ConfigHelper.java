@@ -22,7 +22,7 @@ import com.alibaba.fastjson.JSONObject;
 public interface ConfigHelper {
     static void assertConfig(final String key, final Supplier<Boolean> f) {
         if (!f.get()) {
-            throw DataXException.asDataXException(GdbWriterErrorCode.BAD_CONFIG_VALUE, key);
+            throw DataXException.build(GdbWriterErrorCode.BAD_CONFIG_VALUE, key);
         }
     }
 

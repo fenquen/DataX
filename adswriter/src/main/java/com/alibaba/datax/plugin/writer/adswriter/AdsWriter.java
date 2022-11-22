@@ -88,7 +88,7 @@ public class AdsWriter extends Writer {
                 LOG.debug("After job init(), originalConfig now is:[\n{}\n]",
                         originalConfig.toJSON());
             } else {
-                throw DataXException.asDataXException(AdsWriterErrorCode.INVALID_CONFIG_VALUE, "writeMode 必须为 'load' 或者 'insert' 或者 'stream'");
+                throw DataXException.build(AdsWriterErrorCode.INVALID_CONFIG_VALUE, "writeMode 必须为 'load' 或者 'insert' 或者 'stream'");
             }
         }
 
@@ -143,11 +143,11 @@ public class AdsWriter extends Writer {
                 }
                 LOG.info("正在创建ODPS临时表成功");
             } catch (AdsException e) {
-                throw DataXException.asDataXException(AdsWriterErrorCode.ODPS_CREATETABLE_FAILED, e);
+                throw DataXException.build(AdsWriterErrorCode.ODPS_CREATETABLE_FAILED, e);
             }catch (OdpsException e) {
-                throw DataXException.asDataXException(AdsWriterErrorCode.ODPS_CREATETABLE_FAILED,e);
+                throw DataXException.build(AdsWriterErrorCode.ODPS_CREATETABLE_FAILED,e);
             } catch (InterruptedException e) {
-                throw DataXException.asDataXException(AdsWriterErrorCode.ODPS_CREATETABLE_FAILED,e);
+                throw DataXException.build(AdsWriterErrorCode.ODPS_CREATETABLE_FAILED,e);
             }
 
             Configuration newConf = AdsUtil.generateConf(this.originalConfig, this.odpsTransTableName,
@@ -171,7 +171,7 @@ public class AdsWriter extends Writer {
             }
 
             if(userConfiguredPartitions.size() > 1) {
-                throw DataXException.asDataXException(AdsWriterErrorCode.ODPS_PARTITION_FAILED, "");
+                throw DataXException.build(AdsWriterErrorCode.ODPS_PARTITION_FAILED, "");
             }
 
             if(userConfiguredPartitions.size() == 0) {
@@ -292,12 +292,12 @@ public class AdsWriter extends Writer {
                 if (super.getPeerPluginName().equals(ODPS_READER)) {
                     // TODO 使用云账号
                     AdsWriterErrorCode.ADS_LOAD_ODPS_FAILED.setAdsAccount(helper.getUserName());
-                    throw DataXException.asDataXException(AdsWriterErrorCode.ADS_LOAD_ODPS_FAILED,e);
+                    throw DataXException.build(AdsWriterErrorCode.ADS_LOAD_ODPS_FAILED,e);
                 } else {
-                    throw DataXException.asDataXException(AdsWriterErrorCode.ADS_LOAD_TEMP_ODPS_FAILED,e);
+                    throw DataXException.build(AdsWriterErrorCode.ADS_LOAD_TEMP_ODPS_FAILED,e);
                 }
             } catch (InterruptedException e) {
-                throw DataXException.asDataXException(AdsWriterErrorCode.ODPS_CREATETABLE_FAILED,e);
+                throw DataXException.build(AdsWriterErrorCode.ODPS_CREATETABLE_FAILED,e);
             }
         }
     }
@@ -340,7 +340,7 @@ public class AdsWriter extends Writer {
                 try {
                     this.tableInfo = AdsUtil.createAdsHelper(this.writerSliceConfig).getTableInfo(this.table);
                 } catch (AdsException e) {
-                    throw DataXException.asDataXException(AdsWriterErrorCode.CREATE_ADS_HELPER_FAILED, e);
+                    throw DataXException.build(AdsWriterErrorCode.CREATE_ADS_HELPER_FAILED, e);
                 }
                 List<String> allColumns = new ArrayList<String>();
                 List<ColumnInfo> columnInfo =  this.tableInfo.getColumns();
@@ -352,7 +352,7 @@ public class AdsWriter extends Writer {
                 List<String> userColumns = writerSliceConfig.getList(Key.COLUMN, String.class);
                 this.columnNumber = userColumns.size();
             } else {
-                throw DataXException.asDataXException(AdsWriterErrorCode.INVALID_CONFIG_VALUE, "writeMode 必须为 'load' 或者 'insert' 或者 'stream'");
+                throw DataXException.build(AdsWriterErrorCode.INVALID_CONFIG_VALUE, "writeMode 必须为 'load' 或者 'insert' 或者 'stream'");
             }
         }
 

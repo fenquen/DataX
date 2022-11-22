@@ -51,7 +51,7 @@ public class HBase20xSQLWriterTask {
             writeData(lineReceiver);
 
         } catch (Throwable e) {
-            throw DataXException.asDataXException(HBase20xSQLWriterErrorCode.PUT_HBASE_ERROR, e);
+            throw DataXException.build(HBase20xSQLWriterErrorCode.PUT_HBASE_ERROR, e);
         } finally {
             // 关闭jdbc连接
             HBase20xSQLHelper.closeJdbc(connection, pstmt, null);
@@ -141,7 +141,7 @@ public class HBase20xSQLWriterTask {
                 LOG.debug("Column name : " + name + ", sql type = " + types[i] + " " + meta.getColumnTypeName(i + 1));
             }
         } catch (SQLException e) {
-            throw DataXException.asDataXException(HBase20xSQLWriterErrorCode.GET_TABLE_COLUMNTYPE_ERROR,
+            throw DataXException.build(HBase20xSQLWriterErrorCode.GET_TABLE_COLUMNTYPE_ERROR,
                     "获取表" + fullTableName + "列类型失败，请检查配置和服务状态或者联系HBase管理员.", e);
         } finally {
             HBase20xSQLHelper.closeJdbc(null, statement, null);
@@ -159,7 +159,7 @@ public class HBase20xSQLWriterTask {
         while ((record = lineReceiver.getFromReader()) != null) {
             // 校验列数量是否符合预期
             if (record.getColumnNumber() != numberOfColumnsToRead) {
-                throw DataXException.asDataXException(HBase20xSQLWriterErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(HBase20xSQLWriterErrorCode.ILLEGAL_VALUE,
                         "数据源给出的列数量[" + record.getColumnNumber() + "]与您配置中的列数量[" + numberOfColumnsToRead +
                                 "]不同, 请检查您的配置 或者 联系 Hbase 管理员.");
             }
@@ -205,7 +205,7 @@ public class HBase20xSQLWriterTask {
             pstmt = createPreparedStatement();
             doSingleUpsert(records);
         } catch (Exception e) {
-            throw DataXException.asDataXException(HBase20xSQLWriterErrorCode.PUT_HBASE_ERROR, e);
+            throw DataXException.build(HBase20xSQLWriterErrorCode.PUT_HBASE_ERROR, e);
         }
     }
 
@@ -301,7 +301,7 @@ public class HBase20xSQLWriterTask {
                     break;
 
                 default:
-                    throw DataXException.asDataXException(HBase20xSQLWriterErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(HBase20xSQLWriterErrorCode.ILLEGAL_VALUE,
                             "不支持您配置的列类型:" + sqlType + ", 请检查您的配置 或者 联系 Hbase 管理员.");
             }
         } else {
@@ -320,7 +320,7 @@ public class HBase20xSQLWriterTask {
 
                 default:
                     // nullMode的合法性在初始化配置的时候已经校验过，这里一定不会出错
-                    throw DataXException.asDataXException(HBase20xSQLWriterErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(HBase20xSQLWriterErrorCode.ILLEGAL_VALUE,
                             "Hbasewriter 不支持该 nullMode 类型: " + nullModeType +
                                     ", 目前支持的 nullMode 类型是:" + Arrays.asList(NullModeType.values()));
             }
@@ -382,7 +382,7 @@ public class HBase20xSQLWriterTask {
                 return new byte[0];
 
             default:
-                throw DataXException.asDataXException(HBase20xSQLWriterErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(HBase20xSQLWriterErrorCode.ILLEGAL_VALUE,
                         "不支持您配置的列类型:" + sqlType + ", 请检查您的配置 或者 联系 Hbase 管理员.");
         }
     }

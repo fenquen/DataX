@@ -26,7 +26,7 @@ public enum NullModeType {
                 return modeType;
             }
         }
-        throw DataXException.asDataXException(HBase20xSQLWriterErrorCode.ILLEGAL_VALUE,
+        throw DataXException.build(HBase20xSQLWriterErrorCode.ILLEGAL_VALUE,
                 "Hbasewriter 不支持该 nullMode 类型:" + modeName + ", 目前支持的 nullMode 类型是:" + Arrays.asList(values()));
     }
 }

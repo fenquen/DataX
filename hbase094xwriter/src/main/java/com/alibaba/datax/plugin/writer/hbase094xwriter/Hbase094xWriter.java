@@ -4,7 +4,6 @@ import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.plugin.RecordReceiver;
 import com.alibaba.datax.common.spi.Writer;
 import com.alibaba.datax.common.util.Configuration;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +61,7 @@ public class Hbase094xWriter extends Writer {
                     this.hbaseTaskProxy = new NormalTask(this.taskConfig);
                     break;
                 default:
-                    throw DataXException.asDataXException(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "Hbasewriter 不支持此类模式:" + modeType);
+                    throw DataXException.build(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "Hbasewriter 不支持此类模式:" + modeType);
             }
         }
 

@@ -39,7 +39,7 @@ public class SftpHelperImpl implements IFtpHelper {
             this.session = jsch.getSession(username, host, port);
             if (this.session == null) {
                 throw DataXException
-                        .asDataXException(FtpWriterErrorCode.FAIL_LOGIN,
+                        .build(FtpWriterErrorCode.FAIL_LOGIN,
                                 "创建ftp连接this.session失败,无法通过sftp与服务器建立链接，请检查主机名和用户名是否正确.");
             }
 
@@ -66,7 +66,7 @@ public class SftpHelperImpl implements IFtpHelper {
                             .format("请确认ftp服务器地址是否正确，无法连接到地址为: [%s] 的ftp服务器, errorMessage:%s",
                                     host, e.getMessage());
                     LOG.error(message);
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             FtpWriterErrorCode.FAIL_LOGIN, message, e);
                 } else if (illegalArgumentException.equals(cause)
                         || wrongPort.equals(cause)) {
@@ -74,7 +74,7 @@ public class SftpHelperImpl implements IFtpHelper {
                             "请确认连接ftp服务器端口是否正确，错误的端口: [%s], errorMessage:%s",
                             port, e.getMessage());
                     LOG.error(message);
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             FtpWriterErrorCode.FAIL_LOGIN, message, e);
                 }
             } else {
@@ -82,7 +82,7 @@ public class SftpHelperImpl implements IFtpHelper {
                         .format("与ftp服务器建立连接失败,请检查主机、用户名、密码是否正确, host:%s, port:%s, username:%s, errorMessage:%s",
                                 host, port, username, e.getMessage());
                 LOG.error(message);
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FtpWriterErrorCode.FAIL_LOGIN, message);
             }
         }
@@ -126,7 +126,7 @@ public class SftpHelperImpl implements IFtpHelper {
                                 directoryPath, e.getMessage());
                 LOG.error(message, e);
                 throw DataXException
-                        .asDataXException(
+                        .build(
                                 FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION,
                                 message, e);
             }
@@ -165,7 +165,7 @@ public class SftpHelperImpl implements IFtpHelper {
                                 directoryPath, e.getMessage());
                 LOG.error(message, e);
                 throw DataXException
-                        .asDataXException(
+                        .build(
                                 FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION,
                                 message, e);
             }
@@ -205,7 +205,7 @@ public class SftpHelperImpl implements IFtpHelper {
                     "打开FTP文件[%s]获取写出流时出错,请确认文件%s有权限创建，有权限写出等", filePath,
                     filePath);
             if (null == writeOutputStream) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FtpWriterErrorCode.OPEN_FILE_ERROR, message);
             }
             return writeOutputStream;
@@ -214,7 +214,7 @@ public class SftpHelperImpl implements IFtpHelper {
                     "写出文件[%s] 时出错,请确认文件%s有权限写出, errorMessage:%s", filePath,
                     filePath, e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.OPEN_FILE_ERROR, message);
         }
     }
@@ -238,7 +238,7 @@ public class SftpHelperImpl implements IFtpHelper {
                     "写出文件[%s] 时出错,请确认文件%s有权限写出, errorMessage:%s", filePath,
                     filePath, e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.OPEN_FILE_ERROR, message);
         }
     }
@@ -264,7 +264,7 @@ public class SftpHelperImpl implements IFtpHelper {
                     .format("获取path:[%s] 下文件列表时发生I/O异常,请确认与ftp服务器的连接正常,拥有目录ls权限, errorMessage:%s",
                             dir, e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
         }
         return allFilesWithPointedPrefix;
@@ -285,7 +285,7 @@ public class SftpHelperImpl implements IFtpHelper {
                     "删除文件:[%s] 时发生异常,请确认指定文件有删除权限,以及网络交互正常, errorMessage:%s",
                     eachFile, e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
         }
     }

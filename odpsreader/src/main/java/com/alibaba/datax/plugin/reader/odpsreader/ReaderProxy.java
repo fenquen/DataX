@@ -121,7 +121,7 @@ public class ReaderProxy {
                         retryTimes++;
                         continue;
                     } else {
-                        throw DataXException.asDataXException(OdpsReaderErrorCode.ODPS_READ_EXCEPTION, e);
+                        throw DataXException.build(OdpsReaderErrorCode.ODPS_READ_EXCEPTION, e);
                     }
                 }
                 //记录已经读取的点
@@ -173,7 +173,7 @@ public class ReaderProxy {
             throw e;
         } catch (Exception e) {
             // warn: if dirty
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     OdpsReaderErrorCode.READ_DATA_FAIL, e);
         }
     }
@@ -187,7 +187,7 @@ public class ReaderProxy {
                 // warn: check partition like partition=1
                 if (2 != partitionDetail.length) {
                     throw DataXException
-                            .asDataXException(
+                            .build(
                                     OdpsReaderErrorCode.ILLEGAL_VALUE,
                                     MESSAGE_SOURCE.message("readerproxy.2", eachPartition));
                 }
@@ -214,7 +214,7 @@ public class ReaderProxy {
             String errorMessage = MESSAGE_SOURCE.message("readerproxy.3",
                     com.alibaba.fastjson.JSON.toJSONString(partitionMap),
                     partitionColumnName);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     OdpsReaderErrorCode.READ_DATA_FAIL, errorMessage);
         }
         return partitionMap.get(partitionColumnName);
@@ -278,7 +278,7 @@ public class ReaderProxy {
                         String errMessage = MESSAGE_SOURCE.message("readerproxy.4",
                                 this.partition, columnNameValue);
                         LOG.error(errMessage);
-                        throw DataXException.asDataXException(
+                        throw DataXException.build(
                                 OdpsReaderErrorCode.READ_DATA_FAIL, errMessage, e);
                     }
                 } else {
@@ -384,7 +384,7 @@ public class ReaderProxy {
                         String errMessage = MESSAGE_SOURCE.message("readerproxy.4",
                             this.partition, columnNameValue);
                         LOG.error(errMessage);
-                        throw DataXException.asDataXException(
+                        throw DataXException.build(
                             OdpsReaderErrorCode.READ_DATA_FAIL, errMessage, e);
                     }
                 } else {
@@ -449,7 +449,7 @@ public class ReaderProxy {
                 break;
             }
             default:
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OdpsReaderErrorCode.ILLEGAL_VALUE,
                         MESSAGE_SOURCE.message("readerproxy.5", type));
         }

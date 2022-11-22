@@ -28,7 +28,7 @@ public enum InsertModeType {
                 return modeType;
             }
         }
-        throw DataXException.asDataXException(Kudu11xWriterErrorcode.ILLEGAL_VALUE,
+        throw DataXException.build(Kudu11xWriterErrorcode.ILLEGAL_VALUE,
                 String.format("Kuduwriter does not support the mode :[%s], currently supported mode types are :%s", modeName, Arrays.asList(values())));
     }
 }

@@ -79,7 +79,7 @@ public class DatahubWriter extends Writer {
             }
             if (null != recordType) {
                 if (recordType == RecordType.BLOB) {
-                    throw DataXException.asDataXException(DatahubWriterErrorCode.WRITE_DATAHUB_FAIL,
+                    throw DataXException.build(DatahubWriterErrorCode.WRITE_DATAHUB_FAIL,
                             "DatahubWriter only support 'Tuple' RecordType now, but your RecordType is 'BLOB'");
                 }
             }
@@ -174,7 +174,7 @@ public class DatahubWriter extends Writer {
                     }
                 }, DataXCaseEnvUtil.getRetryTimes(5), DataXCaseEnvUtil.getRetryInterval(10000L), DataXCaseEnvUtil.getRetryExponential(false));
                 } catch (Exception e) {
-                    throw DataXException.asDataXException(DatahubWriterErrorCode.GET_TOPOIC_INFO_FAIL,
+                    throw DataXException.build(DatahubWriterErrorCode.GET_TOPOIC_INFO_FAIL,
                             "get topic info failed", e);
                 }
             LOG.info("datahub topic {} shard to write: {}", this.topic, JSON.toJSONString(this.shards));
@@ -196,7 +196,7 @@ public class DatahubWriter extends Writer {
                     if (indexFound >= 0) {
                         this.columnIndex.add(indexFound);
                     } else {
-                        throw DataXException.asDataXException(DatahubWriterErrorCode.SCHEMA_NOT_MATCH,
+                        throw DataXException.build(DatahubWriterErrorCode.SCHEMA_NOT_MATCH,
                                 String.format("can not find column %s in datahub topic %s", eachCol, this.topic));
                     }
                 }
@@ -240,7 +240,7 @@ public class DatahubWriter extends Writer {
                     commit(records);
                 }
             } catch (Exception e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         DatahubWriterErrorCode.WRITE_DATAHUB_FAIL, e);
             }
         }
@@ -269,7 +269,7 @@ public class DatahubWriter extends Writer {
                                     result.getRequestId(), error.getErrorcode(), error.getMessage());
                         }
                         if (this.fatalErrors.contains(error.getErrorcode())) {
-                            throw DataXException.asDataXException(
+                            throw DataXException.build(
                                     DatahubWriterErrorCode.WRITE_DATAHUB_FAIL,
                                     error.getMessage());
                         }
@@ -286,7 +286,7 @@ public class DatahubWriter extends Writer {
                         return;
                     }
                 }
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         DatahubWriterErrorCode.WRITE_DATAHUB_FAIL,
                         "write datahub failed");
             }
@@ -338,7 +338,7 @@ public class DatahubWriter extends Writer {
                             data.setField(orderInSchema, column.asLong());
                             break;
                         default:
-                            throw DataXException.asDataXException(
+                            throw DataXException.build(
                                     DatahubWriterErrorCode.SCHEMA_NOT_MATCH,
                                     String.format("does not support type: %s", type));
                     }

@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class OpentsdbDataHandler implements DataHandler {
     private static final Logger LOG = LoggerFactory.getLogger(OpentsdbDataHandler.class);
@@ -41,7 +40,7 @@ public class OpentsdbDataHandler implements DataHandler {
             writer = new SchemalessWriter(conn);
             count = write(lineReceiver, batchSize);
         } catch (Exception e) {
-            throw DataXException.asDataXException(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e);
+            throw DataXException.build(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e);
         }
 
         return count;
@@ -77,7 +76,7 @@ public class OpentsdbDataHandler implements DataHandler {
                 writer.write(jsonData, SchemalessProtocolType.JSON, SchemalessTimestampType.NOT_CONFIGURED);
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e);
+            throw DataXException.build(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e);
         }
         return recordIndex - 1;
     }

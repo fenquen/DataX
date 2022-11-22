@@ -14,7 +14,6 @@ import com.alibaba.datax.plugin.rdbms.util.DBUtilErrorCode;
 import com.alibaba.datax.plugin.writer.adbpgwriter.util.Adb4pgUtil;
 import com.alibaba.datax.plugin.writer.adbpgwriter.util.Constant;
 import com.alibaba.datax.plugin.writer.adbpgwriter.util.Key;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,7 +150,7 @@ public class Adb4pgClientProxy implements AdbProxy {
             }
 
         }catch (Exception e) {
-            throw DataXException.asDataXException(DBUtilErrorCode.WRITE_DATA_ERROR, e);
+            throw DataXException.build(DBUtilErrorCode.WRITE_DATA_ERROR, e);
         }finally {
             DBUtil.closeDBResources(null, null, connection);
         }

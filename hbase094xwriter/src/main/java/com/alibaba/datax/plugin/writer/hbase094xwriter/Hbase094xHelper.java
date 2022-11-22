@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.client.*;
@@ -34,7 +33,7 @@ public class Hbase094xHelper {
      */
     public static org.apache.hadoop.conf.Configuration getHbaseConfiguration(String hbaseConfig) {
         if (StringUtils.isBlank(hbaseConfig)) {
-            throw DataXException.asDataXException(Hbase094xWriterErrorCode.REQUIRED_VALUE, "读 Hbase 时需要配置hbaseConfig，其内容为 Hbase 连接信息，请联系 Hbase PE 获取该信息.");
+            throw DataXException.build(Hbase094xWriterErrorCode.REQUIRED_VALUE, "读 Hbase 时需要配置hbaseConfig，其内容为 Hbase 连接信息，请联系 Hbase PE 获取该信息.");
         }
         org.apache.hadoop.conf.Configuration hConfiguration = HBaseConfiguration.create();
         try {
@@ -45,7 +44,7 @@ public class Hbase094xHelper {
                 hConfiguration.set(entry.getKey(), entry.getValue());
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(Hbase094xWriterErrorCode.GET_HBASE_CONFIG_ERROR, e);
+            throw DataXException.build(Hbase094xWriterErrorCode.GET_HBASE_CONFIG_ERROR, e);
         }
         return hConfiguration;
     }
@@ -70,7 +69,7 @@ public class Hbase094xHelper {
             return htable;
         } catch (Exception e) {
             Hbase094xHelper.closeTable(htable);
-            throw DataXException.asDataXException(Hbase094xWriterErrorCode.GET_HBASE_TABLE_ERROR, e);
+            throw DataXException.build(Hbase094xWriterErrorCode.GET_HBASE_TABLE_ERROR, e);
         }finally {
             Hbase094xHelper.closeAdmin(admin);
         }
@@ -88,7 +87,7 @@ public class Hbase094xHelper {
                 hTable.delete(new Delete(rr.getRow()));
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(Hbase094xWriterErrorCode.DELETE_HBASE_ERROR, e);
+            throw DataXException.build(Hbase094xWriterErrorCode.DELETE_HBASE_ERROR, e);
         }finally {
             if(scanner != null){
                 scanner.close();
@@ -115,7 +114,7 @@ public class Hbase094xHelper {
             admin.deleteTable(htable.getTableName());
             admin.createTable(descriptor);
         }catch (Exception e) {
-            throw DataXException.asDataXException(Hbase094xWriterErrorCode.TRUNCATE_HBASE_ERROR, e);
+            throw DataXException.build(Hbase094xWriterErrorCode.TRUNCATE_HBASE_ERROR, e);
         }finally {
             Hbase094xHelper.closeAdmin(admin);
             Hbase094xHelper.closeTable(htable);
@@ -129,7 +128,7 @@ public class Hbase094xHelper {
             if(null != admin)
                 admin.close();
         } catch (IOException e) {
-            throw DataXException.asDataXException(Hbase094xWriterErrorCode.CLOSE_HBASE_AMIN_ERROR, e);
+            throw DataXException.build(Hbase094xWriterErrorCode.CLOSE_HBASE_AMIN_ERROR, e);
         }
     }
 
@@ -138,7 +137,7 @@ public class Hbase094xHelper {
             if(null != table)
                 table.close();
         } catch (IOException e) {
-            throw DataXException.asDataXException(Hbase094xWriterErrorCode.CLOSE_HBASE_TABLE_ERROR, e);
+            throw DataXException.build(Hbase094xWriterErrorCode.CLOSE_HBASE_TABLE_ERROR, e);
         }
     }
 
@@ -170,7 +169,7 @@ public class Hbase094xHelper {
 
         String encoding = originalConfig.getString(Key.ENCODING, Constant.DEFAULT_ENCODING);
         if (!Charset.isSupported(encoding)) {
-            throw DataXException.asDataXException(Hbase094xWriterErrorCode.ILLEGAL_VALUE, String.format("Hbasewriter 不支持您所配置的编码:[%s]", encoding));
+            throw DataXException.build(Hbase094xWriterErrorCode.ILLEGAL_VALUE, String.format("Hbasewriter 不支持您所配置的编码:[%s]", encoding));
         }
         originalConfig.set(Key.ENCODING, encoding);
         Boolean autoFlush = originalConfig.getBool(Key.AUTO_FLUSH, false);
@@ -196,7 +195,7 @@ public class Hbase094xHelper {
                 break;
             }
             default:
-                throw DataXException.asDataXException(Hbase094xWriterErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(Hbase094xWriterErrorCode.ILLEGAL_VALUE,
                         String.format("Hbase11xWriter不支持该 mode 类型:%s", mode));
         }
     }
@@ -204,7 +203,7 @@ public class Hbase094xHelper {
     public static void validateColumn(com.alibaba.datax.common.util.Configuration originalConfig){
         List<Configuration> columns = originalConfig.getListConfiguration(Key.COLUMN);
         if (columns == null || columns.isEmpty()) {
-            throw DataXException.asDataXException(Hbase094xWriterErrorCode.REQUIRED_VALUE, "column为必填项，其形式为：column:[{\"index\": 0,\"name\": \"cf0:column0\",\"type\": \"string\"},{\"index\": 1,\"name\": \"cf1:column1\",\"type\": \"long\"}]");
+            throw DataXException.build(Hbase094xWriterErrorCode.REQUIRED_VALUE, "column为必填项，其形式为：column:[{\"index\": 0,\"name\": \"cf0:column0\",\"type\": \"string\"},{\"index\": 1,\"name\": \"cf1:column1\",\"type\": \"long\"}]");
         }
         for (Configuration aColumn : columns) {
             Integer index = aColumn.getInt(Key.INDEX);
@@ -212,10 +211,10 @@ public class Hbase094xHelper {
             String name = aColumn.getNecessaryValue(Key.NAME, Hbase094xWriterErrorCode.REQUIRED_VALUE);
             ColumnType.getByTypeName(type);
             if(name.split(":").length != 2){
-                throw DataXException.asDataXException(Hbase094xWriterErrorCode.ILLEGAL_VALUE, String.format("您column配置项中name配置的列格式[%s]不正确，name应该配置为 列族:列名  的形式, 如 {\"index\": 1,\"name\": \"cf1:q1\",\"type\": \"long\"}", name));
+                throw DataXException.build(Hbase094xWriterErrorCode.ILLEGAL_VALUE, String.format("您column配置项中name配置的列格式[%s]不正确，name应该配置为 列族:列名  的形式, 如 {\"index\": 1,\"name\": \"cf1:q1\",\"type\": \"long\"}", name));
             }
             if(index == null || index < 0){
-                throw DataXException.asDataXException(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "您的column配置项不正确,配置项中中index为必填项,且为非负数，请检查并修改.");
+                throw DataXException.build(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "您的column配置项不正确,配置项中中index为必填项,且为非负数，请检查并修改.");
             }
         }
     }
@@ -223,7 +222,7 @@ public class Hbase094xHelper {
     public static void validateRowkeyColumn(com.alibaba.datax.common.util.Configuration originalConfig){
         List<Configuration> rowkeyColumn = originalConfig.getListConfiguration(Key.ROWKEY_COLUMN);
         if (rowkeyColumn == null || rowkeyColumn.isEmpty()) {
-            throw DataXException.asDataXException(Hbase094xWriterErrorCode.REQUIRED_VALUE, "rowkeyColumn为必填项，其形式为：rowkeyColumn:[{\"index\": 0,\"type\": \"string\"},{\"index\": -1,\"type\": \"string\",\"value\": \"_\"}]");
+            throw DataXException.build(Hbase094xWriterErrorCode.REQUIRED_VALUE, "rowkeyColumn为必填项，其形式为：rowkeyColumn:[{\"index\": 0,\"type\": \"string\"},{\"index\": -1,\"type\": \"string\",\"value\": \"_\"}]");
         }
         int rowkeyColumnSize = rowkeyColumn.size();
         //包含{"index":0,"type":"string"} 或者 {"index":-1,"type":"string","value":"_"}
@@ -232,11 +231,11 @@ public class Hbase094xHelper {
             String type = aRowkeyColumn.getNecessaryValue(Key.TYPE, Hbase094xWriterErrorCode.REQUIRED_VALUE);
             ColumnType.getByTypeName(type);
             if(index == null ){
-                throw DataXException.asDataXException(Hbase094xWriterErrorCode.REQUIRED_VALUE, "rowkeyColumn配置项中index为必填项");
+                throw DataXException.build(Hbase094xWriterErrorCode.REQUIRED_VALUE, "rowkeyColumn配置项中index为必填项");
             }
             //不能只有-1列,即rowkey连接串
             if(rowkeyColumnSize ==1 && index == -1){
-                throw DataXException.asDataXException(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "rowkeyColumn配置项不能全为常量列,至少指定一个rowkey列");
+                throw DataXException.build(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "rowkeyColumn配置项不能全为常量列,至少指定一个rowkey列");
             }
             if(index == -1){
                 aRowkeyColumn.getNecessaryValue(Key.VALUE, Hbase094xWriterErrorCode.REQUIRED_VALUE);
@@ -250,13 +249,13 @@ public class Hbase094xHelper {
         if(versionColumn != null){
             Integer index = versionColumn.getInt(Key.INDEX);
             if(index == null ){
-                throw DataXException.asDataXException(Hbase094xWriterErrorCode.REQUIRED_VALUE, "versionColumn配置项中index为必填项");
+                throw DataXException.build(Hbase094xWriterErrorCode.REQUIRED_VALUE, "versionColumn配置项中index为必填项");
             }
             if(index == -1){
                 //指定时间,需要index=-1,value
                 versionColumn.getNecessaryValue(Key.VALUE, Hbase094xWriterErrorCode.REQUIRED_VALUE);
             }else if(index < 0){
-                throw DataXException.asDataXException(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "您versionColumn配置项中index配置不正确,只能取-1或者非负数");
+                throw DataXException.build(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "您versionColumn配置项中index配置不正确,只能取-1或者非负数");
             }
         }
     }

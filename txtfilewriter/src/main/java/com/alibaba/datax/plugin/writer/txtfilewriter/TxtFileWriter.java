@@ -68,7 +68,7 @@ public class TxtFileWriter extends Writer {
                 File dir = new File(path);
                 if (dir.isFile()) {
                     throw DataXException
-                            .asDataXException(
+                            .build(
                                     TxtFileWriterErrorCode.ILLEGAL_VALUE,
                                     String.format(
                                             "您配置的path: [%s] 不是一个合法的目录, 请您注意文件重名, 不合法目录名等情况.",
@@ -78,14 +78,14 @@ public class TxtFileWriter extends Writer {
                     boolean createdOk = dir.mkdirs();
                     if (!createdOk) {
                         throw DataXException
-                                .asDataXException(
+                                .build(
                                         TxtFileWriterErrorCode.CONFIG_INVALID_EXCEPTION,
                                         String.format("您指定的文件路径 : [%s] 创建失败.",
                                                 path));
                     }
                 }
             } catch (SecurityException se) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TxtFileWriterErrorCode.SECURITY_NOT_ENOUGH,
                         String.format("您没有权限创建文件路径 : [%s] ", path), se);
             }
@@ -119,20 +119,20 @@ public class TxtFileWriter extends Writer {
                     }
                 } catch (NullPointerException npe) {
                     throw DataXException
-                            .asDataXException(
+                            .build(
                                     TxtFileWriterErrorCode.Write_FILE_ERROR,
                                     String.format("您配置的目录清空时出现空指针异常 : [%s]",
                                             path), npe);
                 } catch (IllegalArgumentException iae) {
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             TxtFileWriterErrorCode.SECURITY_NOT_ENOUGH,
                             String.format("您配置的目录参数异常 : [%s]", path));
                 } catch (SecurityException se) {
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             TxtFileWriterErrorCode.SECURITY_NOT_ENOUGH,
                             String.format("您没有权限查看目录 : [%s]", path));
                 } catch (IOException e) {
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             TxtFileWriterErrorCode.Write_FILE_ERROR,
                             String.format("无法清空目录 : [%s]", path), e);
                 }
@@ -149,7 +149,7 @@ public class TxtFileWriter extends Writer {
                     if (dir.exists()) {
                         if (dir.isFile()) {
                             throw DataXException
-                                    .asDataXException(
+                                    .build(
                                             TxtFileWriterErrorCode.ILLEGAL_VALUE,
                                             String.format(
                                                     "您配置的path: [%s] 不是一个合法的目录, 请您注意文件重名, 不合法目录名等情况.",
@@ -166,7 +166,7 @@ public class TxtFileWriter extends Writer {
                             LOG.error(String.format("冲突文件列表为: [%s]",
                                     StringUtils.join(allFiles, ",")));
                             throw DataXException
-                                    .asDataXException(
+                                    .build(
                                             TxtFileWriterErrorCode.ILLEGAL_VALUE,
                                             String.format(
                                                     "您配置的path: [%s] 目录不为空, 下面存在其他文件或文件夹.",
@@ -176,7 +176,7 @@ public class TxtFileWriter extends Writer {
                         boolean createdOk = dir.mkdirs();
                         if (!createdOk) {
                             throw DataXException
-                                    .asDataXException(
+                                    .build(
                                             TxtFileWriterErrorCode.CONFIG_INVALID_EXCEPTION,
                                             String.format(
                                                     "您指定的文件路径 : [%s] 创建失败.",
@@ -184,13 +184,13 @@ public class TxtFileWriter extends Writer {
                         }
                     }
                 } catch (SecurityException se) {
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             TxtFileWriterErrorCode.SECURITY_NOT_ENOUGH,
                             String.format("您没有权限查看目录 : [%s]", path));
                 }
             } else {
                 throw DataXException
-                        .asDataXException(
+                        .build(
                                 TxtFileWriterErrorCode.ILLEGAL_VALUE,
                                 String.format(
                                         "仅支持 truncate, append, nonConflict 三种模式, 不支持您配置的 writeMode 模式 : [%s]",
@@ -222,7 +222,7 @@ public class TxtFileWriter extends Writer {
                 File dir = new File(path);
                 allFiles.addAll(Arrays.asList(dir.list()));
             } catch (SecurityException se) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TxtFileWriterErrorCode.SECURITY_NOT_ENOUGH,
                         String.format("您没有权限查看目录 : [%s]", path));
             }
@@ -296,11 +296,11 @@ public class TxtFileWriter extends Writer {
                         outputStream, this.writerSliceConfig, this.fileName,
                         this.getTaskPluginCollector());
             } catch (SecurityException se) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TxtFileWriterErrorCode.SECURITY_NOT_ENOUGH,
                         String.format("您没有权限创建文件  : [%s]", this.fileName));
             } catch (IOException ioe) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TxtFileWriterErrorCode.Write_FILE_IO_ERROR,
                         String.format("无法创建待写文件 : [%s]", this.fileName), ioe);
             } finally {

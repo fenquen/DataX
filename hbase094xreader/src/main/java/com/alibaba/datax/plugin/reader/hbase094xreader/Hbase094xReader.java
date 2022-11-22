@@ -55,7 +55,7 @@ public class Hbase094xReader extends Reader {
                     this.hbaseTaskProxy = new MultiVersionFixedColumnTask(this.taskConfig);
                     break;
                 default:
-                    throw DataXException.asDataXException(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 不支持此类模式:" + modeType);
+                    throw DataXException.build(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 不支持此类模式:" + modeType);
             }
         }
 
@@ -64,7 +64,7 @@ public class Hbase094xReader extends Reader {
             try {
                 this.hbaseTaskProxy.prepare();
             } catch (Exception e) {
-                throw DataXException.asDataXException(Hbase094xReaderErrorCode.PREPAR_READ_ERROR, e);
+                throw DataXException.build(Hbase094xReaderErrorCode.PREPAR_READ_ERROR, e);
             }
         }
 

@@ -105,7 +105,7 @@ public class Communication extends BaseObject implements Cloneable {
     }
 
     public Map<String, List<String>> getMessage() {
-        return this.message;
+        return message;
     }
 
     public List<String> getMessage(final String key) {
@@ -114,11 +114,7 @@ public class Communication extends BaseObject implements Cloneable {
 
     public synchronized void addMessage(final String key, final String value) {
         Validate.isTrue(StringUtils.isNotBlank(key), "增加message的key不能为空");
-        List valueList = this.message.get(key);
-        if (null == valueList) {
-            valueList = new ArrayList<String>();
-            this.message.put(key, valueList);
-        }
+        List<String> valueList = message.computeIfAbsent(key, k -> new ArrayList<>());
 
         valueList.add(value);
     }

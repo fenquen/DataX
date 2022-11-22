@@ -42,7 +42,7 @@ public class StreamWriter extends Writer {
                 File dir = new File(path);
                 if (dir.isFile()) {
                     throw DataXException
-                            .asDataXException(
+                            .build(
                                     StreamWriterErrorCode.ILLEGAL_VALUE,
                                     String.format(
                                             "您配置的path: [%s] 不是一个合法的目录, 请您注意文件重名, 不合法目录名等情况.",
@@ -52,7 +52,7 @@ public class StreamWriter extends Writer {
                     boolean createdOk = dir.mkdirs();
                     if (!createdOk) {
                         throw DataXException
-                                .asDataXException(
+                                .build(
                                         StreamWriterErrorCode.CONFIG_INVALID_EXCEPTION,
                                         String.format("您指定的文件路径 : [%s] 创建失败.",
                                                 path));
@@ -65,13 +65,13 @@ public class StreamWriter extends Writer {
                     try {
                         FileUtils.forceDelete(newFile);
                     } catch (IOException e) {
-                        throw DataXException.asDataXException(
+                        throw DataXException.build(
                                 StreamWriterErrorCode.RUNTIME_EXCEPTION,
                                 String.format("删除文件失败 : [%s] ", fileFullPath), e);
                     }
                 }
             } catch (SecurityException se) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         StreamWriterErrorCode.SECURITY_NOT_ENOUGH,
                         String.format("您没有权限创建文件路径 : [%s] ", path), se);
             }
@@ -132,10 +132,10 @@ public class StreamWriter extends Writer {
             this.recordNumBeforSleep = this.writerSliceConfig.getLong(Key.RECORD_NUM_BEFORE_SLEEP, 0);
             this.sleepTime = this.writerSliceConfig.getLong(Key.SLEEP_TIME, 0);
             if(recordNumBeforSleep < 0) {
-                throw DataXException.asDataXException(StreamWriterErrorCode.CONFIG_INVALID_EXCEPTION, "recordNumber 不能为负值");
+                throw DataXException.build(StreamWriterErrorCode.CONFIG_INVALID_EXCEPTION, "recordNumber 不能为负值");
             }
             if(sleepTime <0) {
-                throw DataXException.asDataXException(StreamWriterErrorCode.CONFIG_INVALID_EXCEPTION, "sleep 不能为负值");
+                throw DataXException.build(StreamWriterErrorCode.CONFIG_INVALID_EXCEPTION, "sleep 不能为负值");
             }
 
         }
@@ -166,7 +166,7 @@ public class StreamWriter extends Writer {
                         writer.flush();
 
                     } catch (Exception e) {
-                        throw DataXException.asDataXException(StreamWriterErrorCode.RUNTIME_EXCEPTION, e);
+                        throw DataXException.build(StreamWriterErrorCode.RUNTIME_EXCEPTION, e);
                     }
                 }
         }
@@ -200,7 +200,7 @@ public class StreamWriter extends Writer {
                 }
                 writer.flush();
             } catch (Exception e) {
-                throw DataXException.asDataXException(StreamWriterErrorCode.RUNTIME_EXCEPTION, e);
+                throw DataXException.build(StreamWriterErrorCode.RUNTIME_EXCEPTION, e);
             } finally {
                 IOUtils.closeQuietly(writer);
             }

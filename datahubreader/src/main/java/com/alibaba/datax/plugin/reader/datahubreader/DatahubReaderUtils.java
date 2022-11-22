@@ -24,7 +24,7 @@ public class DatahubReaderUtils {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
             return simpleDateFormat.parse(dateTime).getTime();
         } catch (ParseException ignored) {
-            throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+            throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                     "Invalid DateTime[" + dateTime + "]!");   
         }
     }
@@ -42,7 +42,7 @@ public class DatahubReaderUtils {
             }, DataXCaseEnvUtil.getRetryTimes(7), DataXCaseEnvUtil.getRetryInterval(1000L), DataXCaseEnvUtil.getRetryExponential(true));
             
         } catch (Exception e) {
-            throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+            throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                     "get Shards error, please check ! detail error messsage: " + e.toString());
         }         
         return shards;
@@ -70,7 +70,7 @@ public class DatahubReaderUtils {
             }, DataXCaseEnvUtil.getRetryTimes(7), DataXCaseEnvUtil.getRetryInterval(1000L), DataXCaseEnvUtil.getRetryExponential(true));
             
         } catch (Exception e) {
-            throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+            throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                     "get Cursor error, please check ! detail error messsage: " + e.toString());
         }         
         return cursor;
@@ -89,7 +89,7 @@ public class DatahubReaderUtils {
             }, DataXCaseEnvUtil.getRetryTimes(7), DataXCaseEnvUtil.getRetryInterval(1000L), DataXCaseEnvUtil.getRetryExponential(true));
             
         } catch (Exception e) {
-            throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+            throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                     "get Cursor error, please check ! detail error messsage: " + e.toString());
         }         
         return cursor;
@@ -107,7 +107,7 @@ public class DatahubReaderUtils {
             }, DataXCaseEnvUtil.getRetryTimes(7), DataXCaseEnvUtil.getRetryInterval(1000L), DataXCaseEnvUtil.getRetryExponential(true));
             
         } catch (Exception e) {
-            throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+            throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                     "get Topic Schema error, please check ! detail error messsage: " + e.toString());
         }         
         return schema;
@@ -126,7 +126,7 @@ public class DatahubReaderUtils {
             }, DataXCaseEnvUtil.getRetryTimes(7), DataXCaseEnvUtil.getRetryInterval(1000L), DataXCaseEnvUtil.getRetryExponential(true));
             
         } catch (Exception e) {
-            throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+            throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                     "get Record Result error, please check ! detail error messsage: " + e.toString());
         }     
         return result;

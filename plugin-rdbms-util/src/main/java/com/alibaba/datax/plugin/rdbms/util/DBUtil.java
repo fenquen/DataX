@@ -41,7 +41,7 @@ public final class DBUtil {
                                        final boolean checkSlave) {
 
         if (null == jdbcUrls || jdbcUrls.isEmpty()) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     DBUtilErrorCode.CONF_ERROR,
                     String.format("您的jdbcUrl的配置信息有错, 因为jdbcUrl[%s]不能为空. 请检查您的配置并作出修改.",
                             StringUtils.join(jdbcUrls, ",")));
@@ -74,7 +74,7 @@ public final class DBUtil {
             }, 7, 1000L, true);
             //warn: 7 means 2 minutes
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     DBUtilErrorCode.CONN_DB_ERROR,
                     String.format("数据库连接失败. 因为根据您配置的连接信息,无法从:%s 中找到可连接的jdbcUrl. 请检查您的配置并作出修改.",
                             StringUtils.join(jdbcUrls, ",")), e);
@@ -82,12 +82,12 @@ public final class DBUtil {
     }
 
     public static String chooseJdbcUrlWithoutRetry(final DataBaseType dataBaseType,
-                                       final List<String> jdbcUrls, final String username,
-                                       final String password, final List<String> preSql,
-                                       final boolean checkSlave) throws DataXException {
+                                                   final List<String> jdbcUrls, final String username,
+                                                   final String password, final List<String> preSql,
+                                                   final boolean checkSlave) throws DataXException {
 
         if (null == jdbcUrls || jdbcUrls.isEmpty()) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     DBUtilErrorCode.CONF_ERROR,
                     String.format("您的jdbcUrl的配置信息有错, 因为jdbcUrl[%s]不能为空. 请检查您的配置并作出修改.",
                             StringUtils.join(jdbcUrls, ",")));
@@ -105,7 +105,7 @@ public final class DBUtil {
                         connOK = testConnWithoutRetry(dataBaseType,
                                 url, username, password, checkSlave);
                     } catch (Exception e) {
-                        throw DataXException.asDataXException(
+                        throw DataXException.build(
                                 DBUtilErrorCode.CONN_DB_ERROR,
                                 String.format("数据库连接失败. 因为根据您配置的连接信息,无法从:%s 中找到可连接的jdbcUrl. 请检查您的配置并作出修改.",
                                         StringUtils.join(jdbcUrls, ",")), e);
@@ -116,7 +116,7 @@ public final class DBUtil {
                 }
             }
         }
-        throw DataXException.asDataXException(
+        throw DataXException.build(
                 DBUtilErrorCode.CONN_DB_ERROR,
                 String.format("数据库连接失败. 因为根据您配置的连接信息,无法从:%s 中找到可连接的jdbcUrl. 请检查您的配置并作出修改.",
                         StringUtils.join(jdbcUrls, ",")));
@@ -178,7 +178,7 @@ public final class DBUtil {
         String dbName;
         if (urls != null && urls.length != 0) {
             dbName = urls[3];
-        }else{
+        } else {
             return false;
         }
 
@@ -197,7 +197,7 @@ public final class DBUtil {
                     if (params[0].contains("INSERT") && !tableName.equals("*") && tableNames.contains(tableName))
                         tableNames.remove(tableName);
                 } else {
-                    if (grantRecord.contains("INSERT") ||grantRecord.contains("ALL PRIVILEGES")) {
+                    if (grantRecord.contains("INSERT") || grantRecord.contains("ALL PRIVILEGES")) {
                         if (grantRecord.contains("*.*"))
                             return true;
                         else if (grantRecord.contains(dbPattern)) {
@@ -221,16 +221,16 @@ public final class DBUtil {
 
         boolean hasInsertPrivilege = true;
         Statement insertStmt = null;
-        for(String tableName : tableList) {
+        for (String tableName : tableList) {
             String checkInsertPrivilegeSql = String.format(insertTemplate, tableName, tableName);
             try {
                 insertStmt = connection.createStatement();
                 executeSqlWithoutResultSet(insertStmt, checkInsertPrivilegeSql);
             } catch (Exception e) {
-                if(DataBaseType.Oracle.equals(dataBaseType)) {
-                    if(e.getMessage() != null && e.getMessage().contains("insufficient privileges")) {
+                if (DataBaseType.Oracle.equals(dataBaseType)) {
+                    if (e.getMessage() != null && e.getMessage().contains("insufficient privileges")) {
                         hasInsertPrivilege = false;
-                        LOG.warn("User [" + userName +"] has no 'insert' privilege on table[" + tableName + "], errorMessage:[{}]", e.getMessage());
+                        LOG.warn("User [" + userName + "] has no 'insert' privilege on table[" + tableName + "], errorMessage:[{}]", e.getMessage());
                     }
                 } else {
                     hasInsertPrivilege = false;
@@ -246,20 +246,20 @@ public final class DBUtil {
         return hasInsertPrivilege;
     }
 
-    public static boolean checkDeletePrivilege(DataBaseType dataBaseType,String jdbcURL, String userName, String password, List<String> tableList) {
+    public static boolean checkDeletePrivilege(DataBaseType dataBaseType, String jdbcURL, String userName, String password, List<String> tableList) {
         Connection connection = connect(dataBaseType, jdbcURL, userName, password);
         String deleteTemplate = "delete from %s WHERE 1 = 2";
 
         boolean hasInsertPrivilege = true;
         Statement deleteStmt = null;
-        for(String tableName : tableList) {
+        for (String tableName : tableList) {
             String checkDeletePrivilegeSQL = String.format(deleteTemplate, tableName);
             try {
                 deleteStmt = connection.createStatement();
                 executeSqlWithoutResultSet(deleteStmt, checkDeletePrivilegeSQL);
             } catch (Exception e) {
                 hasInsertPrivilege = false;
-                LOG.warn("User [" + userName +"] has no 'delete' privilege on table[" + tableName + "], errorMessage:[{}]", e.getMessage());
+                LOG.warn("User [" + userName + "] has no 'delete' privilege on table[" + tableName + "], errorMessage:[{}]", e.getMessage());
             }
         }
         try {
@@ -271,17 +271,17 @@ public final class DBUtil {
     }
 
     public static boolean needCheckDeletePrivilege(Configuration originalConfig) {
-        List<String> allSqls =new ArrayList<String>();
+        List<String> allSqls = new ArrayList<String>();
         List<String> preSQLs = originalConfig.getList(Key.PRE_SQL, String.class);
         List<String> postSQLs = originalConfig.getList(Key.POST_SQL, String.class);
-        if (preSQLs != null && !preSQLs.isEmpty()){
+        if (preSQLs != null && !preSQLs.isEmpty()) {
             allSqls.addAll(preSQLs);
         }
-        if (postSQLs != null && !postSQLs.isEmpty()){
+        if (postSQLs != null && !postSQLs.isEmpty()) {
             allSqls.addAll(postSQLs);
         }
-        for(String sql : allSqls) {
-            if(StringUtils.isNotBlank(sql)) {
+        for (String sql : allSqls) {
+            if (StringUtils.isNotBlank(sql)) {
                 if (sql.trim().toUpperCase().startsWith("DELETE")) {
                     return true;
                 }
@@ -298,13 +298,14 @@ public final class DBUtil {
      * NOTE: In DataX, we don't need connection pool in fact
      */
     public static Connection getConnection(final DataBaseType dataBaseType,
-                                           final String jdbcUrl, final String username, final String password) {
+                                           final String jdbcUrl,
+                                           final String username,
+                                           final String password) {
 
         return getConnection(dataBaseType, jdbcUrl, username, password, String.valueOf(Constant.SOCKET_TIMEOUT_INSECOND * 1000));
     }
 
     /**
-     *
      * @param dataBaseType
      * @param jdbcUrl
      * @param username
@@ -324,7 +325,7 @@ public final class DBUtil {
                 }
             }, 9, 1000L, true);
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     DBUtilErrorCode.CONN_DB_ERROR,
                     String.format("数据库连接失败. 因为根据您配置的连接信息:%s获取数据库连接失败. 请检查您的配置并作出修改.", jdbcUrl), e);
         }
@@ -362,13 +363,13 @@ public final class DBUtil {
             String[] ss = url.split(com.alibaba.datax.plugin.rdbms.writer.Constant.OB10_SPLIT_STRING_PATTERN);
             if (ss.length != 3) {
                 throw DataXException
-                        .asDataXException(
+                        .build(
                                 DBUtilErrorCode.JDBC_OB10_ADDRESS_ERROR, "JDBC OB10格式错误，请联系askdatax");
             }
             LOG.info("this is ob1_0 jdbc url.");
-            user = ss[1].trim() +":"+user;
+            user = ss[1].trim() + ":" + user;
             url = ss[2].replace("jdbc:mysql:", "jdbc:oceanbase:");
-            LOG.info("this is ob1_0 jdbc url. user="+user+" :url="+url);
+            LOG.info("this is ob1_0 jdbc url. user=" + user + " :url=" + url);
         }
 
         Properties prop = new Properties();
@@ -474,8 +475,7 @@ public final class DBUtil {
         }
     }
 
-    public static void closeDBResources(ResultSet rs, Statement stmt,
-                                        Connection conn) {
+    public static void closeDBResources(ResultSet rs, Statement stmt, Connection conn) {
         if (null != rs) {
             try {
                 rs.close();
@@ -505,7 +505,7 @@ public final class DBUtil {
     public static List<String> getTableColumns(DataBaseType dataBaseType,
                                                String jdbcUrl, String user, String pass, String tableName) {
         Connection conn = getConnection(dataBaseType, jdbcUrl, user, pass);
-        return getTableColumnsByConn(dataBaseType, conn, tableName, "jdbcUrl:"+jdbcUrl);
+        return getTableColumnsByConn(dataBaseType, conn, tableName, "jdbcUrl:" + jdbcUrl);
     }
 
     public static List<String> getTableColumnsByConn(DataBaseType dataBaseType, Connection conn, String tableName, String basicMsg) {
@@ -524,7 +524,7 @@ public final class DBUtil {
             }
 
         } catch (SQLException e) {
-            throw RdbmsException.asQueryException(dataBaseType,e,queryColumnSql,tableName,null);
+            throw RdbmsException.asQueryException(dataBaseType, e, queryColumnSql, tableName, null);
         } finally {
             DBUtil.closeDBResources(rs, statement, conn);
         }
@@ -576,7 +576,7 @@ public final class DBUtil {
 
         } catch (SQLException e) {
             throw DataXException
-                    .asDataXException(DBUtilErrorCode.GET_COLUMN_INFO_FAILED,
+                    .build(DBUtilErrorCode.GET_COLUMN_INFO_FAILED,
                             String.format("获取表:%s 的字段的元信息时失败. 请联系 DBA 核查该库、表信息.", tableName), e);
         } finally {
             DBUtil.closeDBResources(rs, statement, null);
@@ -584,7 +584,7 @@ public final class DBUtil {
     }
 
     public static boolean testConnWithoutRetry(DataBaseType dataBaseType,
-                                               String url, String user, String pass, boolean checkSlave){
+                                               String url, String user, String pass, boolean checkSlave) {
         Connection connection = null;
 
         try {
@@ -644,7 +644,7 @@ public final class DBUtil {
                             String role = rs.getString("DATABASE_ROLE");
                             return "PRIMARY".equalsIgnoreCase(role);
                         }
-                        throw DataXException.asDataXException(DBUtilErrorCode.RS_ASYNC_ERROR,
+                        throw DataXException.build(DBUtilErrorCode.RS_ASYNC_ERROR,
                                 String.format("select DATABASE_ROLE from V$DATABASE failed,请检查您的jdbcUrl:%s.", url));
                     } finally {
                         DBUtil.closeDBResources(null, conn);
@@ -652,7 +652,7 @@ public final class DBUtil {
                 }
             }, 3, 1000L, true);
         } catch (Exception e) {
-            throw DataXException.asDataXException(DBUtilErrorCode.CONN_DB_ERROR,
+            throw DataXException.build(DBUtilErrorCode.CONN_DB_ERROR,
                     String.format("select DATABASE_ROLE from V$DATABASE failed, url: %s", url), e);
         }
     }
@@ -701,23 +701,23 @@ public final class DBUtil {
 
     // warn:until now, only oracle need to handle session config.
     public static void dealWithSessionConfig(Connection conn,
-                                             Configuration config, DataBaseType databaseType, String message) {
-        List<String> sessionConfig = null;
+                                             Configuration config,
+                                             DataBaseType databaseType,
+                                             String message) {
+        List<String> sessionConfig;
         switch (databaseType) {
             case Oracle:
-                sessionConfig = config.getList(Key.SESSION,
-                        new ArrayList<String>(), String.class);
+                sessionConfig = config.getList(Key.SESSION, new ArrayList<>(), String.class);
                 DBUtil.doDealWithSessionConfig(conn, sessionConfig, message);
                 break;
             case DRDS:
                 // 用于关闭 drds 的分布式事务开关
-                sessionConfig = new ArrayList<String>();
+                sessionConfig = new ArrayList<>();
                 sessionConfig.add("set transaction policy 4");
                 DBUtil.doDealWithSessionConfig(conn, sessionConfig, message);
                 break;
             case MySql:
-                sessionConfig = config.getList(Key.SESSION,
-                        new ArrayList<String>(), String.class);
+                sessionConfig = config.getList(Key.SESSION, new ArrayList<>(), String.class);
                 DBUtil.doDealWithSessionConfig(conn, sessionConfig, message);
                 break;
             default:
@@ -736,7 +736,7 @@ public final class DBUtil {
             stmt = conn.createStatement();
         } catch (SQLException e) {
             throw DataXException
-                    .asDataXException(DBUtilErrorCode.SET_SESSION_ERROR, String
+                    .build(DBUtilErrorCode.SET_SESSION_ERROR, String
                                     .format("session配置有误. 因为根据您的配置执行 session 设置失败. 上下文信息是:[%s]. 请检查您的配置并作出修改.", message),
                             e);
         }
@@ -746,7 +746,7 @@ public final class DBUtil {
             try {
                 DBUtil.executeSqlWithoutResultSet(stmt, sessionSql);
             } catch (SQLException e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         DBUtilErrorCode.SET_SESSION_ERROR, String.format(
                                 "session配置有误. 因为根据您的配置执行 session 设置失败. 上下文信息是:[%s]. 请检查您的配置并作出修改.", message), e);
             }
@@ -754,42 +754,35 @@ public final class DBUtil {
         DBUtil.closeDBResources(stmt, null);
     }
 
-    public static void sqlValid(String sql, DataBaseType dataBaseType){
-        SQLStatementParser statementParser = SQLParserUtils.createSQLStatementParser(sql,dataBaseType.getTypeName());
+    public static void sqlValid(String sql, DataBaseType dataBaseType) {
+        SQLStatementParser statementParser = SQLParserUtils.createSQLStatementParser(sql, dataBaseType.getTypeName());
         statementParser.parseStatementList();
     }
 
     /**
      * 异步获取resultSet的next(),注意，千万不能应用在数据的读取中。只能用在meta的获取
-     * @param resultSet
-     * @return
      */
     public static boolean asyncResultSetNext(final ResultSet resultSet) {
         return asyncResultSetNext(resultSet, 3600);
     }
 
     public static boolean asyncResultSetNext(final ResultSet resultSet, int timeout) {
-        Future<Boolean> future = rsExecutors.get().submit(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return resultSet.next();
-            }
-        });
+        Future<Boolean> future = rsExecutors.get().submit(resultSet::next);
+
         try {
             return future.get(timeout, TimeUnit.SECONDS);
         } catch (Exception e) {
-            throw DataXException.asDataXException(
-                    DBUtilErrorCode.RS_ASYNC_ERROR, "异步获取ResultSet失败", e);
+            throw DataXException.build(DBUtilErrorCode.RS_ASYNC_ERROR, e);
         }
     }
-    
+
     public static void loadDriverClass(String pluginType, String pluginName) {
         try {
             String pluginJsonPath = StringUtils.join(
-                    new String[] { System.getProperty("datax.home"), "plugin",
+                    new String[]{System.getProperty("datax.home"), "plugin",
                             pluginType,
                             String.format("%s%s", pluginName, pluginType),
-                            "plugin.json" }, File.separator);
+                            "plugin.json"}, File.separator);
             Configuration configuration = Configuration.from(new File(
                     pluginJsonPath));
             List<String> drivers = configuration.getList("drivers",
@@ -798,7 +791,7 @@ public final class DBUtil {
                 Class.forName(driver);
             }
         } catch (ClassNotFoundException e) {
-            throw DataXException.asDataXException(DBUtilErrorCode.CONF_ERROR,
+            throw DataXException.build(DBUtilErrorCode.CONF_ERROR,
                     "数据库驱动加载错误, 请确认libs目录有驱动jar包且plugin.json中drivers配置驱动类正确!",
                     e);
         }

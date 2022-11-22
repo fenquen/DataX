@@ -39,7 +39,7 @@ public class UnstructuredStorageWriterUtil {
 
     /**
      * check parameter: writeMode, encoding, compress, filedDelimiter
-     * */
+     */
     public static void validateParameter(Configuration writerConfiguration) {
         // writeMode check
         String writeMode = writerConfiguration.getNecessaryValue(
@@ -50,7 +50,7 @@ public class UnstructuredStorageWriterUtil {
                 "nonConflict");
         if (!supportedWriteModes.contains(writeMode)) {
             throw DataXException
-                    .asDataXException(
+                    .build(
                             UnstructuredStorageWriterErrorCode.ILLEGAL_VALUE, writeMode);
         }
         writerConfiguration.set(Key.WRITE_MODE, writeMode);
@@ -66,7 +66,7 @@ public class UnstructuredStorageWriterUtil {
                 writerConfiguration.set(Key.ENCODING, encoding);
                 Charsets.toCharset(encoding);
             } catch (Exception e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         UnstructuredStorageWriterErrorCode.ILLEGAL_VALUE, e);
             }
         }
@@ -78,7 +78,7 @@ public class UnstructuredStorageWriterUtil {
         } else {
             Set<String> supportedCompress = Sets.newHashSet("gzip", "bzip2");
             if (!supportedCompress.contains(compress.toLowerCase().trim())) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         UnstructuredStorageWriterErrorCode.ILLEGAL_VALUE, String.format("unsupported commpress format %s ", compress));
             }
         }
@@ -91,7 +91,7 @@ public class UnstructuredStorageWriterUtil {
         }
         if (!Constant.FILE_FORMAT_CSV.equals(fileFormat)
                 && !Constant.FILE_FORMAT_TEXT.equals(fileFormat)) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     UnstructuredStorageWriterErrorCode.ILLEGAL_VALUE, String.format("unsupported fileFormat  %s ", fileFormat));
         }
 
@@ -100,7 +100,7 @@ public class UnstructuredStorageWriterUtil {
 
         if (StringUtils.equalsIgnoreCase(fileFormat, Constant.FILE_FORMAT_CSV) &&
                 null != delimiterInStr && 1 != delimiterInStr.length()) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     UnstructuredStorageWriterErrorCode.ILLEGAL_VALUE,
                     String.format("unsupported delimiterInStr  %s ", delimiterInStr));
         }
@@ -177,48 +177,40 @@ public class UnstructuredStorageWriterUtil {
         String compress = config.getString(Key.COMPRESS);
 
         BufferedWriter writer = null;
+
         // compress logic
         try {
             if (null == compress) {
-                writer = new BufferedWriter(new OutputStreamWriter(
-                        outputStream, encoding));
+                writer = new BufferedWriter(new OutputStreamWriter(outputStream, encoding));
             } else {
                 // TODO more compress
                 if ("gzip".equalsIgnoreCase(compress)) {
-                    CompressorOutputStream compressorOutputStream = new GzipCompressorOutputStream(
-                            outputStream);
-                    writer = new BufferedWriter(new OutputStreamWriter(
-                            compressorOutputStream, encoding));
+                    CompressorOutputStream compressorOutputStream = new GzipCompressorOutputStream(outputStream);
+                    writer = new BufferedWriter(new OutputStreamWriter(compressorOutputStream, encoding));
                 } else if ("bzip2".equalsIgnoreCase(compress)) {
-                    CompressorOutputStream compressorOutputStream = new BZip2CompressorOutputStream(
-                            outputStream);
-                    writer = new BufferedWriter(new OutputStreamWriter(
-                            compressorOutputStream, encoding));
+                    CompressorOutputStream compressorOutputStream = new BZip2CompressorOutputStream(outputStream);
+                    writer = new BufferedWriter(new OutputStreamWriter(compressorOutputStream, encoding));
                 } else {
-                    throw DataXException
-                            .asDataXException(
-                                    UnstructuredStorageWriterErrorCode.ILLEGAL_VALUE, compress);
+                    throw DataXException.build(UnstructuredStorageWriterErrorCode.ILLEGAL_VALUE, compress);
                 }
             }
-            UnstructuredStorageWriterUtil.doWriteToStream(lineReceiver, writer,
-                    context, config, taskPluginCollector);
+
+            UnstructuredStorageWriterUtil.doWriteToStream(lineReceiver, writer, context, config, taskPluginCollector);
         } catch (UnsupportedEncodingException uee) {
-            throw DataXException
-                    .asDataXException(
-                            UnstructuredStorageWriterErrorCode.Write_FILE_WITH_CHARSET_ERROR, uee);
+            throw DataXException.build(UnstructuredStorageWriterErrorCode.Write_FILE_WITH_CHARSET_ERROR, uee);
         } catch (NullPointerException e) {
-            throw DataXException.asDataXException(
-                    UnstructuredStorageWriterErrorCode.RUNTIME_EXCEPTION,e);
+            throw DataXException.build(UnstructuredStorageWriterErrorCode.RUNTIME_EXCEPTION, e);
         } catch (IOException e) {
-            throw DataXException.asDataXException(
-                    UnstructuredStorageWriterErrorCode.Write_FILE_IO_ERROR, e);
+            throw DataXException.build(UnstructuredStorageWriterErrorCode.Write_FILE_IO_ERROR, e);
         } finally {
             IOUtils.closeQuietly(writer);
         }
     }
 
     private static void doWriteToStream(RecordReceiver lineReceiver,
-                                        BufferedWriter writer, String contex, Configuration config,
+                                        BufferedWriter writer,
+                                        String contex,
+                                        Configuration config,
                                         TaskPluginCollector taskPluginCollector) throws IOException {
 
         String nullFormat = config.getString(Key.NULL_FORMAT);
@@ -240,26 +232,29 @@ public class UnstructuredStorageWriterUtil {
             unstructuredWriter.writeOneRecord(headers);
         }
 
-        Record record = null;
         String byteEncoding = config.getString(Key.BYTE_ENCODING);
+
+        Record record;
         while ((record = lineReceiver.getFromReader()) != null) {
-            UnstructuredStorageWriterUtil.transportOneRecord(record,
-                    nullFormat, dateParse, taskPluginCollector,
-                    unstructuredWriter, byteEncoding);
+            UnstructuredStorageWriterUtil.transportOneRecord(
+                    record,
+                    nullFormat,
+                    dateParse,
+                    taskPluginCollector,
+                    unstructuredWriter,
+                    byteEncoding);
         }
 
         // warn:由调用方控制流的关闭
         // IOUtils.closeQuietly(unstructuredWriter);
     }
 
-    public static UnstructuredWriter produceUnstructuredWriter(String fileFormat, Configuration config, Writer writer){
+    public static UnstructuredWriter produceUnstructuredWriter(String fileFormat, Configuration config, Writer writer) {
         UnstructuredWriter unstructuredWriter = null;
         if (StringUtils.equalsIgnoreCase(fileFormat, Constant.FILE_FORMAT_CSV)) {
-
             Character fieldDelimiter = config.getChar(Key.FIELD_DELIMITER, Constant.DEFAULT_FIELD_DELIMITER);
             unstructuredWriter = TextCsvWriterManager.produceCsvWriter(writer, fieldDelimiter, config);
         } else if (StringUtils.equalsIgnoreCase(fileFormat, Constant.FILE_FORMAT_TEXT)) {
-
             String fieldDelimiter = config.getString(Key.FIELD_DELIMITER, String.valueOf(Constant.DEFAULT_FIELD_DELIMITER));
             unstructuredWriter = TextCsvWriterManager.produceTextWriter(writer, fieldDelimiter, config);
         }
@@ -269,16 +264,21 @@ public class UnstructuredStorageWriterUtil {
 
     /**
      * 异常表示脏数据
-     * */
-    public static void transportOneRecord(Record record, String nullFormat,
-                                          DateFormat dateParse, TaskPluginCollector taskPluginCollector,
-                                          UnstructuredWriter unstructuredWriter, String byteEncoding) {
+     */
+    public static void transportOneRecord(Record record,
+                                          String nullFormat,
+                                          DateFormat dateParse,
+                                          TaskPluginCollector taskPluginCollector,
+                                          UnstructuredWriter unstructuredWriter,
+                                          String byteEncoding) {
         // warn: default is null
         if (null == nullFormat) {
             nullFormat = "null";
         }
+
         try {
-            List<String> splitedRows = new ArrayList<String>();
+            List<String> splitedRows = new ArrayList<>();
+
             int recordLength = record.getColumnNumber();
             if (0 != recordLength) {
                 Column column;
@@ -298,8 +298,7 @@ public class UnstructuredStorageWriterUtil {
                             }
                         } else {
                             if (null != dateParse) {
-                                splitedRows.add(dateParse.format(column
-                                        .asDate()));
+                                splitedRows.add(dateParse.format(column.asDate()));
                             } else {
                                 splitedRows.add(column.asString());
                             }
@@ -311,17 +310,12 @@ public class UnstructuredStorageWriterUtil {
                 }
             }
             unstructuredWriter.writeOneRecord(splitedRows);
-        } catch (IllegalArgumentException e){
-            // warn: dirty data
-            taskPluginCollector.collectDirtyRecord(record, e);
-        } catch (DataXException e){
+        } catch (IllegalArgumentException | DataXException e) {
             // warn: dirty data
             taskPluginCollector.collectDirtyRecord(record, e);
         } catch (Exception e) {
-            // throw exception, it is not dirty data,
-            // may be network unreachable and the other problem
-            throw DataXException.asDataXException(
-                    UnstructuredStorageWriterErrorCode.Write_ERROR, e.getMessage(),e);
+            // throw exception, it is not dirty data,may be network unreachable and the other problem
+            throw DataXException.build(UnstructuredStorageWriterErrorCode.Write_ERROR, e.getMessage(), e);
         }
     }
 

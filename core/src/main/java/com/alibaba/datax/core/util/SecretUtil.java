@@ -82,7 +82,7 @@ public class SecretUtil {
         } else if (SecretUtil.KEY_ALGORITHM_3DES.equals(method)) {
             return SecretUtil.encrypt3DES(data, key);
         } else {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR,
                     String.format("系统编程错误,不支持的加密类型", method));
         }
@@ -99,7 +99,7 @@ public class SecretUtil {
         } else if (SecretUtil.KEY_ALGORITHM_3DES.equals(method)) {
             return SecretUtil.decrypt3DES(data, key);
         } else {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR,
                     String.format("系统编程错误,不支持的加密类型", method));
         }
@@ -130,7 +130,7 @@ public class SecretUtil {
 
             return encryptBASE64(cipher.doFinal(data.getBytes(ENCODING)));
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR, "rsa加密出错", e);
         }
     }
@@ -160,7 +160,7 @@ public class SecretUtil {
 
             return new String(cipher.doFinal(decryptBASE64(data)), ENCODING);
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR, "rsa解密出错", e);
         }
     }
@@ -210,7 +210,7 @@ public class SecretUtil {
             cipher.init(Cipher.ENCRYPT_MODE, desKey);
             return encryptBASE64(cipher.doFinal(data.getBytes(ENCODING)));
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR, "3重DES加密出错", e);
         }
     }
@@ -234,7 +234,7 @@ public class SecretUtil {
             cipher.init(Cipher.DECRYPT_MODE, desKey);
             return new String(cipher.doFinal(decryptBASE64(data)), ENCODING);
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR, "rsa解密出错", e);
         }
     }
@@ -260,7 +260,7 @@ public class SecretUtil {
             }
             return key;
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR, "构建三重DES密匙出错", e);
         }
     }
@@ -272,7 +272,7 @@ public class SecretUtil {
                 secretStream = new FileInputStream(
                         CoreConstant.DATAX_SECRET_PATH);
             } catch (FileNotFoundException e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FrameworkErrorCode.SECRET_ERROR,
                         "DataX配置要求加解密，但无法找到密钥的配置文件");
             }
@@ -282,7 +282,7 @@ public class SecretUtil {
                 properties.load(secretStream);
                 secretStream.close();
             } catch (IOException e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FrameworkErrorCode.SECRET_ERROR, "读取加解密配置文件出错", e);
             }
         }
@@ -302,7 +302,7 @@ public class SecretUtil {
         Map<String, Triple<String, String, String>> versionKeyMap = getPrivateKeyMap();
 
         if (null == versionKeyMap.get(keyVersion)) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR,
                     String.format("DataX配置的密钥版本为[%s]，但在系统中没有配置，任务密钥配置错误，不存在您配置的密钥版本", keyVersion));
         }
@@ -311,7 +311,7 @@ public class SecretUtil {
         String method = versionKeyMap.get(keyVersion).getMiddle();
         // keyVersion要求的私钥没有配置
         if (StringUtils.isBlank(key)) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR,
                     String.format("DataX配置的密钥版本为[%s]，但在系统中没有配置，可能是任务密钥配置错误，也可能是系统维护问题", keyVersion));
         }
@@ -341,7 +341,7 @@ public class SecretUtil {
 
         Map<String, Triple<String, String, String>> versionKeyMap = getPrivateKeyMap();
         if (null == versionKeyMap.get(keyVersion)) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR,
                     String.format("DataX配置的密钥版本为[%s]，但在系统中没有配置，任务密钥配置错误，不存在您配置的密钥版本", keyVersion));
         }
@@ -349,7 +349,7 @@ public class SecretUtil {
         String method = versionKeyMap.get(keyVersion).getMiddle();
         // keyVersion要求的私钥没有配置
         if (StringUtils.isBlank(decryptKey)) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR,
                     String.format("DataX配置的密钥版本为[%s]，但在系统中没有配置，可能是任务密钥配置错误，也可能是系统维护问题", keyVersion));
         }
@@ -398,7 +398,7 @@ public class SecretUtil {
                                 servicePassword, SecretUtil.KEY_ALGORITHM_3DES,
                                 servicePassword));
                     } else {
-                        throw DataXException.asDataXException(
+                        throw DataXException.build(
                                 FrameworkErrorCode.SECRET_ERROR, String.format(
                                         "DataX配置要求加解密，但配置的密钥版本[%s]存在密钥为空的情况",
                                         serviceUsername));
@@ -423,7 +423,7 @@ public class SecretUtil {
                                 privateKey, SecretUtil.KEY_ALGORITHM_RSA,
                                 publicKey));
                     } else {
-                        throw DataXException.asDataXException(
+                        throw DataXException.build(
                                 FrameworkErrorCode.SECRET_ERROR, String.format(
                                         "DataX配置要求加解密，但配置的公私钥对存在为空的情况，版本[%s]",
                                         keyVersion));
@@ -432,7 +432,7 @@ public class SecretUtil {
             }
         }
         if (versionKeyMap.size() <= 0) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.SECRET_ERROR, "DataX配置要求加解密，但无法找到加解密配置");
         }
         return versionKeyMap;

@@ -142,7 +142,7 @@ public class SubCommonRdbmsReader extends CommonRdbmsReader {
                     default:
                         // warn:not support INTERVAL etc: Types.JAVA_OBJECT
                         throw DataXException
-                                .asDataXException(
+                                .build(
                                         DBUtilErrorCode.UNSUPPORTED_TYPE,
                                         String.format(
                                                 "您的配置文件中的列配置信息有误. 因为DataX 不支持数据库读取这种字段类型. 字段名:[%s], 字段名称:[%s], 字段Java类型:[%s]. 请尝试使用数据库函数将其转换datax支持的类型 或者不同步该字段 .",

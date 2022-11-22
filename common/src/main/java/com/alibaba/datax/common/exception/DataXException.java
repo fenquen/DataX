@@ -26,26 +26,35 @@ public class DataXException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    public static DataXException asDataXException(ErrorCode errorCode, String message) {
+    public DataXException(ErrorCode errorCode) {
+        super(errorCode.toString());
+        this.errorCode = errorCode;
+    }
+
+    public static DataXException build(ErrorCode errorCode, String message) {
         return new DataXException(errorCode, message);
     }
 
-    public static DataXException asDataXException(String message) {
+    public static DataXException build(String message) {
         return new DataXException(message);
     }
 
-    public static DataXException asDataXException(ErrorCode errorCode, String message, Throwable cause) {
+    public static DataXException build(ErrorCode errorCode, String message, Throwable cause) {
         if (cause instanceof DataXException) {
             return (DataXException) cause;
         }
         return new DataXException(errorCode, message, cause);
     }
 
-    public static DataXException asDataXException(ErrorCode errorCode, Throwable cause) {
+    public static DataXException build(ErrorCode errorCode, Throwable cause) {
         if (cause instanceof DataXException) {
             return (DataXException) cause;
         }
         return new DataXException(errorCode, getMessage(cause), cause);
+    }
+
+    public static DataXException build(ErrorCode errorCode) {
+        return new DataXException(errorCode);
     }
 
     public ErrorCode getErrorCode() {

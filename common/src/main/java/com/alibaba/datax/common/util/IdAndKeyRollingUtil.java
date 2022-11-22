@@ -31,7 +31,7 @@ public class IdAndKeyRollingUtil {
 			accessKey = DESCipher.decrypt(skynetAccessKey);
 			if (StringUtils.isBlank(accessKey)) {
 				// 环境变量里面有，但是解析不到
-				throw DataXException.asDataXException(String.format(
+				throw DataXException.build(String.format(
 						"Failed to get the [accessId]/[accessKey] from the environment variable. The [accessId]=[%s]",
 						skynetAccessID));
 			}

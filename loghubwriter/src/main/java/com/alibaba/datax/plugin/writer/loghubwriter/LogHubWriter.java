@@ -16,10 +16,8 @@ import com.aliyun.openservices.log.request.PutLogsRequest;
 import com.aliyun.openservices.log.response.ListShardResponse;
 import com.aliyun.openservices.log.response.PutLogsResponse;
 
-import org.apache.commons.codec.digest.Md5Crypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.provider.MD5;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -220,9 +218,9 @@ public class LogHubWriter extends Writer {
                 }
                 LOG.info("{} records have been sent", count);
             } catch (LogException ex) {
-                throw DataXException.asDataXException(LogHubWriterErrorCode.LOG_HUB_ERROR, ex.getMessage(), ex);
+                throw DataXException.build(LogHubWriterErrorCode.LOG_HUB_ERROR, ex.getMessage(), ex);
             } catch (Exception e) {
-                throw DataXException.asDataXException(LogHubWriterErrorCode.LOG_HUB_ERROR, e.getMessage(), e);
+                throw DataXException.build(LogHubWriterErrorCode.LOG_HUB_ERROR, e.getMessage(), e);
             }
         }
 
@@ -267,9 +265,9 @@ public class LogHubWriter extends Writer {
                 }
                 LOG.info("{} records have been sent", count);
             } catch (LogException ex) {
-                throw DataXException.asDataXException(LogHubWriterErrorCode.LOG_HUB_ERROR, ex.getMessage(), ex);
+                throw DataXException.build(LogHubWriterErrorCode.LOG_HUB_ERROR, ex.getMessage(), ex);
             } catch (Exception e) {
-                throw DataXException.asDataXException(LogHubWriterErrorCode.LOG_HUB_ERROR, e.getMessage(), e);
+                throw DataXException.build(LogHubWriterErrorCode.LOG_HUB_ERROR, e.getMessage(), e);
             }
         }
 

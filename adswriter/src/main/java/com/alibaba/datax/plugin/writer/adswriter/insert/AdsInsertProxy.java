@@ -137,7 +137,7 @@ public class AdsInsertProxy implements AdsProxy {
                     if (record.getColumnNumber() != columnNumber) {
                         // 源头读取字段列数与目的表字段写入列数不相等，直接报错
                         throw DataXException
-                                .asDataXException(
+                                .build(
                                         DBUtilErrorCode.CONF_ERROR,
                                         String.format(
                                                 "列配置信息有错误. 因为您配置的任务中，源头读取字段数:%s 与 目的表要写入的字段数:%s 不相等. 请检查您的配置并作出修改.",
@@ -153,7 +153,7 @@ public class AdsInsertProxy implements AdsProxy {
                     if (record.getColumnNumber() != columnNumber + 1) {
                         // 源头读取字段列数需要为目的表字段写入列数+1, 直接报错, 源头多了一列OP
                         throw DataXException
-                                .asDataXException(
+                                .build(
                                         DBUtilErrorCode.CONF_ERROR,
                                         String.format(
                                                 "列配置信息有错误. 因为您配置的任务中，源头读取字段数:%s 与 目的表要写入的字段数:%s 不满足源头多1列操作类型列. 请检查您的配置并作出修改.",
@@ -209,7 +209,7 @@ public class AdsInsertProxy implements AdsProxy {
                 deleteBuffer.clear();
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     DBUtilErrorCode.WRITE_DATA_ERROR, e);
         } finally {
             writeBuffer.clear();
@@ -270,7 +270,7 @@ public class AdsInsertProxy implements AdsProxy {
             // this.taskPluginCollector.collectDirtyRecord(eachRecord, e);
             // }
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     DBUtilErrorCode.WRITE_DATA_ERROR, e);
         }
     }
@@ -324,7 +324,7 @@ public class AdsInsertProxy implements AdsProxy {
             throw e;
         } catch (Exception e) {
             LOG.error("插入异常, sql: " + sql);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     DBUtilErrorCode.WRITE_DATA_ERROR, e);
         } finally {
             DBUtil.closeDBResources(statement, null);
@@ -391,7 +391,7 @@ public class AdsInsertProxy implements AdsProxy {
             throw e;
         } catch (Exception e) {
             LOG.error("插入异常, sql: " + sql);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     DBUtilErrorCode.WRITE_DATA_ERROR, e);
         } finally {
             DBUtil.closeDBResources(statement, null);
@@ -609,7 +609,7 @@ public class AdsInsertProxy implements AdsProxy {
             default:
                 Pair<Integer, String> columnMetaPair = this.userConfigColumnsMetaData.get(columnName);
                 throw DataXException
-                        .asDataXException(
+                        .build(
                                 DBUtilErrorCode.UNSUPPORTED_TYPE,
                                 String.format(
                                         "您的配置文件中的列配置信息有误. 因为DataX 不支持数据库写入这种字段类型. 字段名:[%s], 字段类型:[%s], 字段Java类型:[%s]. 请修改表中该字段的类型或者不同步该字段.",

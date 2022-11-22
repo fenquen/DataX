@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public abstract class AbstractScheduler {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(AbstractScheduler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractScheduler.class);
 
     private ErrorRecordChecker errorLimit;
 
@@ -33,26 +32,22 @@ public abstract class AbstractScheduler {
         this.containerCommunicator = containerCommunicator;
     }
 
-    public void schedule(List<Configuration> configurations) {
-        Validate.notNull(configurations,
-                "scheduler配置不能为空");
-        int jobReportIntervalInMillSec = configurations.get(0).getInt(
-                CoreConstant.DATAX_CORE_CONTAINER_JOB_REPORTINTERVAL, 30000);
-        int jobSleepIntervalInMillSec = configurations.get(0).getInt(
-                CoreConstant.DATAX_CORE_CONTAINER_JOB_SLEEPINTERVAL, 10000);
+    public void schedule(List<Configuration> taskGroupConfigList) {
+        Validate.notNull(taskGroupConfigList, "scheduler配置不能为空");
 
-        this.jobId = configurations.get(0).getLong(
-                CoreConstant.DATAX_CORE_CONTAINER_JOB_ID);
+        int jobReportIntervalInMillSec = taskGroupConfigList.get(0).getInt(CoreConstant.DATAX_CORE_CONTAINER_JOB_REPORTINTERVAL, 30000);
+        int jobSleepIntervalInMillSec = taskGroupConfigList.get(0).getInt(CoreConstant.DATAX_CORE_CONTAINER_JOB_SLEEPINTERVAL, 10000);
 
-        errorLimit = new ErrorRecordChecker(configurations.get(0));
+        jobId = taskGroupConfigList.get(0).getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID);
 
-        /**
-         * 给 taskGroupContainer 的 Communication 注册
-         */
-        this.containerCommunicator.registerCommunication(configurations);
+        errorLimit = new ErrorRecordChecker(taskGroupConfigList.get(0));
 
-        int totalTasks = calculateTaskCount(configurations);
-        startAllTaskGroup(configurations);
+        // 给 taskGroupContainer 的 Communication 注册
+        containerCommunicator.registerCommunication(taskGroupConfigList);
+
+        int totalTasks = calculateTaskCount(taskGroupConfigList);
+
+        startAllTaskGroup(taskGroupConfigList);
 
         Communication lastJobContainerCommunication = new Communication();
 
@@ -71,17 +66,20 @@ public abstract class AbstractScheduler {
                  * above steps, some ones should report info to DS
                  *
                  */
-                Communication nowJobContainerCommunication = this.containerCommunicator.collect();
+                Communication nowJobContainerCommunication = containerCommunicator.collect();
                 nowJobContainerCommunication.setTimestamp(System.currentTimeMillis());
+
                 LOG.debug(nowJobContainerCommunication.toString());
 
-                //汇报周期
+                // 汇报周期
                 long now = System.currentTimeMillis();
-                if (now - lastReportTimeStamp > jobReportIntervalInMillSec) {
-                    Communication reportCommunication = CommunicationTool
-                            .getReportCommunication(nowJobContainerCommunication, lastJobContainerCommunication, totalTasks);
 
-                    this.containerCommunicator.report(reportCommunication);
+                if (now - lastReportTimeStamp > jobReportIntervalInMillSec) {
+                    Communication reportCommunication =
+                            CommunicationTool.getReportCommunication(nowJobContainerCommunication, lastJobContainerCommunication, totalTasks);
+
+                    containerCommunicator.report(reportCommunication);
+
                     lastReportTimeStamp = now;
                     lastJobContainerCommunication = nowJobContainerCommunication;
                 }
@@ -102,11 +100,8 @@ public abstract class AbstractScheduler {
                 Thread.sleep(jobSleepIntervalInMillSec);
             }
         } catch (InterruptedException e) {
-            // 以 failed 状态退出
             LOG.error("捕获到InterruptedException异常!", e);
-
-            throw DataXException.asDataXException(
-                    FrameworkErrorCode.RUNTIME_ERROR, e);
+            throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR, e);
         }
 
     }
@@ -120,8 +115,7 @@ public abstract class AbstractScheduler {
     private int calculateTaskCount(List<Configuration> configurations) {
         int totalTasks = 0;
         for (Configuration taskGroupConfiguration : configurations) {
-            totalTasks += taskGroupConfiguration.getListConfiguration(
-                    CoreConstant.DATAX_JOB_CONTENT).size();
+            totalTasks += taskGroupConfiguration.getListConfiguration(CoreConstant.DATAX_JOB_CONTENT).size();
         }
         return totalTasks;
     }
@@ -131,5 +125,5 @@ public abstract class AbstractScheduler {
 //        return jobInfo.getData() == State.KILLING.value();
 //    }
 
-    protected  abstract  boolean isJobKilling(Long jobId);
+    protected abstract boolean isJobKilling(Long jobId);
 }

@@ -66,7 +66,7 @@ public abstract class HbaseAbstractTask {
                 }
             }
         }catch (IOException e){
-            throw DataXException.asDataXException(Hbase094xWriterErrorCode.PUT_HBASE_ERROR,e);
+            throw DataXException.build(Hbase094xWriterErrorCode.PUT_HBASE_ERROR,e);
         }finally {
             Hbase094xHelper.closeTable(this.htable);
         }
@@ -105,7 +105,7 @@ public abstract class HbaseAbstractTask {
                     bytes = this.getValueByte(columnType,column.asString());
                     break;
                 default:
-                    throw DataXException.asDataXException(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "HbaseWriter列不支持您配置的列类型:" + columnType);
+                    throw DataXException.build(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "HbaseWriter列不支持您配置的列类型:" + columnType);
             }
         }else{
             switch (nullMode){
@@ -116,7 +116,7 @@ public abstract class HbaseAbstractTask {
                     bytes = HConstants.EMPTY_BYTE_ARRAY;
                     break;
                 default:
-                    throw DataXException.asDataXException(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "HbaseWriter nullMode不支持您配置的类型,只支持skip或者empty");
+                    throw DataXException.build(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "HbaseWriter nullMode不支持您配置的类型,只支持skip或者empty");
             }
         }
         return  bytes;
@@ -148,7 +148,7 @@ public abstract class HbaseAbstractTask {
                     bytes = value.getBytes(Charset.forName(encoding));
                     break;
                 default:
-                    throw DataXException.asDataXException(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "HbaseWriter列不支持您配置的列类型:" + columnType);
+                    throw DataXException.build(Hbase094xWriterErrorCode.ILLEGAL_VALUE, "HbaseWriter列不支持您配置的列类型:" + columnType);
             }
         }else{
             bytes = HConstants.EMPTY_BYTE_ARRAY;

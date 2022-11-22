@@ -33,9 +33,8 @@ public final class ClassLoaderSwapper {
      * @return
      */
     public ClassLoader restoreCurrentThreadClassLoader() {
-        ClassLoader classLoader = Thread.currentThread()
-                .getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(this.storeClassLoader);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(storeClassLoader);
         return classLoader;
     }
 }

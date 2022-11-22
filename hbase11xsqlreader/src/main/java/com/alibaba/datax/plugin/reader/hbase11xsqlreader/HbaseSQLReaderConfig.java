@@ -81,7 +81,7 @@ public class HbaseSQLReaderConfig {
         String hbaseCfg = dataxCfg.getString(Key.HBASE_CONFIG);
         if (StringUtils.isBlank(hbaseCfg)) {
             // 集群配置必须存在且不为空
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.REQUIRED_VALUE, "读 Hbase 时需要配置hbaseConfig，其内容为 Hbase 连接信息，请查看 Hbase 集群信息.");
         }
 
@@ -91,13 +91,13 @@ public class HbaseSQLReaderConfig {
             zkCfg = HbaseSQLHelper.getHbaseConfig(hbaseCfg);
         } catch (Throwable t) {
             // 解析hbase配置错误
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.REQUIRED_VALUE, "解析hbaseConfig出错，请确认您配置的hbaseConfig为合法的json数据格式，内容正确." );
         }
         String zkQuorum = zkCfg.getFirst();
         String znode = zkCfg.getSecond();
         if (zkQuorum == null || zkQuorum.isEmpty()) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.ILLEGAL_VALUE, "HBase的hbase.zookeeper.quorum配置不能为空" );
         }
         // 生成sql使用的连接字符串， 格式： jdbc:hbase:zk_quorum:2181:/znode_parent
@@ -113,21 +113,21 @@ public class HbaseSQLReaderConfig {
         // 解析并检查表名
         cfg.tableName = dataxCfg.getString(Key.TABLE);
         if (cfg.tableName == null || cfg.tableName.isEmpty()) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.ILLEGAL_VALUE, "HBase的tableName配置不能为空,请检查并修改配置." );
         }
 
         // 解析列配置,列为空时，补全所有的列
         cfg.columns = dataxCfg.getList(Key.COLUMN, String.class);
         if (cfg.columns == null) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.ILLEGAL_VALUE, "您配置的tableName含有非法字符{0}，请检查您的配置.");
         } else if (cfg.columns.isEmpty()) {
             try {
                 cfg.columns = HbaseSQLHelper.getPColumnNames(cfg.connectionString, cfg.tableName);
                 dataxCfg.set(Key.COLUMN, cfg.columns);
             } catch (SQLException e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         HbaseSQLReaderErrorCode.GET_PHOENIX_COLUMN_ERROR, "HBase的columns配置不能为空,请添加目标表的列名配置." + e.getMessage(), e);
             }
         }

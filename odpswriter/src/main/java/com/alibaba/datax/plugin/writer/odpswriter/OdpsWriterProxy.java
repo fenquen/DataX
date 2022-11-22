@@ -254,7 +254,7 @@ public class OdpsWriterProxy {
         int userConfiguredColumnNumber = this.columnPositions.size();
 
         if (sourceColumnCount > userConfiguredColumnNumber) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(OdpsWriterErrorCode.ILLEGAL_VALUE,
                     MESSAGE_SOURCE.message("odpswriterproxy.1", sourceColumnCount, userConfiguredColumnNumber));
         } else if (sourceColumnCount < userConfiguredColumnNumber) {
             if (printColumnLess) {

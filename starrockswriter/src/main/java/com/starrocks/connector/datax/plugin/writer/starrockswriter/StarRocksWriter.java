@@ -117,7 +117,7 @@ public class StarRocksWriter extends Writer {
                 while ((record = recordReceiver.getFromReader()) != null) {
                     if (record.getColumnNumber() != options.getColumns().size()) {
                         throw DataXException
-                                .asDataXException(
+                                .build(
                                         DBUtilErrorCode.CONF_ERROR,
                                         String.format(
                                                 "Column configuration error. The number of reader columns %d and the number of writer columns %d are not equal.",
@@ -127,7 +127,7 @@ public class StarRocksWriter extends Writer {
                     writerManager.writeRecord(rowSerializer.serialize(record));
                 }
             } catch (Exception e) {
-                throw DataXException.asDataXException(DBUtilErrorCode.WRITE_DATA_ERROR, e);
+                throw DataXException.build(DBUtilErrorCode.WRITE_DATA_ERROR, e);
             }
         }
 
@@ -136,7 +136,7 @@ public class StarRocksWriter extends Writer {
             try {
                 writerManager.close();
             } catch (Exception e) {
-                throw DataXException.asDataXException(DBUtilErrorCode.WRITE_DATA_ERROR, e);
+                throw DataXException.build(DBUtilErrorCode.WRITE_DATA_ERROR, e);
             }
         }
 

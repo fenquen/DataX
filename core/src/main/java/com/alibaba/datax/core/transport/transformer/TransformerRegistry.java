@@ -128,7 +128,7 @@ public class TransformerRegistry {
         checkName(transformer.getTransformerName(), isNative);
 
         if (registedTransformer.containsKey(transformer.getTransformerName())) {
-            throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_DUPLICATE_ERROR, " name=" + transformer.getTransformerName());
+            throw DataXException.build(TransformerErrorCode.TRANSFORMER_DUPLICATE_ERROR, " name=" + transformer.getTransformerName());
         }
 
         registedTransformer.put(transformer.getTransformerName(), buildTransformerInfo(new ComplexTransformerProxy(transformer), isNative, classLoader));
@@ -140,7 +140,7 @@ public class TransformerRegistry {
         checkName(complexTransformer.getTransformerName(), isNative);
 
         if (registedTransformer.containsKey(complexTransformer.getTransformerName())) {
-            throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_DUPLICATE_ERROR, " name=" + complexTransformer.getTransformerName());
+            throw DataXException.build(TransformerErrorCode.TRANSFORMER_DUPLICATE_ERROR, " name=" + complexTransformer.getTransformerName());
         }
 
         registedTransformer.put(complexTransformer.getTransformerName(), buildTransformerInfo(complexTransformer, isNative, classLoader));
@@ -159,7 +159,7 @@ public class TransformerRegistry {
         }
 
         if (!checkResult) {
-            throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_NAME_ERROR, " name=" + functionName + ": isNative=" + isNative);
+            throw DataXException.build(TransformerErrorCode.TRANSFORMER_NAME_ERROR, " name=" + functionName + ": isNative=" + isNative);
         }
 
     }

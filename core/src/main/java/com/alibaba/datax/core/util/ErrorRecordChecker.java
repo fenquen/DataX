@@ -55,7 +55,7 @@ public final class ErrorRecordChecker {
             LOG.debug(
                     String.format("Error-limit set to %d, error count check.",
                             recordLimit));
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.PLUGIN_DIRTY_DATA_LIMIT_EXCEED,
                     String.format("脏数据条数检查不通过，限制是[%d]条，但实际上捕获了[%d]条.",
                             recordLimit, errorNumber));
@@ -73,7 +73,7 @@ public final class ErrorRecordChecker {
         long error = CommunicationTool.getTotalErrorRecords(communication);
 
         if (total > 0 && ((double) error / (double) total) > percentageLimit) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.PLUGIN_DIRTY_DATA_LIMIT_EXCEED,
                     String.format("脏数据百分比检查不通过，限制是[%f]，但实际上捕获到[%f].",
                             percentageLimit, ((double) error / (double) total)));

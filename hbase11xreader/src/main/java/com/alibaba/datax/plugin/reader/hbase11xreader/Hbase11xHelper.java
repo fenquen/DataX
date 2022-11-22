@@ -33,7 +33,7 @@ public class Hbase11xHelper {
 
     public static org.apache.hadoop.hbase.client.Connection getHbaseConnection(String hbaseConfig) {
         if (StringUtils.isBlank(hbaseConfig)) {
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.REQUIRED_VALUE, "读 Hbase 时需要配置hbaseConfig，其内容为 Hbase 连接信息，请联系 Hbase PE 获取该信息.");
+            throw DataXException.build(Hbase11xReaderErrorCode.REQUIRED_VALUE, "读 Hbase 时需要配置hbaseConfig，其内容为 Hbase 连接信息，请联系 Hbase PE 获取该信息.");
         }
         org.apache.hadoop.conf.Configuration hConfiguration = HBaseConfiguration.create();
         try {
@@ -44,7 +44,7 @@ public class Hbase11xHelper {
                 hConfiguration.set(entry.getKey(), entry.getValue());
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.GET_HBASE_CONNECTION_ERROR, e);
+            throw DataXException.build(Hbase11xReaderErrorCode.GET_HBASE_CONNECTION_ERROR, e);
         }
         org.apache.hadoop.hbase.client.Connection hConnection = null;
         try {
@@ -52,7 +52,7 @@ public class Hbase11xHelper {
 
         } catch (Exception e) {
             Hbase11xHelper.closeConnection(hConnection);
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.GET_HBASE_CONNECTION_ERROR, e);
+            throw DataXException.build(Hbase11xReaderErrorCode.GET_HBASE_CONNECTION_ERROR, e);
         }
         return hConnection;
     }
@@ -74,7 +74,7 @@ public class Hbase11xHelper {
             Hbase11xHelper.closeTable(hTable);
             Hbase11xHelper.closeAdmin(admin);
             Hbase11xHelper.closeConnection(hConnection);
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.GET_HBASE_TABLE_ERROR, e);
+            throw DataXException.build(Hbase11xReaderErrorCode.GET_HBASE_TABLE_ERROR, e);
         }
         return hTable;
     }
@@ -94,7 +94,7 @@ public class Hbase11xHelper {
            Hbase11xHelper.closeRegionLocator(regionLocator);
            Hbase11xHelper.closeAdmin(admin);
            Hbase11xHelper.closeConnection(hConnection);
-           throw DataXException.asDataXException(Hbase11xReaderErrorCode.GET_HBASE_REGINLOCTOR_ERROR, e);
+           throw DataXException.build(Hbase11xReaderErrorCode.GET_HBASE_REGINLOCTOR_ERROR, e);
        }
        return regionLocator;
 
@@ -105,7 +105,7 @@ public class Hbase11xHelper {
             if(null != hConnection)
                 hConnection.close();
         } catch (IOException e) {
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.CLOSE_HBASE_CONNECTION_ERROR, e);
+            throw DataXException.build(Hbase11xReaderErrorCode.CLOSE_HBASE_CONNECTION_ERROR, e);
         }
     }
 
@@ -114,7 +114,7 @@ public class Hbase11xHelper {
             if(null != admin)
                 admin.close();
         } catch (IOException e) {
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.CLOSE_HBASE_ADMIN_ERROR, e);
+            throw DataXException.build(Hbase11xReaderErrorCode.CLOSE_HBASE_ADMIN_ERROR, e);
         }
     }
 
@@ -123,7 +123,7 @@ public class Hbase11xHelper {
             if(null != table)
                 table.close();
         } catch (IOException e) {
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.CLOSE_HBASE_TABLE_ERROR, e);
+            throw DataXException.build(Hbase11xReaderErrorCode.CLOSE_HBASE_TABLE_ERROR, e);
         }
     }
 
@@ -138,22 +138,22 @@ public class Hbase11xHelper {
             if(null != regionLocator)
                 regionLocator.close();
         } catch (IOException e) {
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.CLOSE_HBASE_REGINLOCTOR_ERROR, e);
+            throw DataXException.build(Hbase11xReaderErrorCode.CLOSE_HBASE_REGINLOCTOR_ERROR, e);
         }
     }
 
 
     public static  void checkHbaseTable(Admin admin,  TableName hTableName) throws IOException {
         if(!admin.tableExists(hTableName)){
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.ILLEGAL_VALUE, "HBase源头表" + hTableName.toString()
+            throw DataXException.build(Hbase11xReaderErrorCode.ILLEGAL_VALUE, "HBase源头表" + hTableName.toString()
                     + "不存在, 请检查您的配置 或者 联系 Hbase 管理员.");
         }
         if(!admin.isTableAvailable(hTableName)){
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.ILLEGAL_VALUE, "HBase源头表" +hTableName.toString()
+            throw DataXException.build(Hbase11xReaderErrorCode.ILLEGAL_VALUE, "HBase源头表" +hTableName.toString()
                     + " 不可用, 请检查您的配置 或者 联系 Hbase 管理员.");
         }
         if(admin.isTableDisabled(hTableName)){
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.ILLEGAL_VALUE, "HBase源头表" +hTableName.toString()
+            throw DataXException.build(Hbase11xReaderErrorCode.ILLEGAL_VALUE, "HBase源头表" +hTableName.toString()
                     + "is disabled, 请检查您的配置 或者 联系 Hbase 管理员.");
         }
     }
@@ -272,7 +272,7 @@ public class Hbase11xHelper {
             if( !Hbase11xHelper.isRowkeyColumn(columnName)){
                 String[] cfAndQualifier = columnName.split(":");
                 if ( cfAndQualifier.length != 2) {
-                    throw DataXException.asDataXException(Hbase11xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 中，column 的列配置格式应该是：列族:列名. 您配置的列错误：" + columnName);
+                    throw DataXException.build(Hbase11xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 中，column 的列配置格式应该是：列族:列名. 您配置的列错误：" + columnName);
                 }
                 familyQualifier = StringUtils.join(cfAndQualifier[0].trim(),":",cfAndQualifier[1].trim());
             }else{
@@ -294,14 +294,14 @@ public class Hbase11xHelper {
         /* 如果用户配置了 startRowkey 和 endRowkey，需要确保：startRowkey <= endRowkey */
         if (startRowkeyByte.length != 0 && endRowkeyByte.length != 0
                 && Bytes.compareTo(startRowkeyByte, endRowkeyByte) > 0) {
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 中 startRowkey 不得大于 endRowkey.");
+            throw DataXException.build(Hbase11xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 中 startRowkey 不得大于 endRowkey.");
         }
         RegionLocator regionLocator = Hbase11xHelper.getRegionLocator(configuration);
         List<Configuration> resultConfigurations ;
         try {
             Pair<byte[][], byte[][]> regionRanges = regionLocator.getStartEndKeys();
             if (null == regionRanges) {
-                throw DataXException.asDataXException(Hbase11xReaderErrorCode.SPLIT_ERROR, "获取源头 Hbase 表的 rowkey 范围失败.");
+                throw DataXException.build(Hbase11xReaderErrorCode.SPLIT_ERROR, "获取源头 Hbase 表的 rowkey 范围失败.");
             }
             resultConfigurations = Hbase11xHelper.doSplit(configuration, startRowkeyByte, endRowkeyByte,
                     regionRanges);
@@ -309,7 +309,7 @@ public class Hbase11xHelper {
             LOG.info("HBaseReader split job into {} tasks.", resultConfigurations.size());
             return resultConfigurations;
         } catch (Exception e) {
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.SPLIT_ERROR, "切分源头 Hbase 表失败.", e);
+            throw DataXException.build(Hbase11xReaderErrorCode.SPLIT_ERROR, "切分源头 Hbase 表失败.", e);
         }finally {
             Hbase11xHelper.closeRegionLocator(regionLocator);
         }
@@ -415,7 +415,7 @@ public class Hbase11xHelper {
         //非必选参数处理
         String encoding = originalConfig.getString(Key.ENCODING, Constant.DEFAULT_ENCODING);
         if (!Charset.isSupported(encoding)) {
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.ILLEGAL_VALUE, String.format("Hbasereader 不支持您所配置的编码:[%s]", encoding));
+            throw DataXException.build(Hbase11xReaderErrorCode.ILLEGAL_VALUE, String.format("Hbasereader 不支持您所配置的编码:[%s]", encoding));
         }
         originalConfig.set(Key.ENCODING, encoding);
         // 处理 range 的配置
@@ -446,7 +446,7 @@ public class Hbase11xHelper {
         String mode = originalConfig.getNecessaryValue(Key.MODE,Hbase11xReaderErrorCode.REQUIRED_VALUE);
         List<Map> column = originalConfig.getList(Key.COLUMN, Map.class);
         if (column == null || column.isEmpty()) {
-            throw DataXException.asDataXException(Hbase11xReaderErrorCode.REQUIRED_VALUE, "您配置的column为空,Hbase必须配置 column，其形式为：column:[{\"name\": \"cf0:column0\",\"type\": \"string\"},{\"name\": \"cf1:column1\",\"type\": \"long\"}]");
+            throw DataXException.build(Hbase11xReaderErrorCode.REQUIRED_VALUE, "您配置的column为空,Hbase必须配置 column，其形式为：column:[{\"name\": \"cf0:column0\",\"type\": \"string\"},{\"name\": \"cf1:column1\",\"type\": \"long\"}]");
         }
         ModeType modeType = ModeType.getByTypeName(mode);
         switch (modeType) {
@@ -466,7 +466,7 @@ public class Hbase11xHelper {
                 break;
             }
             default:
-                throw DataXException.asDataXException(Hbase11xReaderErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(Hbase11xReaderErrorCode.ILLEGAL_VALUE,
                         String.format("HbaseReader不支持该 mode 类型:%s", mode));
         }
         return mode;

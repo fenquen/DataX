@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class OssReader extends Reader {
@@ -89,20 +88,20 @@ public class OssReader extends Reader {
         private void basicValidateParameter(){
             endpoint = this.readerOriginConfig.getString(Key.ENDPOINT);
             if (StringUtils.isBlank(endpoint)) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,"invalid endpoint");
             }
 
             accessId = this.readerOriginConfig.getString(Key.ACCESSID);
             if (StringUtils.isBlank(accessId)) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,
                         "invalid accessId");
             }
 
             accessKey = this.readerOriginConfig.getString(Key.ACCESSKEY);
             if (StringUtils.isBlank(accessKey)) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,
                         "invalid accessKey");
             }
@@ -116,18 +115,18 @@ public class OssReader extends Reader {
 
             bucket = this.readerOriginConfig.getString(Key.BUCKET);
             if (StringUtils.isBlank(bucket)) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,
                         "invalid bucket");
             }else if(!ossClient.doesBucketExist(bucket)){
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,
                         "invalid bucket");
             }
 
             String object = this.readerOriginConfig.getString(Key.OBJECT);
             if (StringUtils.isBlank(object)) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,
                         "invalid object");
             }
@@ -188,7 +187,7 @@ public class OssReader extends Reader {
                 LOG.debug("split() ok and end...");
                 return readerSplitConfigs;
             }else if (0 == objects.size()) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssReaderErrorCode.EMPTY_BUCKET_EXCEPTION,
                         String.format("Unable to find the object to read. Please confirm your configured item [bucket]: %s object: %s",
                                 this.readerOriginConfig.get(Key.BUCKET),
@@ -286,17 +285,17 @@ public class OssReader extends Reader {
             if(StringUtils.isNotBlank(errorMessage)){
                 if(errorMessage.contains("UnknownHost")){
                     // endPoint配置错误
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,
                             "The endpoint you configured is not correct. Please check the endpoint configuration", e);
                 }else if(errorMessage.contains("InvalidAccessKeyId")){
                     // accessId配置错误
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,
                             "The accessId you configured is not correct. Please check the accessId configuration", e);
                 }else if(errorMessage.contains("SignatureDoesNotMatch")){
                     // accessKey配置错误
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,
                            "The accessKey you configured is not correct. Please check the accessId configuration", e);
                 }else if(errorMessage.contains("NoSuchKey")){
@@ -309,17 +308,17 @@ public class OssReader extends Reader {
                         }
                     }
                     // object配置错误
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,
                             "The object you configured is not correct. Please check the accessId configuration");
                 }else{
                     // 其他错误
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,
                             String.format("Please check whether the configuration of [endpoint], [accessId], [accessKey], [bucket], and [object] are correct. Error reason: %s",e.getMessage()), e);
                 }
             }else{
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssReaderErrorCode.CONFIG_INVALID_EXCEPTION,
                         "The configured json is invalid", e);
             }

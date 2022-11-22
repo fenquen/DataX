@@ -25,16 +25,16 @@ public class OtsWriter {
                 this.proxy.init(getPluginJobConf());
             } catch (OTSException e) {
                 LOG.error("OTSException: {}",  e.getMessage(), e);
-                throw DataXException.asDataXException(new OtsWriterError(e.getErrorCode(), "OTS端的错误"), Common.getDetailMessage(e), e);
+                throw DataXException.build(new OtsWriterError(e.getErrorCode(), "OTS端的错误"), Common.getDetailMessage(e), e);
             } catch (ClientException e) {
                 LOG.error("ClientException: {}",  e.getMessage(), e);
-                throw DataXException.asDataXException(new OtsWriterError(e.getErrorCode(), "OTS端的错误"), Common.getDetailMessage(e), e);
+                throw DataXException.build(new OtsWriterError(e.getErrorCode(), "OTS端的错误"), Common.getDetailMessage(e), e);
             } catch (IllegalArgumentException e) {
                 LOG.error("IllegalArgumentException. ErrorMsg:{}", e.getMessage(), e);
-                throw DataXException.asDataXException(OtsWriterError.INVALID_PARAM, Common.getDetailMessage(e), e);
+                throw DataXException.build(OtsWriterError.INVALID_PARAM, Common.getDetailMessage(e), e);
             } catch (Exception e) {
                 LOG.error("Exception. ErrorMsg:{}", e.getMessage(), e);
-                throw DataXException.asDataXException(OtsWriterError.ERROR, Common.getDetailMessage(e), e);
+                throw DataXException.build(OtsWriterError.ERROR, Common.getDetailMessage(e), e);
             }
             LOG.info("init() end ...");
         }
@@ -50,7 +50,7 @@ public class OtsWriter {
                 return this.proxy.split(mandatoryNumber);
             } catch (Exception e) {
                 LOG.error("Exception. ErrorMsg:{}", e.getMessage(), e);
-                throw DataXException.asDataXException(OtsWriterError.ERROR, Common.getDetailMessage(e), e);
+                throw DataXException.build(OtsWriterError.ERROR, Common.getDetailMessage(e), e);
             }
         }
     }
@@ -75,16 +75,16 @@ public class OtsWriter {
                 this.proxy.write(lineReceiver, this.getTaskPluginCollector());
             } catch (OTSException e) {
                 LOG.error("OTSException: {}",  e.getMessage(), e);
-                throw DataXException.asDataXException(new OtsWriterError(e.getErrorCode(), "OTS端的错误"), Common.getDetailMessage(e), e);
+                throw DataXException.build(new OtsWriterError(e.getErrorCode(), "OTS端的错误"), Common.getDetailMessage(e), e);
             } catch (ClientException e) {
                 LOG.error("ClientException: {}",  e.getMessage(), e);
-                throw DataXException.asDataXException(new OtsWriterError(e.getErrorCode(), "OTS端的错误"), Common.getDetailMessage(e), e);
+                throw DataXException.build(new OtsWriterError(e.getErrorCode(), "OTS端的错误"), Common.getDetailMessage(e), e);
             } catch (IllegalArgumentException e) {
                 LOG.error("IllegalArgumentException. ErrorMsg:{}", e.getMessage(), e);
-                throw DataXException.asDataXException(OtsWriterError.INVALID_PARAM, Common.getDetailMessage(e), e);
+                throw DataXException.build(OtsWriterError.INVALID_PARAM, Common.getDetailMessage(e), e);
             } catch (Exception e) {
                 LOG.error("Exception. ErrorMsg:{}", e.getMessage(), e);
-                throw DataXException.asDataXException(OtsWriterError.ERROR, Common.getDetailMessage(e), e);
+                throw DataXException.build(OtsWriterError.ERROR, Common.getDetailMessage(e), e);
             }
             LOG.info("startWrite() end ...");
         }

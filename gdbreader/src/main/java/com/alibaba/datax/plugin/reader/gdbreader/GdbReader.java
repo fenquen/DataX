@@ -57,7 +57,7 @@ public class GdbReader extends Reader {
             try {
                 exportType = Key.ExportType.valueOf(jobConfig.getString(Key.EXPORT_TYPE));
             } catch (NullPointerException | IllegalArgumentException e) {
-                throw DataXException.asDataXException(GdbReaderErrorCode.BAD_CONFIG_VALUE, Key.EXPORT_TYPE);
+                throw DataXException.build(GdbReaderErrorCode.BAD_CONFIG_VALUE, Key.EXPORT_TYPE);
             }
         }
 
@@ -71,7 +71,7 @@ public class GdbReader extends Reader {
             try {
                 graph = new ScriptGdbGraph(jobConfig, exportType);
             } catch (RuntimeException e) {
-                throw DataXException.asDataXException(GdbReaderErrorCode.FAIL_CLIENT_CONNECT, e.getMessage());
+                throw DataXException.build(GdbReaderErrorCode.FAIL_CLIENT_CONNECT, e.getMessage());
             }
         }
 
@@ -91,12 +91,12 @@ public class GdbReader extends Reader {
                 try {
                     labels.addAll(graph.getLabels().keySet());
                 } catch (RuntimeException ex) {
-                    throw DataXException.asDataXException(GdbReaderErrorCode.FAIL_FETCH_LABELS, ex.getMessage());
+                    throw DataXException.build(GdbReaderErrorCode.FAIL_FETCH_LABELS, ex.getMessage());
                 }
             }
 
             if (labels.isEmpty()) {
-                throw DataXException.asDataXException(GdbReaderErrorCode.FAIL_FETCH_LABELS, "none labels to read");
+                throw DataXException.build(GdbReaderErrorCode.FAIL_FETCH_LABELS, "none labels to read");
             }
 
             return ConfigHelper.splitConfig(jobConfig, labels);
@@ -173,7 +173,7 @@ public class GdbReader extends Reader {
                     }
                     start = ids.get(ids.size() - 1);
                 } catch (Exception ex) {
-                    throw DataXException.asDataXException(GdbReaderErrorCode.FAIL_FETCH_IDS, ex.getMessage());
+                    throw DataXException.build(GdbReaderErrorCode.FAIL_FETCH_IDS, ex.getMessage());
                 }
 
                 // send range fetch async

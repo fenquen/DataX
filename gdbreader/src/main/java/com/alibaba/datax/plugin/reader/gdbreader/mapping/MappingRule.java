@@ -61,7 +61,7 @@ public class MappingRule {
         rule.setValueType(ValueType.STRING);
 
         if (!propertyNames.isEmpty()) {
-            throw DataXException.asDataXException(GdbReaderErrorCode.BAD_CONFIG_VALUE, "JsonProperties should be only property");
+            throw DataXException.build(GdbReaderErrorCode.BAD_CONFIG_VALUE, "JsonProperties should be only property");
         }
 
         columns.add(rule);

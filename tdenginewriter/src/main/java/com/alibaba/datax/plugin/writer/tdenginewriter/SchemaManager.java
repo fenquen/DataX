@@ -33,7 +33,7 @@ public class SchemaManager {
                 dbname = rs.getString("database()");
             }
             if (dbname == null)
-                throw DataXException.asDataXException(TDengineWriterErrorCode.RUNTIME_EXCEPTION,
+                throw DataXException.build(TDengineWriterErrorCode.RUNTIME_EXCEPTION,
                         "Database not specified or available");
 
             rs = stmt.executeQuery("show databases");
@@ -55,7 +55,7 @@ public class SchemaManager {
                 }
             }
         } catch (SQLException e) {
-            throw DataXException.asDataXException(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e.getMessage());
+            throw DataXException.build(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e.getMessage());
         }
         return this.precision;
     }
@@ -82,11 +82,11 @@ public class SchemaManager {
 
             for (String tbname : tables) {
                 if (!tableMetas.containsKey(tbname)) {
-                    throw DataXException.asDataXException(TDengineWriterErrorCode.RUNTIME_EXCEPTION, "table metadata of " + tbname + " is empty!");
+                    throw DataXException.build(TDengineWriterErrorCode.RUNTIME_EXCEPTION, "table metadata of " + tbname + " is empty!");
                 }
             }
         } catch (SQLException e) {
-            throw DataXException.asDataXException(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e.getMessage());
+            throw DataXException.build(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e.getMessage());
         }
         return tableMetas;
     }
@@ -103,7 +103,7 @@ public class SchemaManager {
                     columnMetaList.add(columnMeta);
                 }
             } catch (SQLException e) {
-                throw DataXException.asDataXException(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e.getMessage());
+                throw DataXException.build(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e.getMessage());
             }
 
             if (columnMetaList.isEmpty()) {

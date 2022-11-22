@@ -1,6 +1,5 @@
 package com.alibaba.datax.plugin.writer.odpswriter.util;
 
-import com.alibaba.datax.common.element.*;
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.common.util.MessageSource;
@@ -15,7 +14,6 @@ import com.aliyun.odps.data.Binary;
 import com.aliyun.odps.task.SQLTask;
 import com.aliyun.odps.tunnel.TableTunnel;
 import com.aliyun.odps.tunnel.io.ProtobufRecordPack;
-import com.aliyun.odps.tunnel.io.TunnelRecordWriter;
 import com.aliyun.odps.type.TypeInfo;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +21,6 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
 
@@ -44,14 +41,14 @@ public class OdpsUtil {
 
         if (null == originalConfig.getList(Key.COLUMN) ||
                 originalConfig.getList(Key.COLUMN, String.class).isEmpty()) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.REQUIRED_VALUE, MESSAGE_SOURCE.message("odpsutil.1"));
+            throw DataXException.build(OdpsWriterErrorCode.REQUIRED_VALUE, MESSAGE_SOURCE.message("odpsutil.1"));
         }
 
         // getBool 内部要求，值只能为 true,false 的字符串（大小写不敏感），其他一律报错，不再有默认配置
         // 如果是动态分区写入，不进行truncate
         Boolean truncate = originalConfig.getBool(Key.TRUNCATE);
         if (null == truncate) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.REQUIRED_VALUE, MESSAGE_SOURCE.message("odpsutil.2"));
+            throw DataXException.build(OdpsWriterErrorCode.REQUIRED_VALUE, MESSAGE_SOURCE.message("odpsutil.2"));
         }
     }
 
@@ -59,7 +56,7 @@ public class OdpsUtil {
         int maxRetryTime = originalConfig.getInt(Key.MAX_RETRY_TIME,
                 OdpsUtil.MAX_RETRY_TIME);
         if (maxRetryTime < 1 || maxRetryTime > OdpsUtil.MAX_RETRY_TIME) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.ILLEGAL_VALUE, MESSAGE_SOURCE.message("odpsutil.3", OdpsUtil.MAX_RETRY_TIME));
+            throw DataXException.build(OdpsWriterErrorCode.ILLEGAL_VALUE, MESSAGE_SOURCE.message("odpsutil.3", OdpsUtil.MAX_RETRY_TIME));
         }
         MAX_RETRY_TIME = maxRetryTime;
     }
@@ -95,7 +92,7 @@ public class OdpsUtil {
                 account = new AliyunAccount(accessId, accessKey);
             }
         } else {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.ACCOUNT_TYPE_ERROR,
+            throw DataXException.build(OdpsWriterErrorCode.ACCOUNT_TYPE_ERROR,
                     MESSAGE_SOURCE.message("odpsutil.4", accountType));
         }
 
@@ -138,7 +135,7 @@ public class OdpsUtil {
                 parts.add(partition.getPartitionSpec().toString());
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.GET_PARTITION_FAIL, MESSAGE_SOURCE.message("odpsutil.5", table.getName()), e);
+            throw DataXException.build(OdpsWriterErrorCode.GET_PARTITION_FAIL, MESSAGE_SOURCE.message("odpsutil.5", table.getName()), e);
         }
         return parts;
     }
@@ -152,7 +149,7 @@ public class OdpsUtil {
                 return true;
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.CHECK_IF_PARTITIONED_TABLE_FAILED,
+            throw DataXException.build(OdpsWriterErrorCode.CHECK_IF_PARTITIONED_TABLE_FAILED,
                     MESSAGE_SOURCE.message("odpsutil.6", table.getName()), e);
         }
         return false;
@@ -170,7 +167,7 @@ public class OdpsUtil {
             LOG.info("truncate non partitioned table with sql: {}", truncateNonPartitionedTableSql);
             runSqlTaskWithRetry(odps, truncateNonPartitionedTableSql, MAX_RETRY_TIME, 1000, true, "truncate", null);
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.TABLE_TRUNCATE_ERROR,
+            throw DataXException.build(OdpsWriterErrorCode.TABLE_TRUNCATE_ERROR,
                     MESSAGE_SOURCE.message("odpsutil.7", tableName), e);
         }
     }
@@ -212,7 +209,7 @@ public class OdpsUtil {
             LOG.info("add partition with sql: {}", addPart.toString());
             runSqlTaskWithRetry(odps, addPart.toString(), MAX_RETRY_TIME, 1000, true, "addPart", hints);
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.ADD_PARTITION_FAILED,
+            throw DataXException.build(OdpsWriterErrorCode.ADD_PARTITION_FAILED,
                     MESSAGE_SOURCE.message("odpsutil.8", table.getProject(), table.getName(), partition), e);
         }
     }
@@ -229,7 +226,7 @@ public class OdpsUtil {
                     }
                 }, MAX_RETRY_TIME, 1000L, true);
             } catch (Exception e) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.CREATE_MASTER_UPLOAD_FAIL,
+                throw DataXException.build(OdpsWriterErrorCode.CREATE_MASTER_UPLOAD_FAIL,
                         MESSAGE_SOURCE.message("odpsutil.9"), e);
             }
         } else {
@@ -242,7 +239,7 @@ public class OdpsUtil {
                     }
                 }, MAX_RETRY_TIME, 1000L, true);
             } catch (Exception e) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.CREATE_MASTER_UPLOAD_FAIL,
+                throw DataXException.build(OdpsWriterErrorCode.CREATE_MASTER_UPLOAD_FAIL,
                         MESSAGE_SOURCE.message("odpsutil.10"), e);
             }
         }
@@ -261,7 +258,7 @@ public class OdpsUtil {
                 }, MAX_RETRY_TIME, 1000L, true);
 
             } catch (Exception e) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.GET_SLAVE_UPLOAD_FAIL,
+                throw DataXException.build(OdpsWriterErrorCode.GET_SLAVE_UPLOAD_FAIL,
                         MESSAGE_SOURCE.message("odpsutil.11"), e);
             }
         } else {
@@ -275,7 +272,7 @@ public class OdpsUtil {
                 }, MAX_RETRY_TIME, 1000L, true);
 
             } catch (Exception e) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.GET_SLAVE_UPLOAD_FAIL,
+                throw DataXException.build(OdpsWriterErrorCode.GET_SLAVE_UPLOAD_FAIL,
                         MESSAGE_SOURCE.message("odpsutil.12"), e);
             }
         }
@@ -295,7 +292,7 @@ public class OdpsUtil {
             LOG.info("drop partition with sql: {}", dropPart.toString());
             runSqlTaskWithRetry(odps, dropPart.toString(), MAX_RETRY_TIME, 1000, true, "truncate", hints);
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.ADD_PARTITION_FAILED,
+            throw DataXException.build(OdpsWriterErrorCode.ADD_PARTITION_FAILED,
                     MESSAGE_SOURCE.message("odpsutil.13", table.getProject(), table.getName(), partition), e);
         }
     }
@@ -307,7 +304,7 @@ public class OdpsUtil {
             String part = parts[i];
             String[] kv = part.split("=");
             if (kv.length != 2) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(OdpsWriterErrorCode.ILLEGAL_VALUE,
                         MESSAGE_SOURCE.message("odpsutil.14", partition));
             }
             partSpec.append(kv[0]).append("=");
@@ -330,7 +327,7 @@ public class OdpsUtil {
                 sql, (endIime - beginTime)));
             return instance;
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.RUN_SQL_ODPS_EXCEPTION,
+            throw DataXException.build(OdpsWriterErrorCode.RUN_SQL_ODPS_EXCEPTION,
                 MESSAGE_SOURCE.message("odpsutil.16", sql), e);
         }
     }
@@ -339,13 +336,13 @@ public class OdpsUtil {
         Instance instance = runSqlTaskWithRetry(odps, sql, tag);
         if (instance == null) {
             LOG.error("can not get odps instance from sql {}", sql);
-            throw DataXException.asDataXException(OdpsWriterErrorCode.RUN_SQL_ODPS_EXCEPTION,
+            throw DataXException.build(OdpsWriterErrorCode.RUN_SQL_ODPS_EXCEPTION,
                     MESSAGE_SOURCE.message("odpsutil.16", sql));
         }
         try {
             return SQLTask.getResultSet(instance, instance.getTaskNames().iterator().next());
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.RUN_SQL_ODPS_EXCEPTION,
+            throw DataXException.build(OdpsWriterErrorCode.RUN_SQL_ODPS_EXCEPTION,
                     MESSAGE_SOURCE.message("odpsutil.16", sql), e);
         }
     }
@@ -415,14 +412,14 @@ public class OdpsUtil {
             instance.waitForSuccess();
             status = instance.getTaskStatus().get(taskName);
             if (!Instance.TaskStatus.Status.SUCCESS.equals(status.getStatus())) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.RUN_SQL_FAILED,
+                throw DataXException.build(OdpsWriterErrorCode.RUN_SQL_FAILED,
                         MESSAGE_SOURCE.message("odpsutil.15", query));
             }
             return instance;
         } catch (DataXException e) {
             throw e;
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.RUN_SQL_ODPS_EXCEPTION,
+            throw DataXException.build(OdpsWriterErrorCode.RUN_SQL_ODPS_EXCEPTION,
                     MESSAGE_SOURCE.message("odpsutil.16", query), e);
         }
     }
@@ -443,7 +440,7 @@ public class OdpsUtil {
                 }
             }, MAX_RETRY_TIME, 1000L, true);
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.COMMIT_BLOCK_FAIL,
+            throw DataXException.build(OdpsWriterErrorCode.COMMIT_BLOCK_FAIL,
                     MESSAGE_SOURCE.message("odpsutil.17", masterUpload.getId()), e);
         }
         
@@ -454,7 +451,7 @@ public class OdpsUtil {
         
         for (Long blockId : blocks) {
             if (!serverBlockMap.containsKey(blockId)) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.COMMIT_BLOCK_FAIL,
+                throw DataXException.build(OdpsWriterErrorCode.COMMIT_BLOCK_FAIL,
                         "BlockId[" + blockId + "] upload failed!");
             }
           }
@@ -471,7 +468,7 @@ public class OdpsUtil {
                 }
             }, MAX_RETRY_TIME, 1000L, true);
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.COMMIT_BLOCK_FAIL,
+            throw DataXException.build(OdpsWriterErrorCode.COMMIT_BLOCK_FAIL,
                     MESSAGE_SOURCE.message("odpsutil.17", masterUpload.getId()), e);
         }
     }    
@@ -486,7 +483,7 @@ public class OdpsUtil {
                 }
             }, MAX_RETRY_TIME, 1000L, true);
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.COMMIT_BLOCK_FAIL,
+            throw DataXException.build(OdpsWriterErrorCode.COMMIT_BLOCK_FAIL,
                     MESSAGE_SOURCE.message("odpsutil.17", StringUtils.join(blocks, ","), masterUpload.getId()), e);
         }
     }
@@ -502,7 +499,7 @@ public class OdpsUtil {
                 }
             }, MAX_RETRY_TIME, 1000L, true);
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.WRITER_RECORD_FAIL,
+            throw DataXException.build(OdpsWriterErrorCode.WRITER_RECORD_FAIL,
                     MESSAGE_SOURCE.message("odpsutil.18", blockId, slaveUpload.getId()), e);
         }
 
@@ -534,7 +531,7 @@ public class OdpsUtil {
             }
 
             if (!hasColumn) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.COLUMN_NOT_EXIST,
+                throw DataXException.build(OdpsWriterErrorCode.COLUMN_NOT_EXIST,
                         MESSAGE_SOURCE.message("odpsutil.19", col));
             }
         }
@@ -641,7 +638,7 @@ public class OdpsUtil {
             if (isPartitionedTable) {
                 //分区表
                 if (StringUtils.isBlank(partition)) {
-                    throw DataXException.asDataXException(OdpsWriterErrorCode.PARTITION_ERROR, MESSAGE_SOURCE.message("odpsutil.21", table.getName()));
+                    throw DataXException.build(OdpsWriterErrorCode.PARTITION_ERROR, MESSAGE_SOURCE.message("odpsutil.21", table.getName()));
                 } else {
                     LOG.info("Try to truncate partition=[{}] in table=[{}].", partition, table.getName());
                     OdpsUtil.truncatePartition(odps, table, partition);
@@ -649,7 +646,7 @@ public class OdpsUtil {
             } else {
                 //非分区表
                 if (StringUtils.isNotBlank(partition)) {
-                    throw DataXException.asDataXException(OdpsWriterErrorCode.PARTITION_ERROR, MESSAGE_SOURCE.message("odpsutil.22", table.getName()));
+                    throw DataXException.build(OdpsWriterErrorCode.PARTITION_ERROR, MESSAGE_SOURCE.message("odpsutil.22", table.getName()));
                 } else {
                     LOG.info("Try to truncate table:[{}].", table.getName());
                     OdpsUtil.truncateNonPartitionedTable(odps, table);
@@ -660,7 +657,7 @@ public class OdpsUtil {
             if (isPartitionedTable) {
                 //分区表
                 if (StringUtils.isBlank(partition)) {
-                    throw DataXException.asDataXException(OdpsWriterErrorCode.PARTITION_ERROR,
+                    throw DataXException.build(OdpsWriterErrorCode.PARTITION_ERROR,
                             MESSAGE_SOURCE.message("odpsutil.23", table.getName()));
                 } else {
                     boolean isPartitionExists = OdpsUtil.isPartitionExist(table, partition);
@@ -673,7 +670,7 @@ public class OdpsUtil {
             } else {
                 //非分区表
                 if (StringUtils.isNotBlank(partition)) {
-                    throw DataXException.asDataXException(OdpsWriterErrorCode.PARTITION_ERROR,
+                    throw DataXException.build(OdpsWriterErrorCode.PARTITION_ERROR,
                             MESSAGE_SOURCE.message("odpsutil.24", table.getName()));
                 }
             }
@@ -697,12 +694,12 @@ public class OdpsUtil {
             if (isPartitionedTable) {
                 //分区表
                 if (StringUtils.isBlank(partition)) {
-                    throw DataXException.asDataXException(OdpsWriterErrorCode.PARTITION_ERROR, MESSAGE_SOURCE.message("odpsutil.25", table.getName()));
+                    throw DataXException.build(OdpsWriterErrorCode.PARTITION_ERROR, MESSAGE_SOURCE.message("odpsutil.25", table.getName()));
                 }
             } else {
                 //非分区表
                 if (StringUtils.isNotBlank(partition)) {
-                    throw DataXException.asDataXException(OdpsWriterErrorCode.PARTITION_ERROR, MESSAGE_SOURCE.message("odpsutil.26", table.getName()));
+                    throw DataXException.build(OdpsWriterErrorCode.PARTITION_ERROR, MESSAGE_SOURCE.message("odpsutil.26", table.getName()));
                 }
             }
         } else {
@@ -710,13 +707,13 @@ public class OdpsUtil {
             if (isPartitionedTable) {
                 //分区表
                 if (StringUtils.isBlank(partition)) {
-                    throw DataXException.asDataXException(OdpsWriterErrorCode.PARTITION_ERROR,
+                    throw DataXException.build(OdpsWriterErrorCode.PARTITION_ERROR,
                             MESSAGE_SOURCE.message("odpsutil.27", table.getName()));
                 }
             } else {
                 //非分区表
                 if (StringUtils.isNotBlank(partition)) {
-                    throw DataXException.asDataXException(OdpsWriterErrorCode.PARTITION_ERROR,
+                    throw DataXException.build(OdpsWriterErrorCode.PARTITION_ERROR,
                             MESSAGE_SOURCE.message("odpsutil.28", table.getName()));
                 }
             }
@@ -729,23 +726,23 @@ public class OdpsUtil {
     public static void throwDataXExceptionWhenReloadTable(Exception e, String tableName) {
         if(e.getMessage() != null) {
             if(e.getMessage().contains(OdpsExceptionMsg.ODPS_PROJECT_NOT_FOUNT)) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.ODPS_PROJECT_NOT_FOUNT,
+                throw DataXException.build(OdpsWriterErrorCode.ODPS_PROJECT_NOT_FOUNT,
                         MESSAGE_SOURCE.message("odpsutil.29", tableName), e);
             } else if(e.getMessage().contains(OdpsExceptionMsg.ODPS_TABLE_NOT_FOUNT)) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.ODPS_TABLE_NOT_FOUNT,
+                throw DataXException.build(OdpsWriterErrorCode.ODPS_TABLE_NOT_FOUNT,
                         MESSAGE_SOURCE.message("odpsutil.30", tableName), e);
             } else if(e.getMessage().contains(OdpsExceptionMsg.ODPS_ACCESS_KEY_ID_NOT_FOUND)) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.ODPS_ACCESS_KEY_ID_NOT_FOUND,
+                throw DataXException.build(OdpsWriterErrorCode.ODPS_ACCESS_KEY_ID_NOT_FOUND,
                         MESSAGE_SOURCE.message("odpsutil.31", tableName), e);
             } else if(e.getMessage().contains(OdpsExceptionMsg.ODPS_ACCESS_KEY_INVALID)) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.ODPS_ACCESS_KEY_INVALID,
+                throw DataXException.build(OdpsWriterErrorCode.ODPS_ACCESS_KEY_INVALID,
                         MESSAGE_SOURCE.message("odpsutil.32", tableName), e);
             } else if(e.getMessage().contains(OdpsExceptionMsg.ODPS_ACCESS_DENY)) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.ODPS_ACCESS_DENY,
+                throw DataXException.build(OdpsWriterErrorCode.ODPS_ACCESS_DENY,
                         MESSAGE_SOURCE.message("odpsutil.33", tableName), e);
             }
         }
-        throw DataXException.asDataXException(OdpsWriterErrorCode.ILLEGAL_VALUE,
+        throw DataXException.build(OdpsWriterErrorCode.ILLEGAL_VALUE,
                 MESSAGE_SOURCE.message("odpsutil.34", tableName), e);
     }
 
@@ -816,7 +813,7 @@ public class OdpsUtil {
             LOG.info("create table with sql: {}", sql);
             runSqlTaskWithRetry(odps, sql, MAX_RETRY_TIME, 1000, true, "create", null);
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.RUN_SQL_FAILED,
+            throw DataXException.build(OdpsWriterErrorCode.RUN_SQL_FAILED,
                     MESSAGE_SOURCE.message("odpsutil.7", tableName), e);
         }
     }
@@ -838,7 +835,7 @@ public class OdpsUtil {
             LOG.info("create table with sql: {}", createTableSql);
             runSqlTaskWithRetry(odps, createTableSql, MAX_RETRY_TIME, 1000, true, "create", null);
         } catch (Exception e) {
-            throw DataXException.asDataXException(OdpsWriterErrorCode.RUN_SQL_FAILED,
+            throw DataXException.build(OdpsWriterErrorCode.RUN_SQL_FAILED,
                     MESSAGE_SOURCE.message("odpsutil.7", targetTable), e);
         }
     }

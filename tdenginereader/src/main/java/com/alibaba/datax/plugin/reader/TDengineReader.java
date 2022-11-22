@@ -15,8 +15,6 @@ import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class TDengineReader extends Reader {
@@ -33,26 +31,26 @@ public class TDengineReader extends Reader {
             // check username
             String username = this.originalConfig.getString(Key.USERNAME);
             if (StringUtils.isBlank(username))
-                throw DataXException.asDataXException(TDengineReaderErrorCode.REQUIRED_VALUE,
+                throw DataXException.build(TDengineReaderErrorCode.REQUIRED_VALUE,
                         "The parameter [" + Key.USERNAME + "] is not set.");
 
             // check password
             String password = this.originalConfig.getString(Key.PASSWORD);
             if (StringUtils.isBlank(password))
-                throw DataXException.asDataXException(TDengineReaderErrorCode.REQUIRED_VALUE,
+                throw DataXException.build(TDengineReaderErrorCode.REQUIRED_VALUE,
                         "The parameter [" + Key.PASSWORD + "] is not set.");
 
             // check connection
             List<Configuration> connectionList = this.originalConfig.getListConfiguration(Key.CONNECTION);
             if (connectionList == null || connectionList.isEmpty())
-                throw DataXException.asDataXException(TDengineReaderErrorCode.REQUIRED_VALUE,
+                throw DataXException.build(TDengineReaderErrorCode.REQUIRED_VALUE,
                         "The parameter [" + Key.CONNECTION + "] is not set.");
             for (int i = 0; i < connectionList.size(); i++) {
                 Configuration conn = connectionList.get(i);
                 // check jdbcUrl
                 List<Object> jdbcUrlList = conn.getList(Key.JDBC_URL);
                 if (jdbcUrlList == null || jdbcUrlList.isEmpty()) {
-                    throw DataXException.asDataXException(TDengineReaderErrorCode.REQUIRED_VALUE,
+                    throw DataXException.build(TDengineReaderErrorCode.REQUIRED_VALUE,
                             "The parameter [" + Key.JDBC_URL + "] of connection[" + (i + 1) + "] is not set.");
                 }
                 // check table/querySql
@@ -62,7 +60,7 @@ public class TDengineReader extends Reader {
                     if (StringUtils.isBlank(querySql)) {
                         List<Object> table = conn.getList(Key.TABLE);
                         if (table == null || table.isEmpty())
-                            throw DataXException.asDataXException(TDengineReaderErrorCode.REQUIRED_VALUE,
+                            throw DataXException.build(TDengineReaderErrorCode.REQUIRED_VALUE,
                                     "The parameter [" + Key.TABLE + "] of connection[" + (i + 1) + "] is not set.");
                     }
                 }
@@ -76,7 +74,7 @@ public class TDengineReader extends Reader {
                 try {
                     start = format.parse(beginDatetime).getTime();
                 } catch (ParseException e) {
-                    throw DataXException.asDataXException(TDengineReaderErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(TDengineReaderErrorCode.ILLEGAL_VALUE,
                             "The parameter [" + Key.BEGIN_DATETIME + "] needs to conform to the [" + DATETIME_FORMAT + "] format.");
                 }
             }
@@ -87,12 +85,12 @@ public class TDengineReader extends Reader {
                 try {
                     end = format.parse(endDatetime).getTime();
                 } catch (ParseException e) {
-                    throw DataXException.asDataXException(TDengineReaderErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(TDengineReaderErrorCode.ILLEGAL_VALUE,
                             "The parameter [" + Key.END_DATETIME + "] needs to conform to the [" + DATETIME_FORMAT + "] format.");
                 }
             }
             if (start >= end)
-                throw DataXException.asDataXException(TDengineReaderErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(TDengineReaderErrorCode.ILLEGAL_VALUE,
                         "The parameter [" + Key.BEGIN_DATETIME + "] should be less than the parameter [" + Key.END_DATETIME + "].");
 
         }
@@ -158,7 +156,7 @@ public class TDengineReader extends Reader {
             try {
                 this.conn = DriverManager.getConnection(url, user, password);
             } catch (SQLException e) {
-                throw DataXException.asDataXException(TDengineReaderErrorCode.CONNECTION_FAILED,
+                throw DataXException.build(TDengineReaderErrorCode.CONNECTION_FAILED,
                         "The parameter [" + Key.JDBC_URL + "] : " + url + " failed to connect since: " + e.getMessage(), e);
             }
 
@@ -254,9 +252,9 @@ public class TDengineReader extends Reader {
                     }
                 }
             } catch (SQLException e) {
-                throw DataXException.asDataXException(TDengineReaderErrorCode.ILLEGAL_VALUE, "database query error！", e);
+                throw DataXException.build(TDengineReaderErrorCode.ILLEGAL_VALUE, "database query error！", e);
             } catch (UnsupportedEncodingException e) {
-                throw DataXException.asDataXException(TDengineReaderErrorCode.ILLEGAL_VALUE, "illegal mandatoryEncoding", e);
+                throw DataXException.build(TDengineReaderErrorCode.ILLEGAL_VALUE, "illegal mandatoryEncoding", e);
             }
             return record;
         }

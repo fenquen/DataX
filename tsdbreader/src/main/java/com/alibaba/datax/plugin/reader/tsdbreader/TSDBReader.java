@@ -42,12 +42,12 @@ public class TSDBReader extends Reader {
 
             String type = originalConfig.getString(Key.SINK_DB_TYPE, Key.TYPE_DEFAULT_VALUE);
             if (StringUtils.isBlank(type)) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TSDBReaderErrorCode.REQUIRED_VALUE,
                         "The parameter [" + Key.SINK_DB_TYPE + "] is not set.");
             }
             if (!Key.TYPE_SET.contains(type)) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TSDBReaderErrorCode.ILLEGAL_VALUE,
                         "The parameter [" + Key.SINK_DB_TYPE + "] should be one of [" +
                                 JSON.toJSONString(Key.TYPE_SET) + "].");
@@ -55,7 +55,7 @@ public class TSDBReader extends Reader {
 
             String address = originalConfig.getString(Key.ENDPOINT);
             if (StringUtils.isBlank(address)) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TSDBReaderErrorCode.REQUIRED_VALUE,
                         "The parameter [" + Key.ENDPOINT + "] is not set.");
             }
@@ -73,14 +73,14 @@ public class TSDBReader extends Reader {
             if ("TSDB".equals(type)) {
                 List<String> columns = originalConfig.getList(Key.COLUMN, String.class);
                 if (columns == null || columns.isEmpty()) {
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             TSDBReaderErrorCode.REQUIRED_VALUE,
                             "The parameter [" + Key.COLUMN + "] is not set.");
                 }
             } else {
                 List<String> columns = originalConfig.getList(Key.COLUMN, String.class);
                 if (columns == null || columns.isEmpty()) {
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             TSDBReaderErrorCode.REQUIRED_VALUE,
                             "The parameter [" + Key.COLUMN + "] is not set.");
                 }
@@ -93,7 +93,7 @@ public class TSDBReader extends Reader {
                         }
                     }
                     if (!containSpecifyKey) {
-                        throw DataXException.asDataXException(
+                        throw DataXException.build(
                                 TSDBReaderErrorCode.ILLEGAL_VALUE,
                                 "The parameter [" + Key.COLUMN + "] should contain "
                                         + JSON.toJSONString(Constant.MUST_CONTAINED_SPECIFY_KEYS) + ".");
@@ -101,7 +101,7 @@ public class TSDBReader extends Reader {
                 }
                 final List<String> metrics = originalConfig.getList(Key.METRIC, String.class);
                 if (metrics == null || metrics.isEmpty()) {
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             TSDBReaderErrorCode.REQUIRED_VALUE,
                             "The parameter [" + Key.METRIC + "] is not set.");
                 }
@@ -110,7 +110,7 @@ public class TSDBReader extends Reader {
             Integer splitIntervalMs = originalConfig.getInt(Key.INTERVAL_DATE_TIME,
                     Key.INTERVAL_DATE_TIME_DEFAULT_VALUE);
             if (splitIntervalMs <= 0) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TSDBReaderErrorCode.ILLEGAL_VALUE,
                         "The parameter [" + Key.INTERVAL_DATE_TIME + "] should be great than zero.");
             }
@@ -121,14 +121,14 @@ public class TSDBReader extends Reader {
             String startTime = originalConfig.getString(Key.BEGIN_DATE_TIME);
             Long startDate;
             if (startTime == null || startTime.trim().length() == 0) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TSDBReaderErrorCode.REQUIRED_VALUE,
                         "The parameter [" + Key.BEGIN_DATE_TIME + "] is not set.");
             } else {
                 try {
                     startDate = format.parse(startTime).getTime();
                 } catch (ParseException e) {
-                    throw DataXException.asDataXException(TSDBReaderErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(TSDBReaderErrorCode.ILLEGAL_VALUE,
                             "The parameter [" + Key.BEGIN_DATE_TIME +
                                     "] needs to conform to the [" + Constant.DEFAULT_DATA_FORMAT + "] format.");
                 }
@@ -136,20 +136,20 @@ public class TSDBReader extends Reader {
             String endTime = originalConfig.getString(Key.END_DATE_TIME);
             Long endDate;
             if (endTime == null || endTime.trim().length() == 0) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TSDBReaderErrorCode.REQUIRED_VALUE,
                         "The parameter [" + Key.END_DATE_TIME + "] is not set.");
             } else {
                 try {
                     endDate = format.parse(endTime).getTime();
                 } catch (ParseException e) {
-                    throw DataXException.asDataXException(TSDBReaderErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(TSDBReaderErrorCode.ILLEGAL_VALUE,
                             "The parameter [" + Key.END_DATE_TIME +
                                     "] needs to conform to the [" + Constant.DEFAULT_DATA_FORMAT + "] format.");
                 }
             }
             if (startDate >= endDate) {
-                throw DataXException.asDataXException(TSDBReaderErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(TSDBReaderErrorCode.ILLEGAL_VALUE,
                         "The parameter [" + Key.BEGIN_DATE_TIME +
                                 "] should be less than the parameter [" + Key.END_DATE_TIME + "].");
             }
@@ -185,14 +185,14 @@ public class TSDBReader extends Reader {
             try {
                 startTime = format.parse(originalConfig.getString(Key.BEGIN_DATE_TIME)).getTime();
             } catch (ParseException e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TSDBReaderErrorCode.ILLEGAL_VALUE, "Analysis [" + Key.BEGIN_DATE_TIME + "] failed.", e);
             }
             long endTime;
             try {
                 endTime = format.parse(originalConfig.getString(Key.END_DATE_TIME)).getTime();
             } catch (ParseException e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TSDBReaderErrorCode.ILLEGAL_VALUE, "Analysis [" + Key.END_DATE_TIME + "] failed.", e);
             }
             if (TimeUtils.isSecond(startTime)) {
@@ -369,7 +369,7 @@ public class TSDBReader extends Reader {
                     }
                 }
             } catch (Exception e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TSDBReaderErrorCode.ILLEGAL_VALUE, "Error in getting or sending data point！", e);
             }
         }

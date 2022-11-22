@@ -62,17 +62,15 @@ public class LoadUtil {
 
     private static String generatePluginKey(PluginType pluginType,
                                             String pluginName) {
-        return String.format(pluginTypeNameFormat, pluginType.toString(),
-                pluginName);
+        return String.format(pluginTypeNameFormat, pluginType.toString(), pluginName);
     }
 
     private static Configuration getPluginConf(PluginType pluginType,
                                                String pluginName) {
-        Configuration pluginConf = pluginRegisterCenter
-                .getConfiguration(generatePluginKey(pluginType, pluginName));
+        Configuration pluginConf = pluginRegisterCenter.getConfiguration(generatePluginKey(pluginType, pluginName));
 
         if (null == pluginConf) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.PLUGIN_INSTALL_ERROR,
                     String.format("DataX不能找到插件[%s]的配置.",
                             pluginName));
@@ -99,7 +97,7 @@ public class LoadUtil {
             jobPlugin.setPluginConf(getPluginConf(pluginType, pluginName));
             return jobPlugin;
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.RUNTIME_ERROR,
                     String.format("DataX找到plugin[%s]的Job配置.",
                             pluginName), e);
@@ -124,7 +122,7 @@ public class LoadUtil {
             taskPlugin.setPluginConf(getPluginConf(pluginType, pluginName));
             return taskPlugin;
         } catch (Exception e) {
-            throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+            throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
                     String.format("DataX不能找plugin[%s]的Task配置.",
                             pluginName), e);
         }
@@ -147,7 +145,7 @@ public class LoadUtil {
             case WRITER:
                 return new WriterRunner(taskPlugin);
             default:
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FrameworkErrorCode.RUNTIME_ERROR,
                         String.format("插件[%s]的类型必须是[reader]或[writer]!",
                                 pluginName));
@@ -173,7 +171,7 @@ public class LoadUtil {
                     .loadClass(pluginConf.getString("class") + "$"
                             + pluginRunType.value());
         } catch (Exception e) {
-            throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR, e);
+            throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR, e);
         }
     }
 
@@ -181,12 +179,11 @@ public class LoadUtil {
                                                       String pluginName) {
         Configuration pluginConf = getPluginConf(pluginType, pluginName);
 
-        JarLoader jarLoader = jarLoaderCenter.get(generatePluginKey(pluginType,
-                pluginName));
+        JarLoader jarLoader = jarLoaderCenter.get(generatePluginKey(pluginType, pluginName));
         if (null == jarLoader) {
             String pluginPath = pluginConf.getString("path");
             if (StringUtils.isBlank(pluginPath)) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FrameworkErrorCode.RUNTIME_ERROR,
                         String.format(
                                 "%s插件[%s]路径非法!",

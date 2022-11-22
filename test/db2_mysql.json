@@ -1,0 +1,78 @@
+{
+  "core": {
+    "transport": {
+      "channel": {
+        "speed": {
+          "byte": 1048576
+        }
+      }
+    }
+  },
+  "job": {
+    "setting": {
+      "speed": {
+        "byte": 1048576
+      },
+      "errorLimit": {
+        "record": 0
+      }
+    },
+    "content": [
+      {
+        "reader": {
+          "name": "rdbmsreader",
+          "parameter": {
+            "username": "DB2INST1",
+            "password": "123456",
+            "column": [
+              "ID",
+              "ORDER_NO",
+              "STORE_ID",
+              "USER_ID",
+              "ORDER_STATE",
+              "GOOD_MONEY",
+              "DELIVER_TYPE",
+              "DELIVER_MONEY"
+            ],
+            "connection": [
+              {
+                "table": [
+                  "ORDER_TABLE"
+                ],
+                "jdbcUrl": [
+                  "jdbc:db2://10.88.36.79:50000/testdb:currentSchema=T1;"
+                ]
+              }
+            ],
+            "fetchSize": 1024
+          }
+        },
+        "writer": {
+          "name": "mysqlwriter",
+          "parameter": {
+            "username": "root",
+            "password": "MynewPass@1.",
+            "column": [
+              "ID",
+              "ORDER_NO",
+              "STORE_ID",
+              "USER_ID",
+              "ORDER_STATE",
+              "GOOD_MONEY",
+              "DELIVER_TYPE",
+              "DELIVER_MONEY"
+            ],
+            "connection": [
+              {
+                "jdbcUrl": "jdbc:mysql://10.88.36.186:3306/test",
+                "table": [
+                  "ORDER_TABLE"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

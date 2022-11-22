@@ -10,7 +10,6 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.slf4j.Logger;
@@ -51,7 +50,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                         .format("与ftp服务器建立连接失败,host:%s, port:%s, username:%s, replyCode:%s",
                                 host, port, username, reply);
                 LOG.error(message);
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FtpWriterErrorCode.FAIL_LOGIN, message);
             }
         } catch (UnknownHostException e) {
@@ -59,21 +58,21 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                     "请确认ftp服务器地址是否正确，无法连接到地址为: [%s] 的ftp服务器, errorMessage:%s",
                     host, e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.FAIL_LOGIN, message, e);
         } catch (IllegalArgumentException e) {
             String message = String.format(
                     "请确认连接ftp服务器端口是否正确，错误的端口: [%s], errorMessage:%s", port,
                     e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.FAIL_LOGIN, message, e);
         } catch (Exception e) {
             String message = String
                     .format("与ftp服务器建立连接失败,host:%s, port:%s, username:%s, errorMessage:%s",
                             host, port, username, e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.FAIL_LOGIN, message, e);
         }
 
@@ -88,7 +87,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                 String message = String.format(
                         "与ftp服务器断开连接失败, errorMessage:%s", e.getMessage());
                 LOG.error(message);
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FtpWriterErrorCode.FAIL_DISCONNECT, message, e);
             } finally {
                 if (this.ftpClient.isConnected()) {
@@ -99,7 +98,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                                 "与ftp服务器断开连接失败, errorMessage:%s",
                                 e.getMessage());
                         LOG.error(message);
-                        throw DataXException.asDataXException(
+                        throw DataXException.build(
                                 FtpWriterErrorCode.FAIL_DISCONNECT, message, e);
                     }
                 }
@@ -122,7 +121,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                         .format("%s,replayCode:%s", message, replayCode);
                 if (replayCode != FTPReply.COMMAND_OK
                         && replayCode != FTPReply.PATHNAME_CREATED) {
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION,
                             message);
                 }
@@ -131,7 +130,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
             message = String.format("%s, errorMessage:%s", message,
                     e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
         }
     }
@@ -149,7 +148,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                 boolean mkdirSuccess = mkDirSingleHierarchy(dirPath.toString());
                 dirPath.append(IOUtils.DIR_SEPARATOR_UNIX);
                 if(!mkdirSuccess){
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION,
                             message);
                 }
@@ -158,7 +157,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
             message = String.format("%s, errorMessage:%s", message,
                     e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
         }
     }
@@ -191,7 +190,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                     "打开FTP文件[%s]获取写出流时出错,请确认文件%s有权限创建，有权限写出等", filePath,
                     filePath);
             if (null == writeOutputStream) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FtpWriterErrorCode.OPEN_FILE_ERROR, message);
             }
 
@@ -201,7 +200,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                     "写出文件 : [%s] 时出错,请确认文件:[%s]存在且配置的用户有权限写, errorMessage:%s",
                     filePath, filePath, e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.OPEN_FILE_ERROR, message);
         }
     }
@@ -225,7 +224,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                     "读取文件 : [%s] 时出错,请确认文件:[%s]存在且配置的用户有权限读取, errorMessage:%s",
                     filePath, filePath, e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.OPEN_FILE_ERROR, message);
         }
     }
@@ -236,7 +235,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
         try {
             boolean isDirExist = this.ftpClient.changeWorkingDirectory(dir);
             if (!isDirExist) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION,
                         String.format("进入目录[%s]失败", dir));
             }
@@ -256,7 +255,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                     .format("获取path:[%s] 下文件列表时发生I/O异常,请确认与ftp服务器的连接正常,拥有目录ls权限, errorMessage:%s",
                             dir, e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
         }
         return allFilesWithPointedPrefix;
@@ -275,7 +274,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                 if (!deleteOk) {
                     String message = String.format(
                             "删除文件:[%s] 时失败,请确认指定文件有删除权限", eachFile);
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION,
                             message);
                 }
@@ -285,7 +284,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                     "删除文件:[%s] 时发生异常,请确认指定文件有删除权限,以及网络交互正常, errorMessage:%s",
                     eachFile, e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
         }
     }
@@ -311,7 +310,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
         try {
             boolean isOk = this.ftpClient.completePendingCommand();
             if (!isOk) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION,
                         "完成ftp completePendingCommand操作发生异常");
             }
@@ -320,7 +319,7 @@ public class StandardFtpHelperImpl implements IFtpHelper {
                     "完成ftp completePendingCommand操作发生异常, errorMessage:%s",
                     e.getMessage());
             LOG.error(message);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FtpWriterErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
         }
     }

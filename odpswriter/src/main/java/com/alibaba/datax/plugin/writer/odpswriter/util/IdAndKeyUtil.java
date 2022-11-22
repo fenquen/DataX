@@ -57,7 +57,7 @@ public class IdAndKeyUtil {
     	String accessKey = IdAndKeyRollingUtil.getAccessIdAndKeyFromEnv(originalConfig);
     	if (StringUtils.isBlank(accessKey)) {
     		// 无处获取（既没有配置在作业中，也没用在环境变量中）
-            throw DataXException.asDataXException(OdpsWriterErrorCode.GET_ID_KEY_FAIL,
+            throw DataXException.build(OdpsWriterErrorCode.GET_ID_KEY_FAIL,
                     MESSAGE_SOURCE.message("idandkeyutil.2"));
     	}
         return originalConfig;

@@ -99,7 +99,7 @@ public class MongoDBReader extends Reader {
             if(lowerBound== null || upperBound == null ||
                 mongoClient == null || database == null ||
                 collection == null  || mongodbColumnMeta == null) {
-                throw DataXException.asDataXException(MongoDBReaderErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(MongoDBReaderErrorCode.ILLEGAL_VALUE,
                     MongoDBReaderErrorCode.ILLEGAL_VALUE.getDescription());
             }
             MongoDatabase db = mongoClient.getDatabase(database);
@@ -166,7 +166,7 @@ public class MongoDBReader extends Reader {
                         if(KeyConstant.isArrayType(column.getString(KeyConstant.COLUMN_TYPE))) {
                             String splitter = column.getString(KeyConstant.COLUMN_SPLITTER);
                             if(Strings.isNullOrEmpty(splitter)) {
-                                throw DataXException.asDataXException(MongoDBReaderErrorCode.ILLEGAL_VALUE,
+                                throw DataXException.build(MongoDBReaderErrorCode.ILLEGAL_VALUE,
                                     MongoDBReaderErrorCode.ILLEGAL_VALUE.getDescription());
                             } else {
                                 ArrayList array = (ArrayList)tempCol;

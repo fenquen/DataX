@@ -50,7 +50,7 @@ public class DataBaseWriterBuffer {
 	public void addRecord(Record record, String tableName) {
 		LinkedList<Record> recordList = tableBuffer.get(tableName);
 		if (recordList == null) {
-			throw DataXException.asDataXException(DBUtilErrorCode.WRITE_DATA_ERROR,
+			throw DataXException.build(DBUtilErrorCode.WRITE_DATA_ERROR,
 					String.format("The [table] calculated based on the rules does not exist. The calculated [tableName]=%s, [db]=%s. Please check the rules you configured.",
 							tableName, connHolder.getJdbcUrl()));
 		}

@@ -62,7 +62,7 @@ public class FtpReader extends Reader {
 			this.protocol = this.originConfig.getNecessaryValue(Key.PROTOCOL, FtpReaderErrorCode.REQUIRED_VALUE);
 			boolean ptrotocolTag = "ftp".equals(this.protocol) || "sftp".equals(this.protocol);
 			if (!ptrotocolTag) {
-				throw DataXException.asDataXException(FtpReaderErrorCode.ILLEGAL_VALUE,
+				throw DataXException.build(FtpReaderErrorCode.ILLEGAL_VALUE,
 						String.format("仅支持 ftp和sftp 传输协议 , 不支持您配置的传输协议: [%s]", protocol));
 			}
 			this.host = this.originConfig.getNecessaryValue(Key.HOST, FtpReaderErrorCode.REQUIRED_VALUE);
@@ -75,7 +75,7 @@ public class FtpReader extends Reader {
 			this.connectPattern = this.originConfig.getUnnecessaryValue(Key.CONNECTPATTERN, Constant.DEFAULT_FTP_CONNECT_PATTERN, null);
 			boolean connectPatternTag = "PORT".equals(connectPattern) || "PASV".equals(connectPattern);
 			if (!connectPatternTag) {
-				throw DataXException.asDataXException(FtpReaderErrorCode.ILLEGAL_VALUE,
+				throw DataXException.build(FtpReaderErrorCode.ILLEGAL_VALUE,
 						String.format("不支持您配置的ftp传输模式: [%s]", connectPattern));
 			}else{
 				this.originConfig.set(Key.CONNECTPATTERN, connectPattern);
@@ -89,13 +89,13 @@ public class FtpReader extends Reader {
 			} else {
 				path = this.originConfig.getList(Key.PATH, String.class);
 				if (null == path || path.size() == 0) {
-					throw DataXException.asDataXException(FtpReaderErrorCode.REQUIRED_VALUE, "您需要指定待读取的源目录或文件");
+					throw DataXException.build(FtpReaderErrorCode.REQUIRED_VALUE, "您需要指定待读取的源目录或文件");
 				}
 				for (String eachPath : path) {
 					if(!eachPath.startsWith("/")){
 						String message = String.format("请检查参数path:[%s],需要配置为绝对路径", eachPath);
 						LOG.error(message);
-						throw DataXException.asDataXException(FtpReaderErrorCode.ILLEGAL_VALUE, message);
+						throw DataXException.build(FtpReaderErrorCode.ILLEGAL_VALUE, message);
 					}
 				}	
 			}		
@@ -137,7 +137,7 @@ public class FtpReader extends Reader {
 			// int splitNumber = adviceNumber;
 			int splitNumber = this.sourceFiles.size();
 			if (0 == splitNumber) {
-				throw DataXException.asDataXException(FtpReaderErrorCode.EMPTY_DIR_EXCEPTION,
+				throw DataXException.build(FtpReaderErrorCode.EMPTY_DIR_EXCEPTION,
 						String.format("未能找到待读取的文件,请确认您的配置项path: %s", this.originConfig.getString(Key.PATH)));
 			}
 

@@ -14,80 +14,77 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class ReaderSplitUtil {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ReaderSplitUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReaderSplitUtil.class);
 
-    public static List<Configuration> doSplit(
-            Configuration originalSliceConfig, int adviceNumber) {
-        boolean isTableMode = originalSliceConfig.getBool(Constant.IS_TABLE_MODE).booleanValue();
-        int eachTableShouldSplittedNumber = -1;
+    public static List<Configuration> doSplit(Configuration readerConfig, int adviceNumber) {
+        boolean isTableMode = readerConfig.getBool(Constant.IS_TABLE_MODE);
+        int eachTableSplittedNumber = -1;
         if (isTableMode) {
             // adviceNumber这里是channel数量大小, 即datax并发task数量
             // eachTableShouldSplittedNumber是单表应该切分的份数, 向上取整可能和adviceNumber没有比例关系了已经
-            eachTableShouldSplittedNumber = calculateEachTableShouldSplittedNumber(
-                    adviceNumber, originalSliceConfig.getInt(Constant.TABLE_NUMBER_MARK));
+            eachTableSplittedNumber = calculateEachTableShouldSplittedNumber(
+                    adviceNumber,
+                    readerConfig.getInt(Constant.TABLE_NUMBER_MARK));
         }
 
-        String column = originalSliceConfig.getString(Key.COLUMN);
-        String where = originalSliceConfig.getString(Key.WHERE, null);
+        String column = readerConfig.getString(Key.COLUMN);
+        String where = readerConfig.getString(Key.WHERE, null);
 
-        List<Object> conns = originalSliceConfig.getList(Constant.CONN_MARK, Object.class);
+        List<Object> connectionObjectList = readerConfig.getList(Constant.CONN_MARK, Object.class);
 
-        List<Configuration> splittedConfigs = new ArrayList<Configuration>();
+        List<Configuration> splittedConfigs = new ArrayList<>();
 
-        for (int i = 0, len = conns.size(); i < len; i++) {
-            Configuration sliceConfig = originalSliceConfig.clone();
+        for (Object connectionObject : connectionObjectList) {
+            Configuration readerConfigCopy = readerConfig.clone();
 
-            Configuration connConf = Configuration.from(conns.get(i).toString());
-            String jdbcUrl = connConf.getString(Key.JDBC_URL);
-            sliceConfig.set(Key.JDBC_URL, jdbcUrl);
+            Configuration connectionConfig = Configuration.from(connectionObject.toString());
+            String jdbcUrl = connectionConfig.getString(Key.JDBC_URL);
+
+            readerConfigCopy.set(Key.JDBC_URL, jdbcUrl);
 
             // 抽取 jdbcUrl 中的 ip/port 进行资源使用的打标，以提供给 core 做有意义的 shuffle 操作
-            sliceConfig.set(CommonConstant.LOAD_BALANCE_RESOURCE_MARK, DataBaseType.parseIpFromJdbcUrl(jdbcUrl));
+            readerConfigCopy.set(CommonConstant.LOAD_BALANCE_RESOURCE_MARK, DataBaseType.parseIpFromJdbcUrl(jdbcUrl));
 
-            sliceConfig.remove(Constant.CONN_MARK);
-
-            Configuration tempSlice;
+            readerConfigCopy.remove(Constant.CONN_MARK);
 
             // 说明是配置的 table 方式
             if (isTableMode) {
                 // 已在之前进行了扩展和`处理，可以直接使用
-                List<String> tables = connConf.getList(Key.TABLE, String.class);
+                List<String> tableNameList = connectionConfig.getList(Key.TABLE, String.class);
 
-                Validate.isTrue(null != tables && !tables.isEmpty(), "您读取数据库表配置错误.");
+                Validate.isTrue(null != tableNameList && !tableNameList.isEmpty(), "您读取数据库表配置错误.");
 
-                String splitPk = originalSliceConfig.getString(Key.SPLIT_PK, null);
+                String splitPk = readerConfig.getString(Key.SPLIT_PK, null);
 
-                //最终切分份数不一定等于 eachTableShouldSplittedNumber
-                boolean needSplitTable = eachTableShouldSplittedNumber > 1
-                        && StringUtils.isNotBlank(splitPk);
+                // 最终切分份数不一定等于 eachTableShouldSplittedNumber
+                boolean needSplitTable = eachTableSplittedNumber > 1 && StringUtils.isNotBlank(splitPk);
                 if (needSplitTable) {
-                    if (tables.size() == 1) {
+                    if (tableNameList.size() == 1) {
                         //原来:如果是单表的，主键切分num=num*2+1
                         // splitPk is null这类的情况的数据量本身就比真实数据量少很多, 和channel大小比率关系时，不建议考虑
                         //eachTableShouldSplittedNumber = eachTableShouldSplittedNumber * 2 + 1;// 不应该加1导致长尾
-                        
+
                         //考虑其他比率数字?(splitPk is null, 忽略此长尾)
                         //eachTableShouldSplittedNumber = eachTableShouldSplittedNumber * 5;
 
                         //为避免导入hive小文件 默认基数为5，可以通过 splitFactor 配置基数
                         // 最终task数为(channel/tableNum)向上取整*splitFactor
-                        Integer splitFactor = originalSliceConfig.getInt(Key.SPLIT_FACTOR, Constant.SPLIT_FACTOR);
-                        eachTableShouldSplittedNumber = eachTableShouldSplittedNumber * splitFactor;
+                        Integer splitFactor = readerConfig.getInt(Key.SPLIT_FACTOR, Constant.SPLIT_FACTOR);
+                        eachTableSplittedNumber = eachTableSplittedNumber * splitFactor;
                     }
-                    // 尝试对每个表，切分为eachTableShouldSplittedNumber 份
-                    for (String table : tables) {
-                        tempSlice = sliceConfig.clone();
-                        tempSlice.set(Key.TABLE, table);
 
-                        List<Configuration> splittedSlices = SingleTableSplitUtil
-                                .splitSingleTable(tempSlice, eachTableShouldSplittedNumber);
+                    // 尝试对每个表，切分为eachTableSplittedNumber份
+                    for (String table : tableNameList) {
+                        Configuration readerConfigCopyCopy = readerConfigCopy.clone();
+                        readerConfigCopyCopy.set(Key.TABLE, table);
+
+                        List<Configuration> splittedSlices = SingleTableSplitUtil.splitSingleTable(readerConfigCopyCopy, eachTableSplittedNumber);
 
                         splittedConfigs.addAll(splittedSlices);
                     }
                 } else {
-                    for (String table : tables) {
-                        tempSlice = sliceConfig.clone();
+                    for (String table : tableNameList) {
+                        Configuration tempSlice = readerConfigCopy.clone();
                         tempSlice.set(Key.TABLE, table);
                         String queryColumn = HintUtil.buildQueryColumn(jdbcUrl, table, column);
                         tempSlice.set(Key.QUERY_SQL, SingleTableSplitUtil.buildQuerySql(queryColumn, table, where));
@@ -96,11 +93,11 @@ public final class ReaderSplitUtil {
                 }
             } else {
                 // 说明是配置的 querySql 方式
-                List<String> sqls = connConf.getList(Key.QUERY_SQL, String.class);
+                List<String> sqls = connectionConfig.getList(Key.QUERY_SQL, String.class);
 
                 // TODO 是否check 配置为多条语句？？
                 for (String querySql : sqls) {
-                    tempSlice = sliceConfig.clone();
+                    Configuration tempSlice = readerConfigCopy.clone();
                     tempSlice.set(Key.QUERY_SQL, querySql);
                     splittedConfigs.add(tempSlice);
                 }
@@ -121,27 +118,27 @@ public final class ReaderSplitUtil {
 
         List<Object> conns = queryConfig.getList(Constant.CONN_MARK, Object.class);
 
-        for (int i = 0, len = conns.size(); i < len; i++){
+        for (int i = 0, len = conns.size(); i < len; i++) {
             Configuration connConf = Configuration.from(conns.get(i).toString());
             List<String> querys = new ArrayList<String>();
             List<String> splitPkQuerys = new ArrayList<String>();
-            String connPath = String.format("connection[%d]",i);
+            String connPath = String.format("connection[%d]", i);
             // 说明是配置的 table 方式
             if (isTableMode) {
                 // 已在之前进行了扩展和`处理，可以直接使用
                 List<String> tables = connConf.getList(Key.TABLE, String.class);
                 Validate.isTrue(null != tables && !tables.isEmpty(), "您读取数据库表配置错误.");
                 for (String table : tables) {
-                    querys.add(SingleTableSplitUtil.buildQuerySql(column,table,where));
-                    if (splitPK != null && !splitPK.isEmpty()){
-                        splitPkQuerys.add(SingleTableSplitUtil.genPKSql(splitPK.trim(),table,where));
+                    querys.add(SingleTableSplitUtil.buildQuerySql(column, table, where));
+                    if (splitPK != null && !splitPK.isEmpty()) {
+                        splitPkQuerys.add(SingleTableSplitUtil.genPKSql(splitPK.trim(), table, where));
                     }
                 }
-                if (!splitPkQuerys.isEmpty()){
-                    connConf.set(Key.SPLIT_PK_SQL,splitPkQuerys);
+                if (!splitPkQuerys.isEmpty()) {
+                    connConf.set(Key.SPLIT_PK_SQL, splitPkQuerys);
                 }
-                connConf.set(Key.QUERY_SQL,querys);
-                queryConfig.set(connPath,connConf);
+                connConf.set(Key.QUERY_SQL, querys);
+                queryConfig.set(connPath, connConf);
             } else {
                 // 说明是配置的 querySql 方式
                 List<String> sqls = connConf.getList(Key.QUERY_SQL,
@@ -149,17 +146,15 @@ public final class ReaderSplitUtil {
                 for (String querySql : sqls) {
                     querys.add(querySql);
                 }
-                connConf.set(Key.QUERY_SQL,querys);
-                queryConfig.set(connPath,connConf);
+                connConf.set(Key.QUERY_SQL, querys);
+                queryConfig.set(connPath, connConf);
             }
         }
         return queryConfig;
     }
 
-    private static int calculateEachTableShouldSplittedNumber(int adviceNumber,
-                                                              int tableNumber) {
+    private static int calculateEachTableShouldSplittedNumber(int adviceNumber, int tableNumber) {
         double tempNum = 1.0 * adviceNumber / tableNumber;
-
         return (int) Math.ceil(tempNum);
     }
 

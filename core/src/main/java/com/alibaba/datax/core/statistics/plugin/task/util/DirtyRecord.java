@@ -40,31 +40,31 @@ public class DirtyRecord implements Record {
 
 	@Override
 	public void setColumn(int i, Column column) {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
 	@Override
 	public Column getColumn(int i) {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
 	@Override
 	public int getColumnNumber() {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
 	@Override
 	public int getByteSize() {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
 	@Override
 	public int getMemorySize() {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
@@ -111,55 +111,55 @@ class DirtyColumn extends Column {
 
 	@Override
 	public Long asLong() {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
 	@Override
 	public Double asDouble() {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
 	@Override
 	public String asString() {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
 	@Override
 	public Date asDate() {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 	
 	@Override
 	public Date asDate(String dateFormat) {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
 	@Override
 	public byte[] asBytes() {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
 	@Override
 	public Boolean asBoolean() {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
 	@Override
 	public BigDecimal asBigDecimal() {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 
 	@Override
 	public BigInteger asBigInteger() {
-		throw DataXException.asDataXException(FrameworkErrorCode.RUNTIME_ERROR,
+		throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
 				"该方法不支持!");
 	}
 

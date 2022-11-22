@@ -110,7 +110,7 @@ public class DefaultDataHandler implements DataHandler {
                 recordBatch.clear();
             }
         } catch (SQLException e) {
-            throw DataXException.asDataXException(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e.getMessage());
+            throw DataXException.build(TDengineWriterErrorCode.RUNTIME_EXCEPTION, e.getMessage());
         }
 
         if (affectedRows != count) {
@@ -562,7 +562,7 @@ public class DefaultDataHandler implements DataHandler {
             if (columns.get(i).equals(colName))
                 return i;
         }
-        throw DataXException.asDataXException(TDengineWriterErrorCode.RUNTIME_EXCEPTION,
+        throw DataXException.build(TDengineWriterErrorCode.RUNTIME_EXCEPTION,
                 "cannot find col: " + colName + " in columns: " + columns);
     }
 

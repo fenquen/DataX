@@ -21,22 +21,21 @@ public abstract class ProcessInnerScheduler extends AbstractScheduler {
     }
 
     @Override
-    public void startAllTaskGroup(List<Configuration> configurations) {
-        this.taskGroupContainerExecutorService = Executors
-                .newFixedThreadPool(configurations.size());
+    public void startAllTaskGroup(List<Configuration> taskGroupConfigList) {
+        taskGroupContainerExecutorService = Executors.newFixedThreadPool(taskGroupConfigList.size());
 
-        for (Configuration taskGroupConfiguration : configurations) {
-            TaskGroupContainerRunner taskGroupContainerRunner = newTaskGroupContainerRunner(taskGroupConfiguration);
-            this.taskGroupContainerExecutorService.execute(taskGroupContainerRunner);
+        for (Configuration taskGroupConfig : taskGroupConfigList) {
+            TaskGroupContainerRunner taskGroupContainerRunner = newTaskGroupContainerRunner(taskGroupConfig);
+            taskGroupContainerExecutorService.execute(taskGroupContainerRunner);
         }
 
-        this.taskGroupContainerExecutorService.shutdown();
+        taskGroupContainerExecutorService.shutdown();
     }
 
     @Override
     public void dealFailedStat(AbstractContainerCommunicator frameworkCollector, Throwable throwable) {
         this.taskGroupContainerExecutorService.shutdownNow();
-        throw DataXException.asDataXException(
+        throw DataXException.build(
                 FrameworkErrorCode.PLUGIN_RUNTIME_ERROR, throwable);
     }
 
@@ -45,16 +44,13 @@ public abstract class ProcessInnerScheduler extends AbstractScheduler {
     public void dealKillingStat(AbstractContainerCommunicator frameworkCollector, int totalTasks) {
         //通过进程退出返回码标示状态
         this.taskGroupContainerExecutorService.shutdownNow();
-        throw DataXException.asDataXException(FrameworkErrorCode.KILLED_EXIT_VALUE,
+        throw DataXException.build(FrameworkErrorCode.KILLED_EXIT_VALUE,
                 "job killed status");
     }
 
 
-    private TaskGroupContainerRunner newTaskGroupContainerRunner(
-            Configuration configuration) {
-        TaskGroupContainer taskGroupContainer = new TaskGroupContainer(configuration);
-
-        return new TaskGroupContainerRunner(taskGroupContainer);
+    private TaskGroupContainerRunner newTaskGroupContainerRunner(Configuration taskGroupConfig) {
+        return new TaskGroupContainerRunner(new TaskGroupContainer(taskGroupConfig));
     }
 
 }

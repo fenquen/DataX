@@ -119,7 +119,7 @@ public abstract class HbaseAbstractTask {
                 column = new DateColumn(ArrayUtils.isEmpty(byteArray) ? null : DateUtils.parseDate(dateValue, new String[]{dateformat}));
                 break;
             default:
-                throw DataXException.asDataXException(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 不支持您配置的列类型:" + columnType);
+                throw DataXException.build(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 不支持您配置的列类型:" + columnType);
         }
         return column;
     }
@@ -146,7 +146,7 @@ public abstract class HbaseAbstractTask {
                 column = new DateColumn(DateUtils.parseDate(constantValue, new String[]{dateformat}));
                 break;
             default:
-                throw DataXException.asDataXException(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 常量列不支持您配置的列类型:" + columnType);
+                throw DataXException.build(Hbase094xReaderErrorCode.ILLEGAL_VALUE, "Hbasereader 常量列不支持您配置的列类型:" + columnType);
         }
         return column;
     }

@@ -13,11 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
@@ -68,7 +66,7 @@ public class KuduWriterTask {
         try {
             while ((record = lineReceiver.getFromReader()) != null) {
                 if (record.getColumnNumber() != columns.size()) {
-                    throw DataXException.asDataXException(Kudu11xWriterErrorcode.PARAMETER_NUM_ERROR, " number of record fields:" + record.getColumnNumber() + " number of configuration fields:" + columns.size());
+                    throw DataXException.build(Kudu11xWriterErrorcode.PARAMETER_NUM_ERROR, " number of record fields:" + record.getColumnNumber() + " number of configuration fields:" + columns.size());
                 }
                 boolean isDirtyRecord = false;
 
@@ -178,13 +176,13 @@ public class KuduWriterTask {
                         LOG.warn("Since you have configured \"skipFail\" to be true, this record will be skipped !");
                         taskPluginCollector.collectDirtyRecord(record, e.getMessage());
                     } else {
-                        throw DataXException.asDataXException(Kudu11xWriterErrorcode.PUT_KUDU_ERROR, e.getMessage());
+                        throw DataXException.build(Kudu11xWriterErrorcode.PUT_KUDU_ERROR, e.getMessage());
                     }
                 }
             }
         } catch (Exception e) {
             LOG.error("write failure! the task will exit!");
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.PUT_KUDU_ERROR, e.getMessage());
+            throw DataXException.build(Kudu11xWriterErrorcode.PUT_KUDU_ERROR, e.getMessage());
         }
         AtomicInteger i = new AtomicInteger(10);
         try {
@@ -206,7 +204,7 @@ public class KuduWriterTask {
                 session.flush();
             } catch (KuduException e) {
                 LOG.error("kuduwriter flush error! The results may be incomplete！");
-                throw DataXException.asDataXException(Kudu11xWriterErrorcode.PUT_KUDU_ERROR, e.getMessage());
+                throw DataXException.build(Kudu11xWriterErrorcode.PUT_KUDU_ERROR, e.getMessage());
             }
         }
 

@@ -35,8 +35,8 @@ public class JarLoader extends URLClassLoader {
         }
 
         List<URL> urls = new ArrayList<URL>();
-        for (String path : dirs) {
-            urls.addAll(doGetURLs(path));
+        for (String dir : dirs) {
+            urls.addAll(doGetURLs(dir));
         }
 
         return urls.toArray(new URL[0]);
@@ -62,10 +62,10 @@ public class JarLoader extends URLClassLoader {
         }
     }
 
-    private static List<URL> doGetURLs(final String path) {
-        Validate.isTrue(!StringUtils.isBlank(path), "jar包路径不能为空.");
+    private static List<URL> doGetURLs(final String dir) {
+        Validate.isTrue(!StringUtils.isBlank(dir), "jar包路径不能为空.");
 
-        File jarPath = new File(path);
+        File jarPath = new File(dir);
 
         Validate.isTrue(jarPath.exists() && jarPath.isDirectory(),
                 "jar包路径必须存在且为目录.");
@@ -79,14 +79,14 @@ public class JarLoader extends URLClassLoader {
         };
 
 		/* iterate all jar */
-        File[] allJars = new File(path).listFiles(jarFilter);
+        File[] allJars = new File(dir).listFiles(jarFilter);
         List<URL> jarURLs = new ArrayList<URL>(allJars.length);
 
         for (int i = 0; i < allJars.length; i++) {
             try {
                 jarURLs.add(allJars[i].toURI().toURL());
             } catch (Exception e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         FrameworkErrorCode.PLUGIN_INIT_ERROR,
                         "系统加载jar包出错", e);
             }

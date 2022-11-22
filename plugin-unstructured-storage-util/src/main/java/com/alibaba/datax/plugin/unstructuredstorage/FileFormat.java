@@ -50,7 +50,7 @@ public enum  FileFormat {
                 return fFormat;
             }
         }
-        throw DataXException.asDataXException(UnstructuredStorageReaderErrorCode.ILLEGAL_VALUE,
+        throw DataXException.build(UnstructuredStorageReaderErrorCode.ILLEGAL_VALUE,
                String.format("DataX 不支持该 fileFormat 类型:%s, 目前支持的 fileFormat 类型是:%s", fileFormat, Arrays.asList(values())));
     }
 

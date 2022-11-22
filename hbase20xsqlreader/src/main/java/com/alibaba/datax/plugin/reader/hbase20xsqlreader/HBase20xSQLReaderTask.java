@@ -60,7 +60,7 @@ public class HBase20xSQLReaderTask {
             allResultPerfRecord.end(rsNextUsedTime);
             LOG.info("Finished read record by Sql: [{}\n] {}.", querySql);
         } catch (SQLException e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HBase20xSQLReaderErrorCode.QUERY_DATA_ERROR, "查询Phoenix数据出现异常，请检查服务状态或与HBase管理员联系！", e);
         } finally {
             helper.closeJdbc(conn, statement, resultSet);
@@ -113,7 +113,7 @@ public class HBase20xSQLReaderTask {
                 column = new DateColumn((Timestamp) value);
                 break;
             default:
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         HBase20xSQLReaderErrorCode.PHOENIX_COLUMN_TYPE_CONVERT_ERROR, "遇到不可识别的phoenix类型，" + "sqlType :" + sqlType);
         }
         return column;

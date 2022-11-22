@@ -35,7 +35,7 @@ public class PadTransformer extends Transformer {
             length = Integer.valueOf((String) paras[2]);
             padString = (String) paras[3];
         } catch (Exception e) {
-            throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_ILLEGAL_PARAMETER, "paras:" + Arrays.asList(paras).toString() + " => " + e.getMessage());
+            throw DataXException.build(TransformerErrorCode.TRANSFORMER_ILLEGAL_PARAMETER, "paras:" + Arrays.asList(paras).toString() + " => " + e.getMessage());
         }
 
         Column column = record.getColumn(columnIndex);
@@ -61,7 +61,7 @@ public class PadTransformer extends Transformer {
             record.setColumn(columnIndex, new StringColumn(newValue));
 
         } catch (Exception e) {
-            throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_RUN_EXCEPTION, e.getMessage(),e);
+            throw DataXException.build(TransformerErrorCode.TRANSFORMER_RUN_EXCEPTION, e.getMessage(),e);
         }
         return record;
     }

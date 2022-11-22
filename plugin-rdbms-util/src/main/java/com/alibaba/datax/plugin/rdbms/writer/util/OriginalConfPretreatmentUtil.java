@@ -40,7 +40,7 @@ public final class OriginalConfPretreatmentUtil {
         // 检查batchSize 配置（选填，如果未填写，则设置为默认值）
         int batchSize = originalConfig.getInt(Key.BATCH_SIZE, Constant.DEFAULT_BATCH_SIZE);
         if (batchSize < 1) {
-            throw DataXException.asDataXException(DBUtilErrorCode.ILLEGAL_VALUE, String.format(
+            throw DataXException.build(DBUtilErrorCode.ILLEGAL_VALUE, String.format(
                     "您的batchSize配置有误. 您所配置的写入数据库表的 batchSize:%s 不能小于1. 推荐配置范围为：[100-1000], 该值越大, 内存溢出可能性越大. 请检查您的配置并作出修改.",
                     batchSize));
         }
@@ -59,7 +59,7 @@ public final class OriginalConfPretreatmentUtil {
 
             String jdbcUrl = connConf.getString(Key.JDBC_URL);
             if (StringUtils.isBlank(jdbcUrl)) {
-                throw DataXException.asDataXException(DBUtilErrorCode.REQUIRED_VALUE, "您未配置的写入数据库表的 jdbcUrl.");
+                throw DataXException.build(DBUtilErrorCode.REQUIRED_VALUE, "您未配置的写入数据库表的 jdbcUrl.");
             }
 
             jdbcUrl = DATABASE_TYPE.appendJDBCSuffixForWriter(jdbcUrl);
@@ -69,7 +69,7 @@ public final class OriginalConfPretreatmentUtil {
             List<String> tables = connConf.getList(Key.TABLE, String.class);
 
             if (null == tables || tables.isEmpty()) {
-                throw DataXException.asDataXException(DBUtilErrorCode.REQUIRED_VALUE,
+                throw DataXException.build(DBUtilErrorCode.REQUIRED_VALUE,
                         "您未配置写入数据库表的表名称. 根据配置DataX找不到您配置的表. 请检查您的配置并作出修改.");
             }
 
@@ -78,14 +78,13 @@ public final class OriginalConfPretreatmentUtil {
                     .expandTableConf(DATABASE_TYPE, tables);
 
             if (null == expandedTables || expandedTables.isEmpty()) {
-                throw DataXException.asDataXException(DBUtilErrorCode.CONF_ERROR,
+                throw DataXException.build(DBUtilErrorCode.CONF_ERROR,
                         "您配置的写入数据库表名称错误. DataX找不到您配置的表，请检查您的配置并作出修改.");
             }
 
             tableNum += expandedTables.size();
 
-            originalConfig.set(String.format("%s[%d].%s", Constant.CONN_MARK,
-                    i, Key.TABLE), expandedTables);
+            originalConfig.set(String.format("%s[%d].%s", Constant.CONN_MARK, i, Key.TABLE), expandedTables);
         }
 
         originalConfig.set(Constant.TABLE_NUMBER_MARK, tableNum);
@@ -94,7 +93,7 @@ public final class OriginalConfPretreatmentUtil {
     public static void dealColumnConf(Configuration originalConfig, ConnectionFactory connectionFactory, String oneTable) {
         List<String> userConfiguredColumns = originalConfig.getList(Key.COLUMN, String.class);
         if (null == userConfiguredColumns || userConfiguredColumns.isEmpty()) {
-            throw DataXException.asDataXException(DBUtilErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(DBUtilErrorCode.ILLEGAL_VALUE,
                     "您的配置文件中的列配置信息有误. 因为您未配置写入数据库表的列名称，DataX获取不到列信息. 请检查您的配置并作出修改.");
         } else {
             boolean isPreCheck = originalConfig.getBool(Key.DRYRUN, false);
@@ -114,7 +113,7 @@ public final class OriginalConfPretreatmentUtil {
                 // 回填其值，需要以 String 的方式转交后续处理
                 originalConfig.set(Key.COLUMN, allColumns);
             } else if (userConfiguredColumns.size() > allColumns.size()) {
-                throw DataXException.asDataXException(DBUtilErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(DBUtilErrorCode.ILLEGAL_VALUE,
                         String.format("您的配置文件中的列配置信息有误. 因为您所配置的写入数据库表的字段个数:%s 大于目的表的总字段总个数:%s. 请检查您的配置并作出修改.",
                                 userConfiguredColumns.size(), allColumns.size()));
             } else {
@@ -173,7 +172,7 @@ public final class OriginalConfPretreatmentUtil {
             String[] ss = jdbcUrl.split(com.alibaba.datax.plugin.rdbms.writer.Constant.OB10_SPLIT_STRING_PATTERN);
             if (ss.length != 3) {
                 throw DataXException
-                        .asDataXException(
+                        .build(
                                 DBUtilErrorCode.JDBC_OB10_ADDRESS_ERROR, "JDBC OB10格式错误，请联系askdatax");
             }
             return true;

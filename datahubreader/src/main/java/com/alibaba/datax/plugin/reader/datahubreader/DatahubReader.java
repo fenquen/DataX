@@ -53,7 +53,7 @@ public class DatahubReader extends Reader {
             
             int batchSize = this.originalConfig.getInt(Key.BATCHSIZE, 1024);
             if (batchSize > 10000) {
-                throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                         "Invalid batchSize[" + batchSize + "] value (0,10000]!");
             }
             
@@ -62,13 +62,13 @@ public class DatahubReader extends Reader {
                 try {
                     beginTimestampMillis = DatahubReaderUtils.getUnixTimeFromDateTime(beginDateTime);
                 } catch (ParseException e) {
-                    throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+                    throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                             "Invalid beginDateTime[" + beginDateTime + "], format [yyyyMMddHHmmss]!");    
                 }
             }
             
             if (beginTimestampMillis != null && beginTimestampMillis <= 0) {
-                throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                         "Invalid beginTimestampMillis[" + beginTimestampMillis + "]!");               
             }
             
@@ -77,19 +77,19 @@ public class DatahubReader extends Reader {
                 try {
                     endTimestampMillis = DatahubReaderUtils.getUnixTimeFromDateTime(endDateTime);
                 } catch (ParseException e) {
-                    throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+                    throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                             "Invalid beginDateTime[" + endDateTime + "], format [yyyyMMddHHmmss]!");    
                 }
             }
             
             if (endTimestampMillis != null && endTimestampMillis <= 0) {
-                throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                         "Invalid endTimestampMillis[" + endTimestampMillis + "]!");                
             }
             
             if (beginTimestampMillis != null && endTimestampMillis != null
                     && endTimestampMillis <= beginTimestampMillis) {
-                throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                         "endTimestampMillis[" + endTimestampMillis + "] must bigger than beginTimestampMillis[" + beginTimestampMillis + "]!");  
             }
         }
@@ -109,7 +109,7 @@ public class DatahubReader extends Reader {
             }
             if (null != recordType) {
                 if (recordType == RecordType.BLOB) {
-                    throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+                    throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                             "DatahubReader only support 'Tuple' RecordType now, but your RecordType is 'BLOB'");
                 }
             }
@@ -130,7 +130,7 @@ public class DatahubReader extends Reader {
             
             List<ShardEntry> shardEntrys = DatahubReaderUtils.getShardsWithRetry(this.datahubClient, project, topic);
             if (shardEntrys == null || shardEntrys.isEmpty() || shardEntrys.size() == 0) {
-                throw DataXException.asDataXException(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(DatahubReaderErrorCode.BAD_CONFIG_VALUE,
                         "Project [" + project + "] Topic [" + topic + "] has no shards, please check !");       
             }
             

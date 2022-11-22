@@ -101,7 +101,7 @@ public class OcsWriter extends Writer {
                 client = getMemcachedConn(proxy, port, ad);
             } catch (Exception e) {
                 //异常不能吃掉，直接抛出，便于定位
-                throw DataXException.asDataXException(OcsWriterErrorCode.OCS_INIT_ERROR, String.format("初始化ocs客户端失败"), e);
+                throw DataXException.build(OcsWriterErrorCode.OCS_INIT_ERROR, String.format("初始化ocs客户端失败"), e);
             }
         }
 
@@ -175,12 +175,12 @@ public class OcsWriter extends Writer {
                     future = client.prepend(0L, key, value);
                     break;
                 default:
-                    throw DataXException.asDataXException(OcsWriterErrorCode.DIRTY_RECORD, String.format("不支持的写入模式%s", writeMode.toString()));
+                    throw DataXException.build(OcsWriterErrorCode.DIRTY_RECORD, String.format("不支持的写入模式%s", writeMode.toString()));
                     //因为前面参数校验的时候已经判断，不可能存在5中操作之外的类型。
             }
             //【注意】getStatus()返回为null有可能是因为get()超时导致，此种情况当做脏数据处理。但有可能数据已经成功写入ocs。
             if (future == null || future.getStatus() == null || !future.getStatus().isSuccess()) {
-                throw DataXException.asDataXException(OcsWriterErrorCode.COMMIT_FAILED, "提交数据到ocs失败");
+                throw DataXException.build(OcsWriterErrorCode.COMMIT_FAILED, "提交数据到ocs失败");
             }
         }
 
@@ -219,17 +219,17 @@ public class OcsWriter extends Writer {
                             value = col.asString();
                             //【注意】value字段中如果有分隔符，当做脏数据处理
                             if (value != null && value.contains(delimiter)) {
-                                throw DataXException.asDataXException(OcsWriterErrorCode.DIRTY_RECORD, String.format("数据中包含分隔符:%s", value));
+                                throw DataXException.build(OcsWriterErrorCode.DIRTY_RECORD, String.format("数据中包含分隔符:%s", value));
                             }
                             break;
                         default:
                             //目前不支持二进制，如果遇到二进制，则当做脏数据处理
-                            throw DataXException.asDataXException(OcsWriterErrorCode.DIRTY_RECORD, String.format("不支持的数据格式:%s", type.toString()));
+                            throw DataXException.build(OcsWriterErrorCode.DIRTY_RECORD, String.format("不支持的数据格式:%s", type.toString()));
                     }
                     valueList.add(value);
                 } else {
                     //如果取到的列为null,需要当做脏数据处理
-                    throw DataXException.asDataXException(OcsWriterErrorCode.DIRTY_RECORD, String.format("record中不存在第%s个字段", i));
+                    throw DataXException.build(OcsWriterErrorCode.DIRTY_RECORD, String.format("record中不存在第%s个字段", i));
                 }
             }
             return StringUtils.join(valueList, delimiter);
@@ -244,7 +244,7 @@ public class OcsWriter extends Writer {
             for (int index : indexesFromUser) {
                 Column col = record.getColumn(index);
                 if (col == null) {
-                    throw DataXException.asDataXException(OcsWriterErrorCode.DIRTY_RECORD, String.format("不存在第%s列", index));
+                    throw DataXException.build(OcsWriterErrorCode.DIRTY_RECORD, String.format("不存在第%s列", index));
                 }
                 Column.Type type = col.getType();
                 String value;
@@ -256,18 +256,18 @@ public class OcsWriter extends Writer {
                     case DATE:
                         value = col.asString();
                         if (value != null && value.contains(delimiter)) {
-                            throw DataXException.asDataXException(OcsWriterErrorCode.DIRTY_RECORD, String.format("主键中包含分隔符:%s", value));
+                            throw DataXException.build(OcsWriterErrorCode.DIRTY_RECORD, String.format("主键中包含分隔符:%s", value));
                         }
                         keyList.add(value);
                         break;
                     default:
                         //目前不支持二进制，如果遇到二进制，则当做脏数据处理
-                        throw DataXException.asDataXException(OcsWriterErrorCode.DIRTY_RECORD, String.format("不支持的数据格式:%s", type.toString()));
+                        throw DataXException.build(OcsWriterErrorCode.DIRTY_RECORD, String.format("不支持的数据格式:%s", type.toString()));
                 }
             }
             String rtn = StringUtils.join(keyList, delimiter);
             if (StringUtils.isBlank(rtn)) {
-                throw DataXException.asDataXException(OcsWriterErrorCode.DIRTY_RECORD, String.format("构建主键为空，请检查indexes的配置"));
+                throw DataXException.build(OcsWriterErrorCode.DIRTY_RECORD, String.format("构建主键为空，请检查indexes的配置"));
             }
             return rtn;
         }
@@ -284,12 +284,12 @@ public class OcsWriter extends Writer {
                         if (client == null || client.shutdown(10000L, TimeUnit.MILLISECONDS)) {
                             return null;
                         } else {
-                            throw DataXException.asDataXException(OcsWriterErrorCode.SHUTDOWN_FAILED, "关闭ocsClient失败");
+                            throw DataXException.build(OcsWriterErrorCode.SHUTDOWN_FAILED, "关闭ocsClient失败");
                         }
                     }
                 }, 8, 1000L, true);
             } catch (Exception e) {
-                throw DataXException.asDataXException(OcsWriterErrorCode.SHUTDOWN_FAILED, "关闭ocsClient失败", e);
+                throw DataXException.build(OcsWriterErrorCode.SHUTDOWN_FAILED, "关闭ocsClient失败", e);
             }
         }
 

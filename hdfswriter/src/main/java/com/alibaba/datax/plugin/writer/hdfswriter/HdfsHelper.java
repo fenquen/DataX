@@ -76,19 +76,19 @@ public  class HdfsHelper {
             String message = String.format("获取FileSystem时发生网络IO异常,请检查您的网络是否正常!HDFS地址：[%s]",
                     "message:defaultFS =" + defaultFS);
             LOG.error(message);
-            throw DataXException.asDataXException(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
+            throw DataXException.build(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
         }catch (Exception e) {
             String message = String.format("获取FileSystem失败,请检查HDFS地址是否正确: [%s]",
                     "message:defaultFS =" + defaultFS);
             LOG.error(message);
-            throw DataXException.asDataXException(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
+            throw DataXException.build(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
         }
 
         if(null == fileSystem || null == conf){
             String message = String.format("获取FileSystem失败,请检查HDFS地址是否正确: [%s]",
                     "message:defaultFS =" + defaultFS);
             LOG.error(message);
-            throw DataXException.asDataXException(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, message);
+            throw DataXException.build(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, message);
         }
     }
 
@@ -101,7 +101,7 @@ public  class HdfsHelper {
                 String message = String.format("kerberos认证失败,请确定kerberosKeytabFilePath[%s]和kerberosPrincipal[%s]填写正确",
                         kerberosKeytabFilePath, kerberosPrincipal);
                 LOG.error(message);
-                throw DataXException.asDataXException(HdfsWriterErrorCode.KERBEROS_LOGIN_ERROR, e);
+                throw DataXException.build(HdfsWriterErrorCode.KERBEROS_LOGIN_ERROR, e);
             }
         }
     }
@@ -125,7 +125,7 @@ public  class HdfsHelper {
         } catch (IOException e) {
             String message = String.format("获取目录[%s]文件列表时发生网络IO异常,请检查您的网络是否正常！", dir);
             LOG.error(message);
-            throw DataXException.asDataXException(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
+            throw DataXException.build(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
         }
         return files;
     }
@@ -151,7 +151,7 @@ public  class HdfsHelper {
             String message = String.format("获取目录[%s]下文件名以[%s]开头的文件列表时发生网络IO异常,请检查您的网络是否正常！",
                     dir,fileName);
             LOG.error(message);
-            throw DataXException.asDataXException(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
+            throw DataXException.build(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
         }
         return files;
     }
@@ -165,7 +165,7 @@ public  class HdfsHelper {
             String message = String.format("判断文件路径[%s]是否存在时发生网络IO异常,请检查您的网络是否正常！",
                     "message:filePath =" + filePath);
             LOG.error(message);
-            throw DataXException.asDataXException(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
+            throw DataXException.build(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
         }
         return exist;
     }
@@ -178,7 +178,7 @@ public  class HdfsHelper {
         } catch (IOException e) {
             String message = String.format("判断路径[%s]是否是目录时发生网络IO异常,请检查您的网络是否正常！", filePath);
             LOG.error(message);
-            throw DataXException.asDataXException(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
+            throw DataXException.build(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
         }
         return isDir;
     }
@@ -192,7 +192,7 @@ public  class HdfsHelper {
                 String message = String.format("删除文件[%s]时发生IO异常,请检查您的网络是否正常！",
                         paths[i].toString());
                 LOG.error(message);
-                throw DataXException.asDataXException(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
+                throw DataXException.build(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
             }
         }
     }
@@ -206,7 +206,7 @@ public  class HdfsHelper {
         } catch (Exception e) {
             String message = String.format("删除临时目录[%s]时发生IO异常,请检查您的网络是否正常！", path.toString());
             LOG.error(message);
-            throw DataXException.asDataXException(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
+            throw DataXException.build(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
         }
         LOG.info(String.format("finish delete tmp dir [%s] .",path.toString()));
     }
@@ -216,7 +216,7 @@ public  class HdfsHelper {
         if(tmpFiles.size() != endFiles.size()){
             String message = String.format("临时目录下文件名个数与目标文件名个数不一致!");
             LOG.error(message);
-            throw DataXException.asDataXException(HdfsWriterErrorCode.HDFS_RENAME_FILE_ERROR, message);
+            throw DataXException.build(HdfsWriterErrorCode.HDFS_RENAME_FILE_ERROR, message);
         }else{
             try{
                 for (Iterator it1=tmpFiles.iterator(),it2=endFiles.iterator();it1.hasNext()&&it2.hasNext();){
@@ -235,7 +235,7 @@ public  class HdfsHelper {
                         if(!renameTag){
                             String message = String.format("重命名文件[%s]失败,请检查您的网络是否正常！", srcFile);
                             LOG.error(message);
-                            throw DataXException.asDataXException(HdfsWriterErrorCode.HDFS_RENAME_FILE_ERROR, message);
+                            throw DataXException.build(HdfsWriterErrorCode.HDFS_RENAME_FILE_ERROR, message);
                         }
                         LOG.info(String.format("finish rename file [%s] to file [%s].", srcFile,dstFile));
                     }else{
@@ -245,7 +245,7 @@ public  class HdfsHelper {
             }catch (Exception e) {
                 String message = String.format("重命名文件时发生异常,请检查您的网络是否正常！");
                 LOG.error(message);
-                throw DataXException.asDataXException(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
+                throw DataXException.build(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
             }finally {
                 deleteDir(tmpFilesParent);
             }
@@ -259,7 +259,7 @@ public  class HdfsHelper {
         } catch (IOException e) {
             String message = String.format("关闭FileSystem时发生IO异常,请检查您的网络是否正常！");
             LOG.error(message);
-            throw DataXException.asDataXException(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
+            throw DataXException.build(HdfsWriterErrorCode.CONNECT_HDFS_IO_ERROR, e);
         }
     }
 
@@ -274,7 +274,7 @@ public  class HdfsHelper {
             String message = String.format("Create an FSDataOutputStream at the indicated Path[%s] failed: [%s]",
                     "message:path =" + path);
             LOG.error(message);
-            throw DataXException.asDataXException(HdfsWriterErrorCode.Write_FILE_IO_ERROR, e);
+            throw DataXException.build(HdfsWriterErrorCode.Write_FILE_IO_ERROR, e);
         }
         return fSDataOutputStream;
     }
@@ -321,7 +321,7 @@ public  class HdfsHelper {
             LOG.error(message);
             Path path = new Path(fileName);
             deleteDir(path.getParent());
-            throw DataXException.asDataXException(HdfsWriterErrorCode.Write_FILE_IO_ERROR, e);
+            throw DataXException.build(HdfsWriterErrorCode.Write_FILE_IO_ERROR, e);
         }
     }
 
@@ -353,7 +353,7 @@ public  class HdfsHelper {
             // org.apache.hadoop.hive.ql.io.orc.ZlibCodec.class  not public
             //codecClass = org.apache.hadoop.hive.ql.io.orc.ZlibCodec.class;
         }else {
-            throw DataXException.asDataXException(HdfsWriterErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(HdfsWriterErrorCode.ILLEGAL_VALUE,
                     String.format("目前不支持您配置的 compress 模式 : [%s]", compress));
         }
         return codecClass;
@@ -399,7 +399,7 @@ public  class HdfsHelper {
             LOG.error(message);
             Path path = new Path(fileName);
             deleteDir(path.getParent());
-            throw DataXException.asDataXException(HdfsWriterErrorCode.Write_FILE_IO_ERROR, e);
+            throw DataXException.build(HdfsWriterErrorCode.Write_FILE_IO_ERROR, e);
         }
     }
 
@@ -456,7 +456,7 @@ public  class HdfsHelper {
                     break;
                 default:
                     throw DataXException
-                            .asDataXException(
+                            .build(
                                     HdfsWriterErrorCode.ILLEGAL_VALUE,
                                     String.format(
                                             "您的配置文件中的列配置信息有误. 因为DataX 不支持数据库写入这种字段类型. 字段名:[%s], 字段类型:[%d]. 请修改表中该字段的类型或者不同步该字段.",
@@ -538,7 +538,7 @@ public  class HdfsHelper {
                                 break;
                             default:
                                 throw DataXException
-                                        .asDataXException(
+                                        .build(
                                                 HdfsWriterErrorCode.ILLEGAL_VALUE,
                                                 String.format(
                                                         "您的配置文件中的列配置信息有误. 因为DataX 不支持数据库写入这种字段类型. 字段名:[%s], 字段类型:[%d]. 请修改表中该字段的类型或者不同步该字段.",

@@ -74,7 +74,7 @@ public class HBase20SQLReaderHelper {
             conn = DriverManager.getConnection(url);
             conn.setAutoCommit(false);
         } catch (Throwable e) {
-            throw DataXException.asDataXException(HBase20xSQLReaderErrorCode.GET_QUERYSERVER_CONNECTION_ERROR,
+            throw DataXException.build(HBase20xSQLReaderErrorCode.GET_QUERYSERVER_CONNECTION_ERROR,
                     "无法连接QueryServer，配置不正确或服务未启动，请检查配置和服务状态或者联系HBase管理员.", e);
         }
         LOG.debug("Connected to QueryServer successfully.");
@@ -112,7 +112,7 @@ public class HBase20SQLReaderHelper {
                 for (String columnName : columnNames) {
                     if (!allColumnName.contains(columnName)) {
                         // 用户配置的列名在元数据中不存在
-                        throw DataXException.asDataXException(HBase20xSQLReaderErrorCode.ILLEGAL_VALUE,
+                        throw DataXException.build(HBase20xSQLReaderErrorCode.ILLEGAL_VALUE,
                                 "您配置的列" + columnName + "在表" + tableName + "的元数据中不存在，请检查您的配置或者联系HBase管理员.");
                     }
                 }
@@ -123,13 +123,13 @@ public class HBase20SQLReaderHelper {
             if (splitKey != null) {
                 // 切分列必须是主键列，否则会严重影响读取性能
                 if (!primaryColumnNames.contains(splitKey)) {
-                    throw DataXException.asDataXException(HBase20xSQLReaderErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(HBase20xSQLReaderErrorCode.ILLEGAL_VALUE,
                             "您配置的切分列" + splitKey + "不是表" + tableName + "的主键，请检查您的配置或者联系HBase管理员.");
                 }
             }
 
         } catch (SQLException e) {
-            throw DataXException.asDataXException(HBase20xSQLReaderErrorCode.GET_PHOENIX_TABLE_ERROR,
+            throw DataXException.build(HBase20xSQLReaderErrorCode.GET_PHOENIX_TABLE_ERROR,
                     "获取表" + tableName + "信息失败，请检查您的集群和表状态或者联系HBase管理员.", e);
 
         } finally {
@@ -178,7 +178,7 @@ public class HBase20SQLReaderHelper {
                 LOG.info("Split according min and max value of splitColumn...");
                 Pair<Object, Object> minMaxPK = getPkRange(configuration);
                 if (null == minMaxPK) {
-                    throw DataXException.asDataXException(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK,
+                    throw DataXException.build(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK,
                             "根据切分主键切分表失败. DataX仅支持切分主键为一个,并且类型为整数或者字符串类型. " +
                                     "请尝试使用其他的切分主键或者联系 HBase管理员 进行处理.");
                 }
@@ -202,7 +202,7 @@ public class HBase20SQLReaderHelper {
                             new BigInteger(minMaxPK.getRight().toString()),
                             adviceNumber, splitKey);
                 } else {
-                    throw DataXException.asDataXException(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK,
+                    throw DataXException.build(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK,
                             "您配置的切分主键(splitPk) 类型 DataX 不支持. DataX 仅支持切分主键为一个,并且类型为整数或者字符串类型. " +
                                     "请尝试使用其他的切分主键或者联系HBase管理员进行处理.");
                 }
@@ -290,7 +290,7 @@ public class HBase20SQLReaderHelper {
                 case Types.BINARY:
                 case Types.VARBINARY:
                 case Types.ARRAY:
-                    throw DataXException.asDataXException(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK,
+                    throw DataXException.build(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK,
                             "切分列类型为" + rsMetaData.getColumnTypeName(1) + "，暂不支持该类型字段作为切分列。");
             }
             String splitCondition = null;
@@ -308,7 +308,7 @@ public class HBase20SQLReaderHelper {
 
             return splitConditions;
         } catch (SQLException e) {
-            throw DataXException.asDataXException(HBase20xSQLReaderErrorCode.GET_TABLE_COLUMNTYPE_ERROR,
+            throw DataXException.build(HBase20xSQLReaderErrorCode.GET_TABLE_COLUMNTYPE_ERROR,
                     "获取切分列类型失败，请检查服务或给定表和切分列是否正常，或者联系HBase管理员进行处理。", e);
         } finally {
             closeJdbc(null, statement, resultSet);
@@ -351,17 +351,17 @@ public class HBase20SQLReaderHelper {
                                 resultSet.getLong(1), resultSet.getLong(2));
                     }
                 } else {
-                    throw DataXException.asDataXException(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK,
+                    throw DataXException.build(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK,
                             "您配置的DataX切分主键(splitPk)有误. 因为您配置的切分主键(splitPk) 类型 DataX 不支持. " +
                                     "DataX 仅支持切分主键为一个,并且类型为整数或者字符串类型. 请尝试使用其他的切分主键或者联系HBASE管理员进行处理.");
                 }
             } else {
-                throw DataXException.asDataXException(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK,
+                throw DataXException.build(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK,
                         "您配置的DataX切分主键(splitPk)有误. 因为您配置的切分主键(splitPk) 类型 DataX 不支持. " +
                                 "DataX 仅支持切分主键为一个,并且类型为整数或者字符串类型. 请尝试使用其他的切分主键或者联系HBASE管理员进行处理.");
             }
         } catch (SQLException e) {
-            throw DataXException.asDataXException(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK, e);
+            throw DataXException.build(HBase20xSQLReaderErrorCode.ILLEGAL_SPLIT_PK, e);
         } finally {
             closeJdbc(null, statement, resultSet);
         }
@@ -383,7 +383,7 @@ public class HBase20SQLReaderHelper {
                 ret = true;
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(DBUtilErrorCode.ILLEGAL_SPLIT_PK,
+            throw DataXException.build(DBUtilErrorCode.ILLEGAL_SPLIT_PK,
                     "DataX获取切分主键(splitPk)字段类型失败. 该错误通常是系统底层异常导致. 请联系旺旺:askdatax或者DBA处理.");
         }
         return ret;

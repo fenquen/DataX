@@ -52,7 +52,7 @@ public final class OdpsSplitUtil {
         }
 
         if (null == partitions || partitions.isEmpty()) {
-            throw DataXException.asDataXException(OdpsReaderErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(OdpsReaderErrorCode.ILLEGAL_VALUE,
                     MESSAGE_SOURCE.message("odpssplitutil.1"));
         }
 

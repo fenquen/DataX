@@ -248,7 +248,7 @@ public class ConcurrentTableWriterTask extends CommonRdbmsWriter.Task {
                 	LOG.error("column not equal {} != {}, record = {}",
                 			this.columnNumber, record.getColumnNumber(), record.toString());
                     throw DataXException
-                            .asDataXException(
+                            .build(
                                     DBUtilErrorCode.CONF_ERROR,
                                     String.format("Recoverable exception in OB. Roll back this write and hibernate for one minute. SQLState: %d. ErrorCode: %d",
                                             record.getColumnNumber(),
@@ -259,7 +259,7 @@ public class ConcurrentTableWriterTask extends CommonRdbmsWriter.Task {
             addLeftRecords();
             waitTaskFinish();
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     DBUtilErrorCode.WRITE_DATA_ERROR, e);
         } finally {
             DBUtil.closeDBResources(null, null, connection);

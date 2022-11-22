@@ -18,7 +18,7 @@ public final class ListUtil {
     public static boolean checkIfValueDuplicate(List<String> aList,
                                                 boolean caseSensitive) {
         if (null == aList || aList.isEmpty()) {
-            throw DataXException.asDataXException(CommonErrorCode.CONFIG_ERROR,
+            throw DataXException.build(CommonErrorCode.CONFIG_ERROR,
                     "您提供的作业配置有误，List不能为空.");
         }
 
@@ -51,7 +51,7 @@ public final class ListUtil {
             for (int i = 0, len = list.size() - 1; i < len; i++) {
                 if (list.get(i).equals(list.get(i + 1))) {
                     throw DataXException
-                            .asDataXException(
+                            .build(
                                     CommonErrorCode.CONFIG_ERROR,
                                     String.format(
                                             "您提供的作业配置信息有误, String:[%s] 不允许重复出现在列表中: [%s].",
@@ -98,7 +98,7 @@ public final class ListUtil {
         for (String oneValue : part) {
             if (!all.contains(oneValue)) {
                 throw DataXException
-                        .asDataXException(
+                        .build(
                                 CommonErrorCode.CONFIG_ERROR,
                                 String.format(
                                         "您提供的作业配置信息有误, String:[%s] 不存在于列表中:[%s].",

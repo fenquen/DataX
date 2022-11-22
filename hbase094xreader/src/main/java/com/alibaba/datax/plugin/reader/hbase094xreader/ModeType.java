@@ -22,7 +22,7 @@ public enum ModeType {
             }
         }
 
-        throw DataXException.asDataXException(Hbase094xReaderErrorCode.ILLEGAL_VALUE,
+        throw DataXException.build(Hbase094xReaderErrorCode.ILLEGAL_VALUE,
                 String.format("HbaseReader 不支持该 mode 类型:%s, 目前支持的 mode 类型是:%s", modeName, Arrays.asList(values())));
     }
 }

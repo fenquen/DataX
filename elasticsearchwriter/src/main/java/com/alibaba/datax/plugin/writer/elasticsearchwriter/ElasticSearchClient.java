@@ -145,7 +145,7 @@ public class ElasticSearchClient {
         } catch (Exception e) {
             String message = "GetSettings for index error: " + e.getMessage();
             LOGGER.warn(message, e);
-            throw DataXException.asDataXException(ElasticSearchWriterErrorCode.ES_GET_SETTINGS, e.getMessage(), e);
+            throw DataXException.build(ElasticSearchWriterErrorCode.ES_GET_SETTINGS, e.getMessage(), e);
         }
     }
 
@@ -265,7 +265,7 @@ public class ElasticSearchClient {
         } catch (Exception e) {
             String message = "GetMapping for index error: " + e.getMessage();
             LOGGER.warn(message, e);
-            throw DataXException.asDataXException(ElasticSearchWriterErrorCode.ES_MAPPINGS, e.getMessage(), e);
+            throw DataXException.build(ElasticSearchWriterErrorCode.ES_MAPPINGS, e.getMessage(), e);
         }
     }
     

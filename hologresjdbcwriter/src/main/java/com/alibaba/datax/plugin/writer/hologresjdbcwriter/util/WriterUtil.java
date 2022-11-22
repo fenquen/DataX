@@ -40,7 +40,7 @@ public final class WriterUtil {
         }
 
         if (tableNumber != adviceNumber) {
-            throw DataXException.asDataXException(DBUtilErrorCode.CONF_ERROR,
+            throw DataXException.build(DBUtilErrorCode.CONF_ERROR,
                     String.format("您的配置文件中的列配置信息有误. 您要写入的目的端的表个数是:%s , 但是根据系统建议需要切分的份数是：%s. 请检查您的配置并作出修改.",
                             tableNumber, adviceNumber));
         }

@@ -93,9 +93,9 @@ public class MappingRuleFactory {
             final ImportType type = ImportType.valueOf(config.getString(Key.IMPORT_TYPE));
             return createV2(config, type);
         } catch (final NullPointerException e) {
-            throw DataXException.asDataXException(GdbWriterErrorCode.CONFIG_ITEM_MISS, Key.IMPORT_TYPE);
+            throw DataXException.build(GdbWriterErrorCode.CONFIG_ITEM_MISS, Key.IMPORT_TYPE);
         } catch (final IllegalArgumentException e) {
-            throw DataXException.asDataXException(GdbWriterErrorCode.BAD_CONFIG_VALUE, Key.IMPORT_TYPE);
+            throw DataXException.build(GdbWriterErrorCode.BAD_CONFIG_VALUE, Key.IMPORT_TYPE);
         }
     }
 

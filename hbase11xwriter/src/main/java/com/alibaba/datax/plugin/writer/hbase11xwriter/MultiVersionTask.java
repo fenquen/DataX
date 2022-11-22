@@ -16,7 +16,7 @@ public  class MultiVersionTask extends HbaseAbstractTask {
         if (record.getColumnNumber() != 4 ) {
             // multversion 模式下源头读取字段列数为4元组(rowkey,column,timestamp,value),目的端需告诉[]
             throw DataXException
-                    .asDataXException(
+                    .build(
                             Hbase11xWriterErrorCode.ILLEGAL_VALUE,
                             String.format(
                                     "HbaseWriter multversion模式下列配置信息有错误.源头应该为四元组,实际源头读取字段数:%s,请检查您的配置并作出修改.",

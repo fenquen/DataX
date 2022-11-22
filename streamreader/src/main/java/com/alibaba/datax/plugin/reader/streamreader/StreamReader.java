@@ -40,10 +40,10 @@ public class StreamReader extends Reader {
 			Long sliceRecordCount = this.originalConfig
 					.getLong(Key.SLICE_RECORD_COUNT);
 			if (null == sliceRecordCount) {
-				throw DataXException.asDataXException(StreamReaderErrorCode.REQUIRED_VALUE,
+				throw DataXException.build(StreamReaderErrorCode.REQUIRED_VALUE,
 						"没有设置参数[sliceRecordCount].");
 			} else if (sliceRecordCount < 1) {
-				throw DataXException.asDataXException(StreamReaderErrorCode.ILLEGAL_VALUE,
+				throw DataXException.build(StreamReaderErrorCode.ILLEGAL_VALUE,
 						"参数[sliceRecordCount]不能小于1.");
 			}
 
@@ -53,7 +53,7 @@ public class StreamReader extends Reader {
 			List<JSONObject> columns = originalConfig.getList(Key.COLUMN,
 					JSONObject.class);
 			if (null == columns || columns.isEmpty()) {
-				throw DataXException.asDataXException(StreamReaderErrorCode.REQUIRED_VALUE,
+				throw DataXException.build(StreamReaderErrorCode.REQUIRED_VALUE,
 						"没有设置参数[column].");
 			}
 
@@ -63,7 +63,7 @@ public class StreamReader extends Reader {
 				try {
                     this.parseMixupFunctions(eachColumnConfig);
                 } catch (Exception e) {
-                    throw DataXException.asDataXException(StreamReaderErrorCode.NOT_SUPPORT_TYPE,
+                    throw DataXException.build(StreamReaderErrorCode.NOT_SUPPORT_TYPE,
                             String.format("解析混淆函数失败[%s]", e.getMessage()), e);
                 }
 				
@@ -82,7 +82,7 @@ public class StreamReader extends Reader {
 						}
 					}
 					if (!Type.isTypeIllegal(typeName)) {
-						throw DataXException.asDataXException(
+						throw DataXException.build(
 								StreamReaderErrorCode.NOT_SUPPORT_TYPE,
 								String.format("不支持类型[%s]", typeName));
 					}
@@ -122,7 +122,7 @@ public class StreamReader extends Reader {
 		            String param2 = matcher.group(2);
 		            long param2Int = 0;
 		            if (StringUtils.isBlank(param1) && StringUtils.isBlank(param2)) {
-		                throw DataXException.asDataXException(
+		                throw DataXException.build(
 	                            StreamReaderErrorCode.ILLEGAL_VALUE,
 	                            String.format("random混淆函数不合法[%s], 混淆函数random的参数不能为空:%s, %s", columnMixup, param1, param2));
 		            }
@@ -136,7 +136,7 @@ public class StreamReader extends Reader {
                             param1Int = format.parse(param1).getTime();//milliseconds
                             param2Int = format.parse(param2).getTime();//milliseconds
 		                }catch (ParseException e) {
-		                    throw DataXException.asDataXException(
+		                    throw DataXException.build(
 	                                StreamReaderErrorCode.ILLEGAL_VALUE,
 	                                String.format("dateFormat参数[%s]和混淆函数random的参数不匹配，解析错误:%s, %s", dateFormat, param1, param2), e);
 		                }
@@ -145,13 +145,13 @@ public class StreamReader extends Reader {
 	                    param2Int = Integer.parseInt(param2);
 		            }
 		            if (param1Int < 0 || param2Int < 0) {
-		                throw DataXException.asDataXException(
+		                throw DataXException.build(
                                 StreamReaderErrorCode.ILLEGAL_VALUE,
                                 String.format("random混淆函数不合法[%s], 混淆函数random的参数不能为负数:%s, %s", columnMixup, param1, param2));
 		            }
 		            if (!Type.BOOL.name().equalsIgnoreCase(typeName)) {
 		                if (param1Int > param2Int) {
-		                    throw DataXException.asDataXException(
+		                    throw DataXException.build(
 	                                StreamReaderErrorCode.ILLEGAL_VALUE,
 	                                String.format("random混淆函数不合法[%s], 混淆函数random的参数需要第一个小于等于第二个:%s, %s", columnMixup, param1, param2));
 		                }
@@ -159,7 +159,7 @@ public class StreamReader extends Reader {
 		            eachColumnConfig.set(Constant.MIXUP_FUNCTION_PARAM1, param1Int);
                     eachColumnConfig.set(Constant.MIXUP_FUNCTION_PARAM2, param2Int);
 		        } else {
-		            throw DataXException.asDataXException(
+		            throw DataXException.build(
                             StreamReaderErrorCode.ILLEGAL_VALUE,
                             String.format("random混淆函数不合法[%s], 需要为param1, param2形式", columnMixup));
 		        }
@@ -325,7 +325,7 @@ public class StreamReader extends Reader {
 					record.addColumn(this.buildOneColumn(eachColumnConfig));
 				}
 			} catch (Exception e) {
-				throw DataXException.asDataXException(StreamReaderErrorCode.ILLEGAL_VALUE,
+				throw DataXException.build(StreamReaderErrorCode.ILLEGAL_VALUE,
 						"构造一个record失败.", e);
 			}
 			return record;

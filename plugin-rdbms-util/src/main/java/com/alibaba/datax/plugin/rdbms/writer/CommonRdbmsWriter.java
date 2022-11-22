@@ -62,11 +62,10 @@ public class CommonRdbmsWriter {
             /*检查insert 跟delete权限*/
             String username = originalConfig.getString(Key.USERNAME);
             String password = originalConfig.getString(Key.PASSWORD);
-            List<Object> connections = originalConfig.getList(Constant.CONN_MARK,
-                    Object.class);
+            List<Object> connections = originalConfig.getList(Constant.CONN_MARK, Object.class);
 
-            for (int i = 0, len = connections.size(); i < len; i++) {
-                Configuration connConf = Configuration.from(connections.get(i).toString());
+            for (Object connection : connections) {
+                Configuration connConf = Configuration.from(connection.toString());
                 String jdbcUrl = connConf.getString(Key.JDBC_URL);
                 List<String> expandedTables = connConf.getList(Key.TABLE, String.class);
                 boolean hasInsertPri = DBUtil.checkInsertPrivilege(dataBaseType, jdbcUrl, username, password, expandedTables);
@@ -91,10 +90,8 @@ public class CommonRdbmsWriter {
                 String username = originalConfig.getString(Key.USERNAME);
                 String password = originalConfig.getString(Key.PASSWORD);
 
-                List<Object> conns = originalConfig.getList(Constant.CONN_MARK,
-                        Object.class);
-                Configuration connConf = Configuration.from(conns.get(0)
-                        .toString());
+                List<Object> conns = originalConfig.getList(Constant.CONN_MARK, Object.class);
+                Configuration connConf = Configuration.from(conns.get(0).toString());
 
                 // 这里的 jdbcUrl 已经 append 了合适后缀参数
                 String jdbcUrl = connConf.getString(Key.JDBC_URL);
@@ -127,8 +124,7 @@ public class CommonRdbmsWriter {
                     originalConfig.toJSON());
         }
 
-        public List<Configuration> split(Configuration originalConfig,
-                                         int mandatoryNumber) {
+        public List<Configuration> split(Configuration originalConfig, int mandatoryNumber) {
             return WriterUtil.doSplit(originalConfig, mandatoryNumber);
         }
 
@@ -213,7 +209,7 @@ public class CommonRdbmsWriter {
                 String[] ss = this.jdbcUrl.split(Constant.OB10_SPLIT_STRING_PATTERN);
                 if (ss.length != 3) {
                     throw DataXException
-                            .asDataXException(
+                            .build(
                                     DBUtilErrorCode.JDBC_OB10_ADDRESS_ERROR, "JDBC OB10格式错误，请联系askdatax");
                 }
                 LOG.info("this is ob1_0 jdbc url.");
@@ -245,8 +241,7 @@ public class CommonRdbmsWriter {
             Connection connection = DBUtil.getConnection(this.dataBaseType,
                     this.jdbcUrl, username, password);
 
-            DBUtil.dealWithSessionConfig(connection, writerSliceConfig,
-                    this.dataBaseType, BASIC_MESSAGE);
+            DBUtil.dealWithSessionConfig(connection, writerSliceConfig, dataBaseType, BASIC_MESSAGE);
 
             int tableNumber = writerSliceConfig.getInt(
                     Constant.TABLE_NUMBER_MARK);
@@ -276,7 +271,7 @@ public class CommonRdbmsWriter {
                     if (record.getColumnNumber() != this.columnNumber) {
                         // 源头读取字段列数与目的表字段写入列数不相等，直接报错
                         throw DataXException
-                                .asDataXException(
+                                .build(
                                         DBUtilErrorCode.CONF_ERROR,
                                         String.format(
                                                 "列配置信息有错误. 因为您配置的任务中，源头读取字段数:%s 与 目的表要写入的字段数:%s 不相等. 请检查您的配置并作出修改.",
@@ -299,7 +294,7 @@ public class CommonRdbmsWriter {
                     bufferBytes = 0;
                 }
             } catch (Exception e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         DBUtilErrorCode.WRITE_DATA_ERROR, e);
             } finally {
                 writeBuffer.clear();
@@ -312,10 +307,8 @@ public class CommonRdbmsWriter {
         public void startWrite(RecordReceiver recordReceiver,
                                Configuration writerSliceConfig,
                                TaskPluginCollector taskPluginCollector) {
-            Connection connection = DBUtil.getConnection(this.dataBaseType,
-                    this.jdbcUrl, username, password);
-            DBUtil.dealWithSessionConfig(connection, writerSliceConfig,
-                    this.dataBaseType, BASIC_MESSAGE);
+            Connection connection = DBUtil.getConnection(dataBaseType, jdbcUrl, username, password);
+            DBUtil.dealWithSessionConfig(connection, writerSliceConfig, dataBaseType, BASIC_MESSAGE);
             startWriteWithConnection(recordReceiver, taskPluginCollector, connection);
         }
 
@@ -361,7 +354,7 @@ public class CommonRdbmsWriter {
                 connection.rollback();
                 doOneInsert(connection, buffer);
             } catch (Exception e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         DBUtilErrorCode.WRITE_DATA_ERROR, e);
             } finally {
                 DBUtil.closeDBResources(preparedStatement, null);
@@ -390,7 +383,7 @@ public class CommonRdbmsWriter {
                     }
                 }
             } catch (Exception e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         DBUtilErrorCode.WRITE_DATA_ERROR, e);
             } finally {
                 DBUtil.closeDBResources(preparedStatement, null);
@@ -533,7 +526,7 @@ public class CommonRdbmsWriter {
                     break;
                 default:
                     throw DataXException
-                            .asDataXException(
+                            .build(
                                     DBUtilErrorCode.UNSUPPORTED_TYPE,
                                     String.format(
                                             "您的配置文件中的列配置信息有误. 因为DataX 不支持数据库写入这种字段类型. 字段名:[%s], 字段类型:[%d], 字段Java类型:[%s]. 请修改表中该字段的类型或者不同步该字段.",

@@ -135,7 +135,7 @@ public abstract class UnstructuredSplitUtil {
             try {
                 ch = inputStream.read();
             } catch (IOException e) {
-                throw DataXException.asDataXException(UnstructuredStorageReaderErrorCode.READ_FILE_IO_ERROR,
+                throw DataXException.build(UnstructuredStorageReaderErrorCode.READ_FILE_IO_ERROR,
                         String.format("inputstream read Byte has exception: %s", e.getMessage()), e);
             }
             hasReadByteIndex++;

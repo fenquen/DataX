@@ -74,7 +74,7 @@ public abstract class TransformerExchanger {
             if (!transformerInfoExec.isChecked()) {
 
                 if (transformerInfoExec.getColumnIndex() != null && transformerInfoExec.getColumnIndex() >= record.getColumnNumber()) {
-                    throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_ILLEGAL_PARAMETER,
+                    throw DataXException.build(TransformerErrorCode.TRANSFORMER_ILLEGAL_PARAMETER,
                             String.format("columnIndex[%s] out of bound[%s]. name=%s",
                                     transformerInfoExec.getColumnIndex(), record.getColumnNumber(),
                                     transformerInfoExec.getTransformerName()));

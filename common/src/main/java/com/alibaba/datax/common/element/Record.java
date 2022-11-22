@@ -8,22 +8,22 @@ import java.util.Map;
 
 public interface Record {
 
-	public void addColumn(Column column);
+    void addColumn(Column column);
 
-	public void setColumn(int i, final Column column);
+    void setColumn(int i, final Column column);
 
-	public Column getColumn(int i);
+    Column getColumn(int i);
 
-	public String toString();
+    String toString();
 
-	public int getColumnNumber();
+    int getColumnNumber();
 
-	public int getByteSize();
+    int getByteSize();
 
-	public int getMemorySize();
+    int getMemorySize();
 
-	public void setMeta(Map<String, String> meta);
+    void setMeta(Map<String, String> meta);
 
-	public Map<String, String> getMeta();
+    Map<String, String> getMeta();
 
 }

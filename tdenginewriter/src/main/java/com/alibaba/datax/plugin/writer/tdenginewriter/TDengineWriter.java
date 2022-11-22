@@ -29,26 +29,26 @@ public class TDengineWriter extends Writer {
             // check username
             String user = this.originalConfig.getString(Key.USERNAME);
             if (StringUtils.isBlank(user))
-                throw DataXException.asDataXException(TDengineWriterErrorCode.REQUIRED_VALUE, "The parameter ["
+                throw DataXException.build(TDengineWriterErrorCode.REQUIRED_VALUE, "The parameter ["
                         + Key.USERNAME + "] is not set.");
 
             // check password
             String password = this.originalConfig.getString(Key.PASSWORD);
             if (StringUtils.isBlank(password))
-                throw DataXException.asDataXException(TDengineWriterErrorCode.REQUIRED_VALUE, "The parameter ["
+                throw DataXException.build(TDengineWriterErrorCode.REQUIRED_VALUE, "The parameter ["
                         + Key.PASSWORD + "] is not set.");
 
             // check connection
             List<Object> connection = this.originalConfig.getList(Key.CONNECTION);
             if (connection == null || connection.isEmpty())
-                throw DataXException.asDataXException(TDengineWriterErrorCode.REQUIRED_VALUE, "The parameter ["
+                throw DataXException.build(TDengineWriterErrorCode.REQUIRED_VALUE, "The parameter ["
                         + Key.CONNECTION + "] is not set.");
             if (connection.size() > 1)
                 LOG.warn("connection.size is " + connection.size() + " and only connection[0] will be used.");
             Configuration conn = Configuration.from(connection.get(0).toString());
             String jdbcUrl = conn.getString(Key.JDBC_URL);
             if (StringUtils.isBlank(jdbcUrl))
-                throw DataXException.asDataXException(TDengineWriterErrorCode.REQUIRED_VALUE, "The parameter ["
+                throw DataXException.build(TDengineWriterErrorCode.REQUIRED_VALUE, "The parameter ["
                         + Key.JDBC_URL + "] of connection is not set.");
 
             // check column

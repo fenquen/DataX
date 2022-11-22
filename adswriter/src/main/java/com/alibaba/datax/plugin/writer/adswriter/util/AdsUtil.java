@@ -38,13 +38,13 @@ public class AdsUtil {
                     AdsWriterErrorCode.REQUIRED_VALUE);
             Integer lifeCycle = originalConfig.getInt(Key.Life_CYCLE);
             if (lifeCycle <= 0) {
-                throw DataXException.asDataXException(AdsWriterErrorCode.INVALID_CONFIG_VALUE, "配置项[lifeCycle]的值必须大于零.");
+                throw DataXException.build(AdsWriterErrorCode.INVALID_CONFIG_VALUE, "配置项[lifeCycle]的值必须大于零.");
             }
             originalConfig.getNecessaryValue(Key.ADS_TABLE,
                     AdsWriterErrorCode.REQUIRED_VALUE);
             Boolean overwrite = originalConfig.getBool(Key.OVER_WRITE);
             if (overwrite == null) {
-                throw DataXException.asDataXException(AdsWriterErrorCode.REQUIRED_VALUE, "配置项[overWrite]是必填项.");
+                throw DataXException.build(AdsWriterErrorCode.REQUIRED_VALUE, "配置项[overWrite]是必填项.");
             }
         }
         if (Constant.STREAMMODE.equalsIgnoreCase(writeMode)) {
@@ -130,7 +130,7 @@ public class AdsUtil {
             }
         }
         if (adsPartition.contains("*"))
-            throw DataXException.asDataXException(AdsWriterErrorCode.ODPS_PARTITION_FAILED, "");
+            throw DataXException.build(AdsWriterErrorCode.ODPS_PARTITION_FAILED, "");
         return adsPartition;
     }
 

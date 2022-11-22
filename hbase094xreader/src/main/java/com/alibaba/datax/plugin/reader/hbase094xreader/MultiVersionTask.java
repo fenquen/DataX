@@ -35,7 +35,7 @@ public abstract class MultiVersionTask extends HbaseAbstractTask {
         try {
             MultiVersionTask.COLON_BYTE = ":".getBytes("utf8");
         } catch (UnsupportedEncodingException e) {
-            throw DataXException.asDataXException(Hbase094xReaderErrorCode.PREPAR_READ_ERROR, "系统内部获取 列族与列名冒号分隔符的二进制时失败.", e);
+            throw DataXException.build(Hbase094xReaderErrorCode.PREPAR_READ_ERROR, "系统内部获取 列族与列名冒号分隔符的二进制时失败.", e);
         }
     }
 

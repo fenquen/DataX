@@ -59,7 +59,7 @@ public class HbaseSQLHelper {
         try {
             info = PhoenixEmbeddedDriver.ConnectionInfo.create(zkUrl);
         } catch (SQLException e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.GET_PHOENIX_CONNECTIONINFO_ERROR, "通过zkURL获取phoenix的connectioninfo出错，请检查hbase集群服务是否正常", e);
         }
         conf.set(HConstants.ZOOKEEPER_QUORUM, info.getZookeeperQuorum());
@@ -106,10 +106,10 @@ public class HbaseSQLHelper {
                 resultConfigurations.add(cfg);
             }
         } catch (IOException e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.GET_PHOENIX_SPLITS_ERROR, "获取表的split信息时出现了异常，请检查hbase集群服务是否正常," + e.getMessage(), e);
         } catch (InterruptedException e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.GET_PHOENIX_SPLITS_ERROR, "获取表的split信息时被中断，请重试，若还有问题请联系datax管理员," + e.getMessage(), e);
         }
 

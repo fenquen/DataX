@@ -36,7 +36,7 @@ public class FilterTransformer extends Transformer {
                 throw new RuntimeException("dx_filter para 2 can't be null");
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_ILLEGAL_PARAMETER, "paras:" + Arrays.asList(paras).toString() + " => " + e.getMessage());
+            throw DataXException.build(TransformerErrorCode.TRANSFORMER_ILLEGAL_PARAMETER, "paras:" + Arrays.asList(paras).toString() + " => " + e.getMessage());
         }
 
 
@@ -64,7 +64,7 @@ public class FilterTransformer extends Transformer {
                 throw new RuntimeException("dx_filter can't support code:" + code);
             }
         } catch (Exception e) {
-            throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_RUN_EXCEPTION, e.getMessage(), e);
+            throw DataXException.build(TransformerErrorCode.TRANSFORMER_RUN_EXCEPTION, e.getMessage(), e);
         }
     }
 

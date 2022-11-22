@@ -27,7 +27,7 @@ public class SqlServerReader extends Reader {
 					Constant.DEFAULT_FETCH_SIZE);
 			if (fetchSize < 1) {
 				throw DataXException
-						.asDataXException(DBUtilErrorCode.REQUIRED_VALUE,
+						.build(DBUtilErrorCode.REQUIRED_VALUE,
 								String.format("您配置的fetchSize有误，根据DataX的设计，fetchSize : [%d] 设置值不能小于 1.",
 										fetchSize));
 			}

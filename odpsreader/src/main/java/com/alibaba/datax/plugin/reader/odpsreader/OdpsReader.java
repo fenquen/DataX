@@ -70,7 +70,7 @@ public class OdpsReader extends Reader {
 
             boolean isVirtualView = this.table.isVirtualView();
             if (isVirtualView) {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.VIRTUAL_VIEW_NOT_SUPPORT,
+                throw DataXException.build(OdpsReaderErrorCode.VIRTUAL_VIEW_NOT_SUPPORT,
                     MESSAGE_SOURCE.message("odpsreader.1", tableName));
             }
 
@@ -84,7 +84,7 @@ public class OdpsReader extends Reader {
                 splitMode.equalsIgnoreCase(Constant.PARTITION_SPLIT_MODE)) {
                 originalConfig.set(Key.SPLIT_MODE, splitMode);
             } else {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.SPLIT_MODE_ERROR,
+                throw DataXException.build(OdpsReaderErrorCode.SPLIT_MODE_ERROR,
                     MESSAGE_SOURCE.message("odpsreader.2", splitMode));
             }
         }
@@ -108,7 +108,7 @@ public class OdpsReader extends Reader {
             if (isPartitionedTable) {
                 // 分区表，需要配置分区
                 if (null == userConfiguredPartitions || userConfiguredPartitions.isEmpty()) {
-                    throw DataXException.asDataXException(OdpsReaderErrorCode.PARTITION_ERROR,
+                    throw DataXException.build(OdpsReaderErrorCode.PARTITION_ERROR,
                         MESSAGE_SOURCE.message("odpsreader.3", table.getName()));
                 } else {
                     // 获取分区列名, 支持用户配置分区列同步
@@ -124,7 +124,7 @@ public class OdpsReader extends Reader {
                         if (!this.successOnNoPartition) {
                             // PARTITION_NOT_EXISTS_ERROR 这个异常ErrorCode在AdsWriter有使用，用户判断空分区Load Data任务不报错
                             // 其他类型的异常不要使用这个错误码
-                            throw DataXException.asDataXException(
+                            throw DataXException.build(
                                 OdpsReaderErrorCode.PARTITION_NOT_EXISTS_ERROR,
                                 MESSAGE_SOURCE.message("odpsreader.5",
                                     StringUtils.join(allPartitions, "\n"),
@@ -149,7 +149,7 @@ public class OdpsReader extends Reader {
                 // 非分区表，则不能配置分区
                 if (null != userConfiguredPartitions
                     && !userConfiguredPartitions.isEmpty()) {
-                    throw DataXException.asDataXException(OdpsReaderErrorCode.PARTITION_ERROR,
+                    throw DataXException.build(OdpsReaderErrorCode.PARTITION_ERROR,
                         MESSAGE_SOURCE.message("odpsreader.6", table.getName()));
                 }
             }
@@ -216,7 +216,7 @@ public class OdpsReader extends Reader {
                 sqliteUtil.loadAllPartitionsIntoSqlite(table, allPartitions);
                 return sqliteUtil.selectUserConfiguredPartition(userHintConfiguredPartitions);
             } catch (Exception ex) {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.PARTITION_ERROR,
+                throw DataXException.build(OdpsReaderErrorCode.PARTITION_ERROR,
                     String.format("Expand user configured partition has exception: %s", ex.getMessage()), ex);
             }
         }
@@ -258,7 +258,7 @@ public class OdpsReader extends Reader {
                 comparedPartition = allStandardUserConfiguredPartitions.get(i);
                 comparedPartitionDepth = comparedPartition.split(",").length;
                 if (comparedPartitionDepth != firstPartitionDepth) {
-                    throw DataXException.asDataXException(OdpsReaderErrorCode.PARTITION_ERROR,
+                    throw DataXException.build(OdpsReaderErrorCode.PARTITION_ERROR,
                         MESSAGE_SOURCE
                             .message("odpsreader.8", firstPartition, firstPartitionDepth, comparedPartition,
                                 comparedPartitionDepth));
@@ -266,7 +266,7 @@ public class OdpsReader extends Reader {
             }
 
             if (firstPartitionDepth != tableOriginalPartitionDepth) {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.PARTITION_ERROR,
+                throw DataXException.build(OdpsReaderErrorCode.PARTITION_ERROR,
                     MESSAGE_SOURCE
                         .message("odpsreader.9", firstPartition, firstPartitionDepth, tableOriginalPartitionDepth));
             }
@@ -485,7 +485,7 @@ public class OdpsReader extends Reader {
                 LOG.warn(MESSAGE_SOURCE.message("odpsreader.12", this.tableName, partition));
                 return;
             } else {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.READ_DATA_FAIL,
+                throw DataXException.build(OdpsReaderErrorCode.READ_DATA_FAIL,
                     MESSAGE_SOURCE.message("odpsreader.13", this.tableName, partition));
             }
 
@@ -507,7 +507,7 @@ public class OdpsReader extends Reader {
                         start, count, this.isCompress, this.readerSliceConf);
                 readerProxy.doRead();
             } catch (Exception e) {
-                throw DataXException.asDataXException(OdpsReaderErrorCode.READ_DATA_FAIL,
+                throw DataXException.build(OdpsReaderErrorCode.READ_DATA_FAIL,
                     MESSAGE_SOURCE.message("odpsreader.14", this.tableName, partition), e);
             }
 

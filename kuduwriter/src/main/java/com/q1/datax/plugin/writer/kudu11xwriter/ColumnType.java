@@ -31,7 +31,7 @@ public enum ColumnType {
                 return modeType;
             }
         }
-        throw DataXException.asDataXException(Kudu11xWriterErrorcode.ILLEGAL_VALUE,
+        throw DataXException.build(Kudu11xWriterErrorcode.ILLEGAL_VALUE,
                 String.format("Kuduwriter does not support the type:%s, currently supported types are:%s", modeName, Arrays.asList(values())));
     }
 }

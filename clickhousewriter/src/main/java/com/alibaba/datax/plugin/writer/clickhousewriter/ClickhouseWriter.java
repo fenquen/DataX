@@ -224,7 +224,7 @@ public class ClickhouseWriter extends Writer {
 									break;
 								}
 								throw DataXException
-										.asDataXException(
+										.build(
 												DBUtilErrorCode.UNSUPPORTED_TYPE,
 												String.format(
 														"您的配置文件中的列配置信息有误. 因为DataX 不支持数据库写入这种字段类型. 字段名:[%s], 字段类型:[%d], 字段Java类型:[%s]. 请修改表中该字段的类型或者不同步该字段.",
@@ -241,7 +241,7 @@ public class ClickhouseWriter extends Writer {
 						if (e.getErrorCode() == CommonErrorCode.CONVERT_NOT_SUPPORT ||
 								e.getErrorCode() == CommonErrorCode.CONVERT_OVER_FLOW) {
 							throw DataXException
-									.asDataXException(
+									.build(
 											e.getErrorCode(),
 											String.format(
 													"类型转化错误. 字段名:[%s], 字段类型:[%d], 字段Java类型:[%s]. 请修改表中该字段的类型或者不同步该字段.",
@@ -278,7 +278,7 @@ public class ClickhouseWriter extends Writer {
 						case Types.OTHER:
 							if (this.resultSetMetaData.getRight().get(columnIndex).startsWith("Tuple")) {
 								throw DataXException
-										.asDataXException(ClickhouseWriterErrorCode.TUPLE_NOT_SUPPORTED_ERROR, ClickhouseWriterErrorCode.TUPLE_NOT_SUPPORTED_ERROR.getDescription());
+										.build(ClickhouseWriterErrorCode.TUPLE_NOT_SUPPORTED_ERROR, ClickhouseWriterErrorCode.TUPLE_NOT_SUPPORTED_ERROR.getDescription());
 							} else {
 								ps.setString(columnIndex + 1, column.asString());
 							}

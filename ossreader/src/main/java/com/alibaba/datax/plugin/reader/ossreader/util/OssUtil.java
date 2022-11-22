@@ -37,7 +37,7 @@ public class OssUtil {
             client = new OSSClient(endpoint, accessId, accessKey, ossConf);
 
         } catch (IllegalArgumentException e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     OssReaderErrorCode.ILLEGAL_VALUE, e.getMessage());
         }
 

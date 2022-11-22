@@ -4,13 +4,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +17,6 @@ import com.alibaba.datax.common.element.Column;
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 
 import com.datastax.driver.core.BoundStatement;
@@ -33,8 +29,6 @@ import com.datastax.driver.core.TupleType;
 import com.datastax.driver.core.TupleValue;
 import com.datastax.driver.core.UDTValue;
 import com.datastax.driver.core.UserType;
-import com.datastax.driver.core.UserType.Field;
-import com.google.common.base.Splitter;
 import org.apache.commons.codec.binary.Base64;
 
 /**
@@ -135,7 +129,7 @@ public class CassandraWriterHelper {
       return parseFromJson(jsonObject,sqlType);
 
     default:
-      throw DataXException.asDataXException(CassandraWriterErrorCode.CONF_ERROR,
+      throw DataXException.build(CassandraWriterErrorCode.CONF_ERROR,
           "不支持您配置的列类型:" + sqlType + ", 请检查您的配置 或者 联系 管理员.");
 
     } // end switch
@@ -339,7 +333,7 @@ public class CassandraWriterHelper {
         break;
 
       default:
-        throw DataXException.asDataXException(CassandraWriterErrorCode.CONF_ERROR,
+        throw DataXException.build(CassandraWriterErrorCode.CONF_ERROR,
             "不支持您配置的列类型:" + sqlType + ", 请检查您的配置 或者 联系 管理员.");
 
       } // end switch

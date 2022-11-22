@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +59,7 @@ public class HbaseSQLReaderTask {
         try {
             this.getPColumns();
         } catch (SQLException e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.GET_PHOENIX_CONNECTIONINFO_ERROR, "获取表的列出问题，重试，若还有问题请检查hbase集群状态,"+ e.getMessage());
         }
         this.phoenixInputFormat = new PhoenixInputFormat<PhoenixRecordWritable>();
@@ -74,7 +73,7 @@ public class HbaseSQLReaderTask {
             HadoopSerializationUtil.deserialize(phoenixInputSplit, splitBytes);
             this.phoenixRecordReader = (PhoenixRecordReader) phoenixInputFormat.createRecordReader(phoenixInputSplit, hadoopAttemptContext);
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.PHOENIX_CREATEREADER_ERROR, "创建phoenix的reader出现问题,请重试，若还有问题请检查hbase集群状态," + e.getMessage());
         }
     }
@@ -83,10 +82,10 @@ public class HbaseSQLReaderTask {
         try {
             this.phoenixRecordReader.initialize(this.phoenixInputSplit, hadoopAttemptContext);
         } catch (IOException e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.PHOENIX_READERINIT_ERROR, "phoenix的reader初始化出现问题,请重试，若还有问题请检查hbase集群状态" + e.getMessage());
         } catch (InterruptedException e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     HbaseSQLReaderErrorCode.PHOENIX_READERINIT_ERROR, "phoenix的reader初始化被中断,请重试," + e.getMessage());
         }
     }
@@ -137,7 +136,7 @@ public class HbaseSQLReaderTask {
                 column = new DateColumn((Timestamp) value);
                 break;
             default:
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         HbaseSQLReaderErrorCode.PHOENIX_COLUMN_TYPE_CONVERT_ERROR, "遇到不可识别的phoenix类型，" + "sqlType :" + sqlType);
         }
         return column;
@@ -168,7 +167,7 @@ public class HbaseSQLReaderTask {
             try {
                 this.phoenixRecordReader.close();
             } catch (IOException e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         HbaseSQLReaderErrorCode.PHOENIX_READER_CLOSE_ERROR, "phoenix的reader close失败,请重试，若还有问题请检查hbase集群状态" + e.getMessage());
             }
         }

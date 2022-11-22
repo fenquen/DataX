@@ -382,7 +382,7 @@ public class CassandraReaderHelper {
 
         default:
           throw DataXException
-              .asDataXException(
+              .build(
                   CassandraReaderErrorCode.CONF_ERROR,
                   String.format(
                       "您的配置文件中的列配置信息有误. 因为DataX 不支持数据库读取这种字段类型. 字段名:[%s], "
@@ -392,7 +392,7 @@ public class CassandraReaderHelper {
         }
       } catch (TypeNotSupported t) {
         throw DataXException
-            .asDataXException(
+            .build(
                 CassandraReaderErrorCode.CONF_ERROR,
                 String.format(
                     "您的配置文件中的列配置信息有误. 因为DataX 不支持数据库读取这种字段类型. 字段名:[%s], "
@@ -533,7 +533,7 @@ public class CassandraReaderHelper {
     String keyspace = jobConfig.getString(Key.KEYSPACE);
     if( cluster.getMetadata().getKeyspace(keyspace) == null ) {
       throw DataXException
-          .asDataXException(
+          .build(
               CassandraReaderErrorCode.CONF_ERROR,
               String.format(
                   "配置信息有错误.keyspace'%s'不存在 .",
@@ -543,7 +543,7 @@ public class CassandraReaderHelper {
     TableMetadata tableMetadata = cluster.getMetadata().getKeyspace(keyspace).getTable(table);
     if( tableMetadata == null ) {
       throw DataXException
-          .asDataXException(
+          .build(
               CassandraReaderErrorCode.CONF_ERROR,
               String.format(
                   "配置信息有错误.表'%s'不存在 .",
@@ -553,7 +553,7 @@ public class CassandraReaderHelper {
     for( String name : columns ) {
       if( name == null || name.isEmpty() ) {
         throw DataXException
-            .asDataXException(
+            .build(
                 CassandraReaderErrorCode.CONF_ERROR,
                 String.format(
                     "配置信息有错误.列信息中需要包含'%s'字段 .",Key.COLUMN_NAME));
@@ -563,7 +563,7 @@ public class CassandraReaderHelper {
         ColumnMetadata col = tableMetadata.getColumn(colName);
         if( col == null ) {
           throw DataXException
-              .asDataXException(
+              .build(
                   CassandraReaderErrorCode.CONF_ERROR,
                   String.format(
                       "配置信息有错误.列'%s'不存在 .",colName));
@@ -572,7 +572,7 @@ public class CassandraReaderHelper {
         ColumnMetadata col = tableMetadata.getColumn(name);
         if( col == null ) {
           throw DataXException
-              .asDataXException(
+              .build(
                   CassandraReaderErrorCode.CONF_ERROR,
                   String.format(
                       "配置信息有错误.列'%s'不存在 .",name));
@@ -584,7 +584,7 @@ public class CassandraReaderHelper {
   static void ensureExists(Configuration jobConfig,String keyword) {
     if( jobConfig.get(keyword) == null ) {
       throw DataXException
-          .asDataXException(
+          .build(
               CassandraReaderErrorCode.CONF_ERROR,
               String.format(
                   "配置信息有错误.参数'%s'为必填项 .",
@@ -596,7 +596,7 @@ public class CassandraReaderHelper {
     ensureExists(jobConfig,keyword);
     if( jobConfig.getString(keyword).isEmpty() ) {
       throw DataXException
-          .asDataXException(
+          .build(
               CassandraReaderErrorCode.CONF_ERROR,
               String.format(
                   "配置信息有错误.参数'%s'不能为空 .",

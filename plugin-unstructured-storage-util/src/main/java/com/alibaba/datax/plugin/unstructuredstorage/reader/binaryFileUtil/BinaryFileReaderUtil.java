@@ -5,7 +5,6 @@ import com.alibaba.datax.common.element.Column;
 import com.alibaba.datax.common.element.Record;
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.plugin.RecordSender;
-import com.alibaba.datax.plugin.unstructuredstorage.reader.Key;
 import com.alibaba.datax.plugin.unstructuredstorage.reader.UnstructuredStorageReaderErrorCode;
 import com.alibaba.datax.plugin.unstructuredstorage.reader.UnstructuredStorageReaderUtil;
 import org.slf4j.Logger;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -46,7 +44,7 @@ public class BinaryFileReaderUtil {
             recordSenderBytesColumn(recordSender, byteUtils.getBuffer(), meta);
             LOG.info("End read!!!");
         } catch (IOException e) {
-            throw DataXException.asDataXException(UnstructuredStorageReaderErrorCode.READ_FILE_IO_ERROR, e);
+            throw DataXException.build(UnstructuredStorageReaderErrorCode.READ_FILE_IO_ERROR, e);
         }
     }
 

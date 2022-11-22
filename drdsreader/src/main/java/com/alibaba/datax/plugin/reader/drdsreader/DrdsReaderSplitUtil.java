@@ -38,7 +38,7 @@ public class DrdsReaderSplitUtil {
             originalSliceConfig.remove(Constant.CONN_MARK);
             return doDrdsReaderSplit(originalSliceConfig);
         } else {
-            throw DataXException.asDataXException(DBUtilErrorCode.CONF_ERROR, "您的配置信息中的表(table)的配置有误. 因为Drdsreader 只需要读取一张逻辑表,后台会通过DRDS Proxy自动获取实际对应物理表的数据. 请检查您的配置并作出修改.");
+            throw DataXException.build(DBUtilErrorCode.CONF_ERROR, "您的配置信息中的表(table)的配置有误. 因为Drdsreader 只需要读取一张逻辑表,后台会通过DRDS Proxy自动获取实际对应物理表的数据. 请检查您的配置并作出修改.");
         }
     }
 
@@ -47,7 +47,7 @@ public class DrdsReaderSplitUtil {
 
         Map<String, List<String>> topology = getTopology(originalSliceConfig);
         if (null == topology || topology.isEmpty()) {
-            throw DataXException.asDataXException(DrdsReaderErrorCode.GET_TOPOLOGY_FAILED,
+            throw DataXException.build(DrdsReaderErrorCode.GET_TOPOLOGY_FAILED,
                     "获取 drds 表拓扑结构失败, 拓扑结构不能为空.");
         } else {
             String table = originalSliceConfig.getString(Key.TABLE).trim();
@@ -110,7 +110,7 @@ public class DrdsReaderSplitUtil {
 
             return topology;
         } catch (Exception e) {
-            throw DataXException.asDataXException(DrdsReaderErrorCode.GET_TOPOLOGY_FAILED,
+            throw DataXException.build(DrdsReaderErrorCode.GET_TOPOLOGY_FAILED,
                     String.format("获取 drds 表拓扑结构失败.根据您的配置, datax获取不到拓扑信息。相关上下文信息:表:%s, jdbcUrl:%s . 请联系 drds 管理员处理.", logicTable, jdbcURL), e);
         } finally {
             DBUtil.closeDBResources(rs, null, conn);

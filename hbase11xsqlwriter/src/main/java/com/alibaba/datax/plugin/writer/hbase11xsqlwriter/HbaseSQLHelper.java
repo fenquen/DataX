@@ -80,7 +80,7 @@ public class HbaseSQLHelper {
         try {
             schema = getTableSchema(conn, cfg.getNamespace(), cfg.getTableName(), cfg.isThinClient());
         } catch (SQLException e) {
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.GET_HBASE_CONNECTION_ERROR,
+            throw DataXException.build(HbaseSQLWriterErrorCode.GET_HBASE_CONNECTION_ERROR,
                     "无法获取目的表" + cfg.getTableName() + "的元数据信息，表可能不是SQL表或表名配置错误，请检查您的配置 或者 联系 HBase 管理员.", e);
         }
 
@@ -91,11 +91,11 @@ public class HbaseSQLHelper {
             }
         } catch (ColumnNotFoundException e) {
             // 用户配置的列名在元数据中不存在
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
                     "您配置的列" + e.getColumnName() + "在目的表" + cfg.getTableName() + "的元数据中不存在，请检查您的配置 或者 联系 HBase 管理员.", e);
         } catch (SQLException e) {
             // 列名有二义性或者其他问题
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
                     "目的表" + cfg.getTableName() + "的列信息校验失败，请检查您的配置 或者 联系 HBase 管理员.", e);
         }
     }
@@ -116,7 +116,7 @@ public class HbaseSQLHelper {
             }
             conn.setAutoCommit(false);
         } catch (Throwable e) {
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.GET_HBASE_CONNECTION_ERROR,
+            throw DataXException.build(HbaseSQLWriterErrorCode.GET_HBASE_CONNECTION_ERROR,
                     "无法连接hbase集群，配置不正确或目标集群不可用，请检查配置和集群状态 或者 联系 HBase 管理员.", e);
         }
         LOG.debug("Connected to HBase cluster successfully.");
@@ -140,7 +140,7 @@ public class HbaseSQLHelper {
           statement.executeUpdate(userNamespaceQuery);
           return conn;
         } catch (Exception e) {
-          throw DataXException.asDataXException(HbaseSQLWriterErrorCode.GET_HBASE_CONNECTION_ERROR,
+          throw DataXException.build(HbaseSQLWriterErrorCode.GET_HBASE_CONNECTION_ERROR,
               "无法连接配置的namespace, 请检查配置 或者 联系 HBase 管理员.", e);
         } finally {
           if (statement != null) {
@@ -245,7 +245,7 @@ public class HbaseSQLHelper {
             LOG.debug("Table " + tableName + " has been truncated.");
         } catch (Throwable t) {
             // 清空表失败
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.TRUNCATE_HBASE_ERROR,
+            throw DataXException.build(HbaseSQLWriterErrorCode.TRUNCATE_HBASE_ERROR,
                     "清空目的表" + tableName + "失败，请联系 HBase 管理员.", t);
         } finally {
             if (admin != null) {
@@ -284,10 +284,10 @@ public class HbaseSQLHelper {
             TableName hTableName = TableName.valueOf(tableName);
             checkTable(admin, hTableName);
         } catch (SQLException t) {
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.TRUNCATE_HBASE_ERROR,
+            throw DataXException.build(HbaseSQLWriterErrorCode.TRUNCATE_HBASE_ERROR,
                     "表" + tableName + "状态检查未通过，请检查您的集群和表状态 或者 联系 Hbase 管理员.", t);
         } catch (IOException t) {
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.TRUNCATE_HBASE_ERROR,
+            throw DataXException.build(HbaseSQLWriterErrorCode.TRUNCATE_HBASE_ERROR,
                     "表" + tableName + "状态检查未通过，请检查您的集群和表状态 或者 联系 Hbase 管理员.", t);
         } finally {
             if (admin != null) {
@@ -298,15 +298,15 @@ public class HbaseSQLHelper {
 
     private static void checkTable(Admin admin, TableName tableName) throws IOException {
         if(!admin.tableExists(tableName)){
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
                     "HBase目的表" + tableName.toString() + "不存在, 请检查您的配置 或者 联系 Hbase 管理员.");
         }
         if(!admin.isTableAvailable(tableName)){
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
                     "HBase目的表" + tableName.toString() + "不可用, 请检查您的配置 或者 联系 Hbase 管理员.");
         }
         if(admin.isTableDisabled(tableName)){
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
                     "HBase目的表" + tableName.toString() + "不可用, 请检查您的配置 或者 联系 Hbase 管理员.");
         }
     }
@@ -316,7 +316,7 @@ public class HbaseSQLHelper {
             if(null != admin)
                 admin.close();
         } catch (IOException e) {
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.CLOSE_HBASE_AMIN_ERROR, e);
+            throw DataXException.build(HbaseSQLWriterErrorCode.CLOSE_HBASE_AMIN_ERROR, e);
         }
     }
 }

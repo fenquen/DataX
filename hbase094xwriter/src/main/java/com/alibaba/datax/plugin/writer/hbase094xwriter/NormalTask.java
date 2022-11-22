@@ -7,14 +7,11 @@ import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.util.Configuration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,7 +44,7 @@ public class NormalTask extends HbaseAbstractTask {
                     && StringUtils.isNotBlank(cfAndQualifier[0])
                     && StringUtils.isNotBlank(cfAndQualifier[1]), promptInfo);
             if(index >= record.getColumnNumber()){
-                throw DataXException.asDataXException(Hbase094xWriterErrorCode.ILLEGAL_VALUE, String.format("您的column配置项中中index值超出范围,根据reader端配置,index的值小于%s,而您配置的值为%s，请检查并修改.",record.getColumnNumber(),index));
+                throw DataXException.build(Hbase094xWriterErrorCode.ILLEGAL_VALUE, String.format("您的column配置项中中index值超出范围,根据reader端配置,index的值小于%s,而您配置的值为%s，请检查并修改.",record.getColumnNumber(),index));
             }
             byte[] columnBytes = getColumnByte(columnType,record.getColumn(index));
             //columnBytes 为null忽略这列
@@ -74,7 +71,7 @@ public class NormalTask extends HbaseAbstractTask {
                 rowkeyBuffer = Bytes.add(rowkeyBuffer,getValueByte(columnType,value));
             }else{
                 if(index >= record.getColumnNumber()){
-                    throw DataXException.asDataXException(Hbase094xWriterErrorCode.CONSTRUCT_ROWKEY_ERROR, String.format("您的rowkeyColumn配置项中中index值超出范围,根据reader端配置,index的值小于%s,而您配置的值为%s，请检查并修改.",record.getColumnNumber(),index));
+                    throw DataXException.build(Hbase094xWriterErrorCode.CONSTRUCT_ROWKEY_ERROR, String.format("您的rowkeyColumn配置项中中index值超出范围,根据reader端配置,index的值小于%s,而您配置的值为%s，请检查并修改.",record.getColumnNumber(),index));
                 }
                 byte[] value = getColumnByte(columnType,record.getColumn(index));
                 rowkeyBuffer = Bytes.add(rowkeyBuffer, value);
@@ -90,15 +87,15 @@ public class NormalTask extends HbaseAbstractTask {
             //指定时间作为版本
             timestamp = versionColumn.getLong(Key.VALUE);
             if(timestamp < 0){
-                throw DataXException.asDataXException(Hbase094xWriterErrorCode.CONSTRUCT_VERSION_ERROR, "您指定的版本非法!");
+                throw DataXException.build(Hbase094xWriterErrorCode.CONSTRUCT_VERSION_ERROR, "您指定的版本非法!");
             }
         }else{
             //指定列作为版本,long/doubleColumn直接record.aslong, 其它类型尝试用yyyy-MM-dd HH:mm:ss,yyyy-MM-dd HH:mm:ss SSS去format
             if(index >= record.getColumnNumber()){
-                throw DataXException.asDataXException(Hbase094xWriterErrorCode.CONSTRUCT_VERSION_ERROR, String.format("您的versionColumn配置项中中index值超出范围,根据reader端配置,index的值小于%s,而您配置的值为%s，请检查并修改.",record.getColumnNumber(),index));
+                throw DataXException.build(Hbase094xWriterErrorCode.CONSTRUCT_VERSION_ERROR, String.format("您的versionColumn配置项中中index值超出范围,根据reader端配置,index的值小于%s,而您配置的值为%s，请检查并修改.",record.getColumnNumber(),index));
             }
             if(record.getColumn(index).getRawData()  == null){
-                throw DataXException.asDataXException(Hbase094xWriterErrorCode.CONSTRUCT_VERSION_ERROR, "您指定的版本为空!");
+                throw DataXException.build(Hbase094xWriterErrorCode.CONSTRUCT_VERSION_ERROR, "您指定的版本为空!");
             }
             SimpleDateFormat df_senconds = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             SimpleDateFormat df_ms = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
@@ -113,7 +110,7 @@ public class NormalTask extends HbaseAbstractTask {
                         date = df_senconds.parse(record.getColumn(index).asString());
                     } catch (ParseException e1) {
                         LOG.info(String.format("您指定第[%s]列作为hbase写入版本,但在尝试用yyyy-MM-dd HH:mm:ss 和 yyyy-MM-dd HH:mm:ss SSS 去解析为Date时均出错,请检查并修改",index));
-                        throw DataXException.asDataXException(Hbase094xWriterErrorCode.CONSTRUCT_VERSION_ERROR, e1);
+                        throw DataXException.build(Hbase094xWriterErrorCode.CONSTRUCT_VERSION_ERROR, e1);
                     }
                 }
                 timestamp = date.getTime();

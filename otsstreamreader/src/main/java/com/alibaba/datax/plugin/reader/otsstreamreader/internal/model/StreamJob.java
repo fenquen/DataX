@@ -107,9 +107,9 @@ public class StreamJob {
                 rowChange.addColumn(StatusTableConstants.JOB_SHARD_LIST_PREFIX_COLUMN_NAME + id, columns.get(id));
             }
         } catch (UnsupportedEncodingException e) {
-            throw DataXException.asDataXException(OTSReaderError.ERROR, e);
+            throw DataXException.build(OTSReaderError.ERROR, e);
         } catch (IOException e) {
-            throw DataXException.asDataXException(OTSReaderError.ERROR, e);
+            throw DataXException.build(OTSReaderError.ERROR, e);
         }
     }
 
@@ -135,11 +135,11 @@ public class StreamJob {
             String json = new String(realContent, "utf-8");
             return new HashSet<String>(GsonParser.jsonToList(json));
         } catch (UnsupportedEncodingException e) {
-            throw DataXException.asDataXException(OTSReaderError.ERROR, e);
+            throw DataXException.build(OTSReaderError.ERROR, e);
         } catch (IOException e) {
-            throw DataXException.asDataXException(OTSReaderError.ERROR, e);
+            throw DataXException.build(OTSReaderError.ERROR, e);
         } catch (DataFormatException e) {
-            throw DataXException.asDataXException(OTSReaderError.ERROR, e);
+            throw DataXException.build(OTSReaderError.ERROR, e);
         }
     }
 

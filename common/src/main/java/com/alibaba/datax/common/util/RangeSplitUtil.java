@@ -14,11 +14,15 @@ public final class RangeSplitUtil {
     public static String[] doAsciiStringSplit(String left, String right, int expectSliceNumber) {
         int radix = 128;
 
-        BigInteger[] tempResult = doBigIntegerSplit(stringToBigInteger(left, radix),
-                stringToBigInteger(right, radix), expectSliceNumber);
+        BigInteger[] tempResult = doBigIntegerSplit(
+                stringToBigInteger(left, radix),
+                stringToBigInteger(right, radix),
+                expectSliceNumber
+        );
+
         String[] result = new String[tempResult.length];
 
-        //处理第一个字符串（因为：在转换为数字，再还原的时候，如果首字符刚好是 basic,则不知道应该添加多少个 basic）
+        // 处理第一个字符串（因为：在转换为数字，再还原的时候，如果首字符刚好是 basic,则不知道应该添加多少个 basic）
         result[0] = left;
         result[tempResult.length - 1] = right;
 
@@ -40,62 +44,64 @@ public final class RangeSplitUtil {
         return returnResult;
     }
 
-    public static BigInteger[] doBigIntegerSplit(BigInteger left, BigInteger right, int expectSliceNumber) {
+    public static BigInteger[] doBigIntegerSplit(BigInteger left,
+                                                 BigInteger right,
+                                                 int expectSliceNumber) {
+
         if (expectSliceNumber < 1) {
-            throw new IllegalArgumentException(String.format(
-                    "切分份数不能小于1. 此处:expectSliceNumber=[%s].", expectSliceNumber));
+            throw new IllegalArgumentException("expectSliceNumber < 1");
         }
 
         if (null == left || null == right) {
-            throw new IllegalArgumentException(String.format(
-                    "对 BigInteger 进行切分时，其左右区间不能为 null. 此处:left=[%s],right=[%s].", left, right));
+            throw new IllegalArgumentException(String.format("null == left || null == right ,left=[%s],right=[%s].", left, right));
         }
 
         if (left.compareTo(right) == 0) {
             return new BigInteger[]{left, right};
-        } else {
-            // 调整大小顺序，确保 left < right
-            if (left.compareTo(right) > 0) {
-                BigInteger temp = left;
-                left = right;
-                right = temp;
-            }
-
-            //left < right
-            BigInteger endAndStartGap = right.subtract(left);
-
-            BigInteger step = endAndStartGap.divide(BigInteger.valueOf(expectSliceNumber));
-            BigInteger remainder = endAndStartGap.remainder(BigInteger.valueOf(expectSliceNumber));
-
-            //remainder 不可能超过expectSliceNumber,所以不需要检查remainder的 Integer 的范围
-
-            // 这里不能 step.intValue()==0，因为可能溢出
-            if (step.compareTo(BigInteger.ZERO) == 0) {
-                expectSliceNumber = remainder.intValue();
-            }
-
-            BigInteger[] result = new BigInteger[expectSliceNumber + 1];
-            result[0] = left;
-            result[expectSliceNumber] = right;
-
-            BigInteger lowerBound;
-            BigInteger upperBound = left;
-            for (int i = 1; i < expectSliceNumber; i++) {
-                lowerBound = upperBound;
-                upperBound = lowerBound.add(step);
-                upperBound = upperBound.add((remainder.compareTo(BigInteger.valueOf(i)) >= 0)
-                        ? BigInteger.ONE : BigInteger.ZERO);
-                result[i] = upperBound;
-            }
-
-            return result;
         }
+
+        // 调整大小顺序，确保 left < right
+        if (left.compareTo(right) > 0) {
+            BigInteger temp = left;
+            left = right;
+            right = temp;
+        }
+
+        // left < right
+        BigInteger endAndStartGap = right.subtract(left);
+
+        BigInteger step = endAndStartGap.divide(BigInteger.valueOf(expectSliceNumber));
+        BigInteger remainder = endAndStartGap.remainder(BigInteger.valueOf(expectSliceNumber));
+
+        //remainder 不可能超过expectSliceNumber,所以不需要检查remainder的 Integer 的范围
+
+        // 这里不能 step.intValue()==0，因为可能溢出
+        if (step.compareTo(BigInteger.ZERO) == 0) {
+            expectSliceNumber = remainder.intValue();
+        }
+
+        BigInteger[] result = new BigInteger[expectSliceNumber + 1];
+
+        result[0] = left;
+        result[expectSliceNumber] = right;
+
+        BigInteger lowerBound;
+        BigInteger upperBound = left;
+
+        for (int i = 1; i < expectSliceNumber; i++) {
+            lowerBound = upperBound;
+            upperBound = lowerBound.add(step);
+            upperBound = upperBound.add((remainder.compareTo(BigInteger.valueOf(i)) >= 0) ? BigInteger.ONE : BigInteger.ZERO);
+            result[i] = upperBound;
+        }
+
+        return result;
+
     }
 
     private static void checkIfBetweenRange(int value, int left, int right) {
         if (value < left || value > right) {
-            throw new IllegalArgumentException(String.format("parameter can not <[%s] or >[%s].",
-                    left, right));
+            throw new IllegalArgumentException(String.format("parameter can not <[%s] or >[%s].", left, right));
         }
     }
 
@@ -120,6 +126,7 @@ public final class RangeSplitUtil {
             if (tempChar >= 128) {
                 throw new IllegalArgumentException(String.format("根据字符串进行切分时仅支持 ASCII 字符串，而字符串:[%s]非 ASCII 字符串.", aString));
             }
+
             result = result.add(BigInteger.valueOf(tempChar).multiply(radixBigInteger.pow(k)));
             k++;
         }
@@ -137,37 +144,40 @@ public final class RangeSplitUtil {
 
         checkIfBetweenRange(radix, 1, 128);
 
-        StringBuilder resultStringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
 
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> ascCodeList = new ArrayList<>();
+
         BigInteger radixBigInteger = BigInteger.valueOf(radix);
         BigInteger currentValue = bigInteger;
 
         BigInteger quotient = currentValue.divide(radixBigInteger);
+
         while (quotient.compareTo(BigInteger.ZERO) > 0) {
-            list.add(currentValue.remainder(radixBigInteger).intValue());
+            ascCodeList.add(currentValue.remainder(radixBigInteger).intValue());
             currentValue = currentValue.divide(radixBigInteger);
             quotient = currentValue;
         }
-        Collections.reverse(list);
 
-        if (list.isEmpty()) {
-            list.add(0, bigInteger.remainder(radixBigInteger).intValue());
+        Collections.reverse(ascCodeList);
+
+        if (ascCodeList.isEmpty()) {
+            ascCodeList.add(0, bigInteger.remainder(radixBigInteger).intValue());
         }
 
-        Map<Integer, Character> map = new HashMap<Integer, Character>();
+        Map<Integer, Character> ascCode_char = new HashMap<>();
         for (int i = 0; i < radix; i++) {
-            map.put(i, (char) (i));
+            ascCode_char.put(i, (char) (i));
         }
 
-//        String msg = String.format("%s 转为 %s 进制，结果为：%s", bigInteger.longValue(), radix, list);
-//        System.out.println(msg);
+        // String msg = String.format("%s 转为 %s 进制，结果为：%s", bigInteger.longValue(), radix, list);
+        // System.out.println(msg);
 
-        for (Integer aList : list) {
-            resultStringBuilder.append(map.get(aList));
+        for (Integer ascCode : ascCodeList) {
+            stringBuilder.append(ascCode_char.get(ascCode));
         }
 
-        return resultStringBuilder.toString();
+        return stringBuilder.toString();
     }
 
     /**
@@ -209,7 +219,7 @@ public final class RangeSplitUtil {
 
     /**
      * List拆分工具函数，主要用于reader插件的split拆分逻辑
-     * */
+     */
     public static <T> List<List<T>> doListSplit(List<T> objects, int adviceNumber) {
         List<List<T>> splitLists = new ArrayList<List<T>>();
         if (null == objects) {

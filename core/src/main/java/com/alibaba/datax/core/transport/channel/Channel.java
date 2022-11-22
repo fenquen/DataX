@@ -174,10 +174,8 @@ public abstract class Channel {
     }
 
     private void statPush(long recordSize, long byteSize) {
-        currentCommunication.increaseCounter(CommunicationTool.READ_SUCCEED_RECORDS,
-                recordSize);
-        currentCommunication.increaseCounter(CommunicationTool.READ_SUCCEED_BYTES,
-                byteSize);
+        currentCommunication.increaseCounter(CommunicationTool.READ_SUCCEED_RECORDS, recordSize);
+        currentCommunication.increaseCounter(CommunicationTool.READ_SUCCEED_BYTES, byteSize);
         //在读的时候进行统计waitCounter即可，因为写（pull）的时候可能正在阻塞，但读的时候已经能读到这个阻塞的counter数
 
         currentCommunication.setLongCounter(CommunicationTool.WAIT_READER_TIME, waitReaderTime);
@@ -194,30 +192,27 @@ public abstract class Channel {
         long interval = nowTimestamp - lastTimestamp;
         if (interval - this.flowControlInterval >= 0) {
             long byteLimitSleepTime = 0;
-            long recordLimitSleepTime = 0;
             if (isChannelByteSpeedLimit) {
                 long currentByteSpeed = (CommunicationTool.getTotalReadBytes(currentCommunication) -
                         CommunicationTool.getTotalReadBytes(lastCommunication)) * 1000 / interval;
                 if (currentByteSpeed > this.byteSpeed) {
                     // 计算根据byteLimit得到的休眠时间
-                    byteLimitSleepTime = currentByteSpeed * interval / this.byteSpeed
-                            - interval;
+                    byteLimitSleepTime = currentByteSpeed * interval / this.byteSpeed - interval;
                 }
             }
 
+            long recordLimitSleepTime = 0;
             if (isChannelRecordSpeedLimit) {
                 long currentRecordSpeed = (CommunicationTool.getTotalReadRecords(currentCommunication) -
                         CommunicationTool.getTotalReadRecords(lastCommunication)) * 1000 / interval;
                 if (currentRecordSpeed > this.recordSpeed) {
                     // 计算根据recordLimit得到的休眠时间
-                    recordLimitSleepTime = currentRecordSpeed * interval / this.recordSpeed
-                            - interval;
+                    recordLimitSleepTime = currentRecordSpeed * interval / recordSpeed - interval;
                 }
             }
 
             // 休眠时间取较大值
-            long sleepTime = byteLimitSleepTime < recordLimitSleepTime ?
-                    recordLimitSleepTime : byteLimitSleepTime;
+            long sleepTime = Math.max(byteLimitSleepTime, recordLimitSleepTime);
             if (sleepTime > 0) {
                 try {
                     Thread.sleep(sleepTime);
@@ -239,10 +234,8 @@ public abstract class Channel {
     }
 
     private void statPull(long recordSize, long byteSize) {
-        currentCommunication.increaseCounter(
-                CommunicationTool.WRITE_RECEIVED_RECORDS, recordSize);
-        currentCommunication.increaseCounter(
-                CommunicationTool.WRITE_RECEIVED_BYTES, byteSize);
+        currentCommunication.increaseCounter(CommunicationTool.WRITE_RECEIVED_RECORDS, recordSize);
+        currentCommunication.increaseCounter(CommunicationTool.WRITE_RECEIVED_BYTES, byteSize);
     }
 
 }

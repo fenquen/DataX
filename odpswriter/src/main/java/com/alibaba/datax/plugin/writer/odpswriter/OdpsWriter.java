@@ -159,7 +159,7 @@ public class OdpsWriter extends Writer {
 
             if (!Constant.DEFAULT_ACCOUNT_TYPE.equalsIgnoreCase(this.accountType) &&
                     !Constant.TAOBAO_ACCOUNT_TYPE.equalsIgnoreCase(this.accountType)) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.ACCOUNT_TYPE_ERROR,
+                throw DataXException.build(OdpsWriterErrorCode.ACCOUNT_TYPE_ERROR,
                         MESSAGE_SOURCE.message("odpswriter.1", accountType));
             }
             this.originalConfig.set(Key.ACCOUNT_TYPE, this.accountType);
@@ -197,18 +197,18 @@ public class OdpsWriter extends Writer {
                         List<PartitionInfo> partitions = getListWithJson(originalConfig,"customPartitionColumns",PartitionInfo.class);
                         // 自定义分区配置必须与实际分区列完全一致
                         if (!ListUtil.checkIfAllSameValue(partitions.stream().map(item->item.getName()).collect(Collectors.toList()), partitionCols)) {
-                            throw DataXException.asDataXException("custom partition config is not same as real partition info.");
+                            throw DataXException.build("custom partition config is not same as real partition info.");
                         }
                     } else {
                         // 设置动态分区写入为真--检查是否所有分区列都配置在了列映射中，不满足则抛出异常
                         if (!ListUtil.checkIfBInA(configCols, partitionCols, false)) {
-                            throw DataXException.asDataXException("You config supportDynamicPartition as true, but didn't config all partition columns");
+                            throw DataXException.build("You config supportDynamicPartition as true, but didn't config all partition columns");
                         }
                     }
                 } else {
                     // 设置动态分区写入为假--确保列映射中没有配置分区列，配置则抛出异常
                     if (ListUtil.checkIfHasSameValue(configCols, partitionCols)) {
-                        throw DataXException.asDataXException("You should config all partition columns in column param, or you can specify a static partition param");
+                        throw DataXException.build("You should config all partition columns in column param, or you can specify a static partition param");
                     }
                 }
             } else {
@@ -220,7 +220,7 @@ public class OdpsWriter extends Writer {
                     } else {
                         // 并非所有partition列都配置在了column中，此时还需检查是否只配置了部分，如果只配置了部分，则报错
                         if (ListUtil.checkIfHasSameValue(configCols, partitionCols)) {
-                            throw DataXException.asDataXException("You should config all partition columns in column param, or you can specify a static partition param");
+                            throw DataXException.build("You should config all partition columns in column param, or you can specify a static partition param");
                         }
                         // 分区列没有配置任何分区列，则设置为false
                         this.supportDynamicPartition = false;
@@ -342,7 +342,7 @@ public class OdpsWriter extends Writer {
 
             // 动态分区下column不支持配置*
             if (supportDynamicPartition && userConfiguredColumns.contains("*")) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(OdpsWriterErrorCode.ILLEGAL_VALUE,
                         "In dynamic partition write mode you can't specify column with *.");
             }
             if (1 == userConfiguredColumns.size() && "*".equals(userConfiguredColumns.get(0))) {
@@ -484,7 +484,7 @@ public class OdpsWriter extends Writer {
             this.blockSizeInMB = this.sliceConfig.getInt(Key.BLOCK_SIZE_IN_MB);
             this.isCompress = this.sliceConfig.getBool(Key.IS_COMPRESS, false);
             if (this.blockSizeInMB < 1 || this.blockSizeInMB > 512) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(OdpsWriterErrorCode.ILLEGAL_VALUE,
                         MESSAGE_SOURCE.message("odpswriter.3", this.blockSizeInMB));
             }
 
@@ -498,7 +498,7 @@ public class OdpsWriter extends Writer {
                 if (consistencyCommit) {
                     this.uploadId = this.sliceConfig.getString(Key.UPLOAD_ID);
                     if (this.uploadId == null || this.uploadId.isEmpty()) {
-                        throw DataXException.asDataXException(OdpsWriterErrorCode.ILLEGAL_VALUE,
+                        throw DataXException.build(OdpsWriterErrorCode.ILLEGAL_VALUE,
                                 MESSAGE_SOURCE.message("odpswriter.3", this.uploadId));
                     }
                 }
@@ -600,7 +600,7 @@ public class OdpsWriter extends Writer {
                         if (!columnCntChecked) {
                             // 动态分区模式下，读写两端的column数量必须相同
                             if (dataXRecord.getColumnNumber() != this.sliceConfig.getList(Key.COLUMN).size()) {
-                                throw DataXException.asDataXException(OdpsWriterErrorCode.ILLEGAL_VALUE,
+                                throw DataXException.build(OdpsWriterErrorCode.ILLEGAL_VALUE,
                                         "In dynamic partition write mode you must make sure reader and writer has same column count.");
                             }
                             columnCntChecked = true;
@@ -628,7 +628,7 @@ public class OdpsWriter extends Writer {
                             proxy = proxyBlocksPair.getLeft();
                             currentWriteBlocks = proxyBlocksPair.getRight();
                             if (null == proxy || null == currentWriteBlocks) {
-                                throw DataXException.asDataXException("Get OdpsWriterProxy failed.");
+                                throw DataXException.build("Get OdpsWriterProxy failed.");
                             }
                         } else {
                             /*
@@ -730,7 +730,7 @@ public class OdpsWriter extends Writer {
                     blockClose.end(blockCloseUsedTime);
                 }
             } catch (Exception e) {
-                throw DataXException.asDataXException(OdpsWriterErrorCode.WRITER_RECORD_FAIL, MESSAGE_SOURCE.message("odpswriter.4"), e);
+                throw DataXException.build(OdpsWriterErrorCode.WRITER_RECORD_FAIL, MESSAGE_SOURCE.message("odpswriter.4"), e);
             }
         }
 
@@ -778,7 +778,7 @@ public class OdpsWriter extends Writer {
                     }
 
                 } else {
-                    throw DataXException.asDataXException(CommonErrorCode.SHUT_DOWN_TASK, "");
+                    throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK, "");
                 }
             }
         }

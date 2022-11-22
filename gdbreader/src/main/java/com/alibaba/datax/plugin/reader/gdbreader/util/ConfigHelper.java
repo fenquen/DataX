@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 public interface ConfigHelper {
     static void assertConfig(String key, Supplier<Boolean> f) {
         if (!f.get()) {
-            throw DataXException.asDataXException(GdbReaderErrorCode.BAD_CONFIG_VALUE, key);
+            throw DataXException.build(GdbReaderErrorCode.BAD_CONFIG_VALUE, key);
         }
     }
 
@@ -46,7 +46,7 @@ public interface ConfigHelper {
     static List<String> assertLabels(Configuration config) {
         Object labels = config.get(Key.LABEL);
         if (!(labels instanceof List)) {
-            throw DataXException.asDataXException(GdbReaderErrorCode.BAD_CONFIG_VALUE, "labels should be List");
+            throw DataXException.build(GdbReaderErrorCode.BAD_CONFIG_VALUE, "labels should be List");
         }
 
         List<?> list = (List<?>) labels;

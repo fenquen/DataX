@@ -59,7 +59,7 @@ public class TxtFileReader extends Reader {
 			String pathInString = this.originConfig.getNecessaryValue(Key.PATH,
 					TxtFileReaderErrorCode.REQUIRED_VALUE);
 			if (StringUtils.isBlank(pathInString)) {
-				throw DataXException.asDataXException(
+				throw DataXException.build(
 						TxtFileReaderErrorCode.REQUIRED_VALUE,
 						"您需要指定待读取的源目录或文件");
 			}
@@ -69,7 +69,7 @@ public class TxtFileReader extends Reader {
 			} else {
 				path = this.originConfig.getList(Key.PATH, String.class);
 				if (null == path || path.size() == 0) {
-					throw DataXException.asDataXException(
+					throw DataXException.build(
 							TxtFileReaderErrorCode.REQUIRED_VALUE,
 							"您需要指定待读取的源目录或文件");
 				}
@@ -91,11 +91,11 @@ public class TxtFileReader extends Reader {
 									encoding);
 					Charsets.toCharset(encoding);
 				} catch (UnsupportedCharsetException uce) {
-					throw DataXException.asDataXException(
+					throw DataXException.build(
 							TxtFileReaderErrorCode.ILLEGAL_VALUE,
 							String.format("不支持您配置的编码格式 : [%s]", encoding), uce);
 				} catch (Exception e) {
-					throw DataXException.asDataXException(
+					throw DataXException.build(
 							TxtFileReaderErrorCode.CONFIG_INVALID_EXCEPTION,
 							String.format("编码配置异常, 请联系我们: %s", e.getMessage()),
 							e);
@@ -129,18 +129,18 @@ public class TxtFileReader extends Reader {
 							.getString(com.alibaba.datax.plugin.unstructuredstorage.reader.Key.VALUE);
 
 					if (null == columnIndex && null == columnValue) {
-						throw DataXException.asDataXException(
+						throw DataXException.build(
 								TxtFileReaderErrorCode.NO_INDEX_VALUE,
 								"由于您配置了type, 则至少需要配置 index 或 value");
 					}
 
 					if (null != columnIndex && null != columnValue) {
-						throw DataXException.asDataXException(
+						throw DataXException.build(
 								TxtFileReaderErrorCode.MIXED_INDEX_VALUE,
 								"您混合配置了index, value, 每一列同时仅能选择其中一种");
 					}
 					if (null != columnIndex && columnIndex < 0) {
-						throw DataXException.asDataXException(
+						throw DataXException.build(
 								TxtFileReaderErrorCode.ILLEGAL_VALUE, String
 										.format("index需要大于等于0, 您配置的index为[%s]",
 												columnIndex));
@@ -161,7 +161,7 @@ public class TxtFileReader extends Reader {
 				compress = compress.toLowerCase().trim();
 				if (!supportedCompress.contains(compress)) {
 					throw DataXException
-							.asDataXException(
+							.build(
 									TxtFileReaderErrorCode.ILLEGAL_VALUE,
 									String.format(
 											"仅支持 gzip, bzip2, zip 文件压缩格式 , 不支持您配置的文件压缩格式: [%s]",
@@ -176,7 +176,7 @@ public class TxtFileReader extends Reader {
 					.getString(com.alibaba.datax.plugin.unstructuredstorage.reader.Key.FIELD_DELIMITER);
 			// warn: if have, length must be one
 			if (null != delimiterInStr && 1 != delimiterInStr.length()) {
-				throw DataXException.asDataXException(
+				throw DataXException.build(
 						UnstructuredStorageReaderErrorCode.ILLEGAL_VALUE,
 						String.format("仅仅支持单字符切分, 您配置的切分为 : [%s]",
 								delimiterInStr));
@@ -218,7 +218,7 @@ public class TxtFileReader extends Reader {
 			// int splitNumber = adviceNumber;
 			int splitNumber = this.sourceFiles.size();
             if (0 == splitNumber) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         TxtFileReaderErrorCode.EMPTY_DIR_EXCEPTION, String
                                 .format("未能找到待读取的文件,请确认您的配置项path: %s",
                                         this.originConfig.getString(Key.PATH)));
@@ -277,14 +277,14 @@ public class TxtFileReader extends Reader {
 					String message = String.format("您设定的目录不存在 : [%s]",
 							parentDirectory);
 					LOG.error(message);
-					throw DataXException.asDataXException(
+					throw DataXException.build(
 							TxtFileReaderErrorCode.FILE_NOT_EXISTS, message);
 				}
 			} catch (SecurityException se) {
 				String message = String.format("您没有权限查看目录 : [%s]",
 						parentDirectory);
 				LOG.error(message);
-				throw DataXException.asDataXException(
+				throw DataXException.build(
 						TxtFileReaderErrorCode.SECURITY_NOT_ENOUGH, message);
 			}
 
@@ -319,7 +319,7 @@ public class TxtFileReader extends Reader {
 						String message = String.format("您没有权限查看目录 : [%s]",
 								directory);
 						LOG.error(message);
-						throw DataXException.asDataXException(
+						throw DataXException.build(
 								TxtFileReaderErrorCode.SECURITY_NOT_ENOUGH,
 								message);
 					}
@@ -328,7 +328,7 @@ public class TxtFileReader extends Reader {
 					String message = String.format("您没有权限查看目录 : [%s]",
 							directory);
 					LOG.error(message);
-					throw DataXException.asDataXException(
+					throw DataXException.build(
 							TxtFileReaderErrorCode.SECURITY_NOT_ENOUGH,
 							message, e);
 				}
@@ -409,7 +409,7 @@ public class TxtFileReader extends Reader {
 					String message = String
 							.format("找不到待读取的文件 : [%s]", fileName);
 					LOG.error(message);
-					throw DataXException.asDataXException(
+					throw DataXException.build(
 							TxtFileReaderErrorCode.OPEN_FILE_ERROR, message);
 				}
 			}

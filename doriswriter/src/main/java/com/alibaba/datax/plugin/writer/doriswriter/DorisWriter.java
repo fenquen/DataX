@@ -127,7 +127,7 @@ public class DorisWriter extends Writer {
                 while ((record = recordReceiver.getFromReader()) != null) {
                     if (record.getColumnNumber() != options.getColumns().size()) {
                         throw DataXException
-                                .asDataXException(
+                                .build(
                                         DBUtilErrorCode.CONF_ERROR,
                                         String.format(
                                                 "There is an error in the column configuration information. " +
@@ -140,7 +140,7 @@ public class DorisWriter extends Writer {
                     writerManager.writeRecord(rowCodec.codec(record));
                 }
             } catch (Exception e) {
-                throw DataXException.asDataXException(DBUtilErrorCode.WRITE_DATA_ERROR, e);
+                throw DataXException.build(DBUtilErrorCode.WRITE_DATA_ERROR, e);
             }
         }
 
@@ -149,7 +149,7 @@ public class DorisWriter extends Writer {
             try {
                 writerManager.close();
             } catch (Exception e) {
-                throw DataXException.asDataXException(DBUtilErrorCode.WRITE_DATA_ERROR, e);
+                throw DataXException.build(DBUtilErrorCode.WRITE_DATA_ERROR, e);
             }
         }
 

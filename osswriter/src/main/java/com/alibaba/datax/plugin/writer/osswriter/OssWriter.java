@@ -4,7 +4,6 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.Callable;
 
 import com.alibaba.datax.common.element.BytesColumn;
 import com.alibaba.datax.common.element.Column;
@@ -26,8 +25,6 @@ import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.plugin.RecordReceiver;
 import com.alibaba.datax.common.spi.Writer;
 import com.alibaba.datax.common.util.Configuration;
-import com.alibaba.datax.common.util.RetryUtil;
-import com.alibaba.datax.plugin.unstructuredstorage.writer.TextCsvWriterManager;
 import com.alibaba.datax.plugin.unstructuredstorage.writer.UnstructuredStorageWriterUtil;
 import com.alibaba.datax.plugin.unstructuredstorage.writer.UnstructuredWriter;
 import com.alibaba.datax.plugin.writer.osswriter.util.OssUtil;
@@ -44,7 +41,7 @@ public class OssWriter extends Writer {
 
     public static int parseParentPathLength(List<String> path) {
         if (path == null || path.size() != 1) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     OssWriterErrorCode.CONFIG_INVALID_EXCEPTION, String.format("only support configure one path in binary copy mode, your config: %s", JSON.toJSONString(path)));
         }
         String eachPath = path.get(0);
@@ -150,7 +147,7 @@ public class OssWriter extends Writer {
             if (StringUtils.isNotBlank(compress)) {
                 String errorMessage = String.format("OSS writes do not support compression for the moment. The compressed item %s does not work", compress);
                 LOG.error(errorMessage);
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssWriterErrorCode.ILLEGAL_VALUE, errorMessage);
 
             }
@@ -208,7 +205,7 @@ public class OssWriter extends Writer {
                         }
 
                     }else {
-                        throw DataXException.asDataXException(OssWriterErrorCode.ILLEGAL_VALUE,
+                        throw DataXException.build(OssWriterErrorCode.ILLEGAL_VALUE,
                                 "only support truncate writeMode in copy sync mode.");
                     }
                 } else {
@@ -244,7 +241,7 @@ public class OssWriter extends Writer {
                                     JSON.toJSONString(deleteResult.getDeletedObjects()));
                         }
                     } else {
-                        throw DataXException.asDataXException(OssWriterErrorCode.ILLEGAL_VALUE,
+                        throw DataXException.build(OssWriterErrorCode.ILLEGAL_VALUE,
                                 "only support truncate writeMode in copy sync mode.");
                     }
                 }
@@ -258,7 +255,7 @@ public class OssWriter extends Writer {
                         // this.ossClient.createBucket(bucket);
                         String errorMessage = String.format("The [bucket]: %s you configured does not exist. Please confirm your configuration items. ", bucket);
                         LOG.error(errorMessage);
-                        throw DataXException.asDataXException(
+                        throw DataXException.build(
                                 OssWriterErrorCode.ILLEGAL_VALUE, errorMessage);
                     }
                     LOG.info(String.format("access control details [%s].",
@@ -270,10 +267,10 @@ public class OssWriter extends Writer {
                         doPrepareForMutliObject(bucket, object, writeMode);
                     }
                 } catch (OSSException e) {
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             OssWriterErrorCode.OSS_COMM_ERROR, e.getMessage(), e);
                 } catch (ClientException e) {
-                    throw DataXException.asDataXException(
+                    throw DataXException.build(
                             OssWriterErrorCode.OSS_COMM_ERROR, e.getMessage(), e);
                 }
             }
@@ -297,14 +294,14 @@ public class OssWriter extends Writer {
                 }
             } else if (APPEND.equals(writeMode)) {
                 throw DataXException
-                        .asDataXException(
+                        .build(
                                 OssWriterErrorCode.ILLEGAL_VALUE,
                                 "Illegal value");
             } else if (NOCONFLICT.equals(writeMode)) {
                 LOG.info("Because you have configured writeMode nonConflict, and writeSingleObject is true, start checking bucket [{}] under the same name object [{}]", bucket, object);
                 if (doesObjectExist) {
                     throw DataXException
-                            .asDataXException(
+                            .build(
                                     OssWriterErrorCode.ILLEGAL_VALUE,
                                     String.format("Buffet you configured: %s There is a duplicate name of Object %s", bucket, object));
                 }
@@ -357,7 +354,7 @@ public class OssWriter extends Writer {
                             "object with prefix [%s] details: %s", object,
                             objectKeys.toString()));
                     throw DataXException
-                            .asDataXException(
+                            .build(
                                     OssWriterErrorCode.ILLEGAL_VALUE,
                                     String.format("The [bucket] you configured: %s contains objects with the name prefix of %s.", bucket, object));
                 }
@@ -398,7 +395,7 @@ public class OssWriter extends Writer {
                     LOG.info(String.format("post final object etag is:[%s]", completeMultipartUploadResult.getETag()));
                 } catch (Exception e) {
                     LOG.error("osswriter post error: {}", e.getMessage(), e);
-                    throw DataXException.asDataXException(e.getMessage());
+                    throw DataXException.build(e.getMessage());
                 }
             }
         }
@@ -496,7 +493,7 @@ public class OssWriter extends Writer {
                         uploadRequest);
             } catch (Exception e) {
                 LOG.error("initiateMultipartUpload error: {}", e.getMessage(), e);
-                throw DataXException.asDataXException(e.getMessage());
+                throw DataXException.build(e.getMessage());
             }
             /**
              * 如果需要写同一个object，需要保证使用同一个upload Id
@@ -534,10 +531,10 @@ public class OssWriter extends Writer {
                     allObjects.add(objectSummary.getKey());
                 }
             } catch (OSSException e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssWriterErrorCode.OSS_COMM_ERROR, e.getMessage(), e);
             } catch (ClientException e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssWriterErrorCode.OSS_COMM_ERROR, e.getMessage(), e);
             }
 
@@ -728,7 +725,7 @@ public class OssWriter extends Writer {
                 while ((record = lineReceiver.getFromReader()) != null) {
                     //单文件同步暂不支持轮转[目前单文件支持同步约最大100GB大小]
                     if (OssSingleObject.currentPartNumber.intValue() > Constant.MAX_BLOCK_SIZE) {
-                        throw DataXException.asDataXException(String.format("When writeSingleObject is true, the write size of your single object has exceeded the maximum value of %s MB.",
+                        throw DataXException.build(String.format("When writeSingleObject is true, the write size of your single object has exceeded the maximum value of %s MB.",
                                 (Constant.MAX_BLOCK_SIZE * this.blockSizeInByte / 1024 / 1024)));
                     }
 
@@ -760,10 +757,10 @@ public class OssWriter extends Writer {
             } catch (IOException e) {
                 // 脏数据UnstructuredStorageWriterUtil.transportOneRecord已经记录,header
                 // 都是字符串不认为有脏数据
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssWriterErrorCode.Write_OBJECT_ERROR, e.getMessage(), e);
             } catch (Exception e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssWriterErrorCode.Write_OBJECT_ERROR, e.getMessage(), e);
             }
             LOG.info("single oss object end do write");
@@ -858,7 +855,7 @@ public class OssWriter extends Writer {
                         currentSize += data.length;
                     } else {
                         String message = "the type of column must be BytesColumn!";
-                        throw DataXException.asDataXException(OssWriterErrorCode.Write_OBJECT_ERROR, message);
+                        throw DataXException.build(OssWriterErrorCode.Write_OBJECT_ERROR, message);
                     }
                     if (currentSize >= this.blockSizeInByte) {
                         this.ossWriterProxy.uploadOnePart(byteArrayOutputStream.toByteArray(), currentPartNumber,
@@ -898,9 +895,9 @@ public class OssWriter extends Writer {
             } catch (IOException e) {
                 // 脏数据UnstructuredStorageWriterUtil.transportOneRecord已经记录,header
                 // 都是字符串不认为有脏数据
-                throw DataXException.asDataXException(OssWriterErrorCode.Write_OBJECT_ERROR, e.getMessage(), e);
+                throw DataXException.build(OssWriterErrorCode.Write_OBJECT_ERROR, e.getMessage(), e);
             } catch (Exception e) {
-                throw DataXException.asDataXException(OssWriterErrorCode.Write_OBJECT_ERROR, e.getMessage(), e);
+                throw DataXException.build(OssWriterErrorCode.Write_OBJECT_ERROR, e.getMessage(), e);
             }
             LOG.info("end do write");
         }
@@ -1064,10 +1061,10 @@ public class OssWriter extends Writer {
             } catch (IOException e) {
                 // 脏数据UnstructuredStorageWriterUtil.transportOneRecord已经记录,header
                 // 都是字符串不认为有脏数据
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssWriterErrorCode.Write_OBJECT_ERROR, e.getMessage(), e);
             } catch (Exception e) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         OssWriterErrorCode.Write_OBJECT_ERROR, e.getMessage(), e);
             }
             LOG.info("end do write");

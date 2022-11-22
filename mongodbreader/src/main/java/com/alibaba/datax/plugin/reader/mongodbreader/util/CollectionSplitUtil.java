@@ -33,7 +33,7 @@ public class CollectionSplitUtil {
         String collName = originalSliceConfig.getString(KeyConstant.MONGO_COLLECTION_NAME);
 
         if(Strings.isNullOrEmpty(dbName) || Strings.isNullOrEmpty(collName) || mongoClient == null) {
-            throw DataXException.asDataXException(MongoDBReaderErrorCode.ILLEGAL_VALUE,
+            throw DataXException.build(MongoDBReaderErrorCode.ILLEGAL_VALUE,
                 MongoDBReaderErrorCode.ILLEGAL_VALUE.getDescription());
         }
 

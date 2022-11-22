@@ -104,21 +104,20 @@ public final class OriginalConfPretreatmentUtil {
             if (isTableMode) {
                 // table 方式
                 // 对每一个connection 上配置的table 项进行解析(已对表名称进行了 ` 处理的)
-                List<String> tables = connConf.getList(Key.TABLE, String.class);
+                List<String> tableNameList = connConf.getList(Key.TABLE, String.class);
 
-                List<String> expandedTables = TableExpandUtil.expandTableConf(
-                        DATABASE_TYPE, tables);
+                List<String> expandedTableNameList = TableExpandUtil.expandTableConf(DATABASE_TYPE, tableNameList);
 
-                if (null == expandedTables || expandedTables.isEmpty()) {
-                    throw DataXException.asDataXException(
+                if (expandedTableNameList.isEmpty()) {
+                    throw DataXException.build(
                             DBUtilErrorCode.ILLEGAL_VALUE, String.format("您所配置的读取数据库表:%s 不正确. 因为DataX根据您的配置找不到这张表. 请检查您的配置并作出修改." +
-                                    "请先了解 DataX 配置.", StringUtils.join(tables, ",")));
+                                    "请先了解 DataX 配置.", StringUtils.join(tableNameList, ",")));
                 }
 
-                tableNum += expandedTables.size();
+                tableNum += expandedTableNameList.size();
 
                 originalConfig.set(String.format("%s[%d].%s",
-                        Constant.CONN_MARK, i, Key.TABLE), expandedTables);
+                        Constant.CONN_MARK, i, Key.TABLE), expandedTableNameList);
             } else {
                 // 说明是配置的 querySql 方式，不做处理.
             }
@@ -136,7 +135,7 @@ public final class OriginalConfPretreatmentUtil {
         if (isTableMode) {
             if (null == userConfiguredColumns
                     || userConfiguredColumns.isEmpty()) {
-                throw DataXException.asDataXException(DBUtilErrorCode.REQUIRED_VALUE, "您未配置读取数据库表的列信息. " +
+                throw DataXException.build(DBUtilErrorCode.REQUIRED_VALUE, "您未配置读取数据库表的列信息. " +
                         "正确的配置方式是给 column 配置上您需要读取的列名称,用英文逗号分隔. 例如: \"column\": [\"id\", \"name\"],请参考上述配置并作出修改.");
             } else {
                 String splitPk = originalConfig.getString(Key.SPLIT_PK, null);
@@ -167,7 +166,7 @@ public final class OriginalConfPretreatmentUtil {
 
                     for (String column : userConfiguredColumns) {
                         if ("*".equals(column)) {
-                            throw DataXException.asDataXException(
+                            throw DataXException.build(
                                     DBUtilErrorCode.ILLEGAL_VALUE,
                                     "您的配置文件中的列配置信息有误. 因为根据您的配置，数据库表的列中存在多个*. 请检查您的配置并作出修改. ");
                         }
@@ -191,7 +190,7 @@ public final class OriginalConfPretreatmentUtil {
                             StringUtils.join(quotedColumns, ","));
                     if (StringUtils.isNotBlank(splitPk)) {
                         if (!allColumns.contains(splitPk.toLowerCase())) {
-                            throw DataXException.asDataXException(DBUtilErrorCode.ILLEGAL_SPLIT_PK,
+                            throw DataXException.build(DBUtilErrorCode.ILLEGAL_SPLIT_PK,
                                     String.format("您的配置文件中的列配置信息有误. 因为根据您的配置，您读取的数据库表:%s 中没有主键名为:%s. 请检查您的配置并作出修改.", tableName, splitPk));
                         }
                     }
@@ -250,11 +249,11 @@ public final class OriginalConfPretreatmentUtil {
 
             if (false == isTableMode && false == isQuerySqlMode) {
                 // table 和 querySql 二者均未配制
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                         DBUtilErrorCode.TABLE_QUERYSQL_MISSING, "您的配置有误. 因为table和querySql应该配置并且只能配置一个. 请检查您的配置并作出修改.");
             } else if (true == isTableMode && true == isQuerySqlMode) {
                 // table 和 querySql 二者均配置
-                throw DataXException.asDataXException(DBUtilErrorCode.TABLE_QUERYSQL_MIXED,
+                throw DataXException.build(DBUtilErrorCode.TABLE_QUERYSQL_MIXED,
                         "您的配置凌乱了. 因为datax不能同时既配置table又配置querySql.请检查您的配置并作出修改.");
             }
         }
@@ -262,7 +261,7 @@ public final class OriginalConfPretreatmentUtil {
         // 混合配制 table 和 querySql
         if (!ListUtil.checkIfValueSame(tableModeFlags)
                 || !ListUtil.checkIfValueSame(tableModeFlags)) {
-            throw DataXException.asDataXException(DBUtilErrorCode.TABLE_QUERYSQL_MIXED,
+            throw DataXException.build(DBUtilErrorCode.TABLE_QUERYSQL_MIXED,
                     "您配置凌乱了. 不能同时既配置table又配置querySql. 请检查您的配置并作出修改.");
         }
 

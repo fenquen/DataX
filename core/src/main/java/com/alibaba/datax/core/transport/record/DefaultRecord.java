@@ -50,7 +50,7 @@ public class DefaultRecord implements Record {
 	@Override
 	public void setColumn(int i, final Column column) {
 		if (i < 0) {
-			throw DataXException.asDataXException(FrameworkErrorCode.ARGUMENT_ERROR,
+			throw DataXException.build(FrameworkErrorCode.ARGUMENT_ERROR,
 					"不能给index小于0的column设置值");
 		}
 

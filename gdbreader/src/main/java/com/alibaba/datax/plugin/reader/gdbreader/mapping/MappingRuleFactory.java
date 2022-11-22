@@ -39,7 +39,7 @@ public class MappingRuleFactory {
             try {
                 columnType = ColumnType.valueOf(column.getString(Key.COLUMN_NODE_TYPE));
             } catch (NullPointerException | IllegalArgumentException e) {
-                throw DataXException.asDataXException(GdbReaderErrorCode.BAD_CONFIG_VALUE, Key.COLUMN_NODE_TYPE);
+                throw DataXException.build(GdbReaderErrorCode.BAD_CONFIG_VALUE, Key.COLUMN_NODE_TYPE);
             }
 
             if (exportType == ExportType.VERTEX) {
@@ -62,7 +62,7 @@ public class MappingRuleFactory {
 
                 ConfigHelper.assertConfig(Key.COLUMN_NAME, () -> name != null);
                 if (propType == null) {
-                    throw DataXException.asDataXException(GdbReaderErrorCode.UNSUPPORTED_TYPE, Key.COLUMN_TYPE);
+                    throw DataXException.build(GdbReaderErrorCode.UNSUPPORTED_TYPE, Key.COLUMN_TYPE);
                 }
                 rule.addColumn(columnType, propType, name);
             } else if (columnType == ColumnType.vertexJsonProperty || columnType == ColumnType.edgeJsonProperty) {

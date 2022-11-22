@@ -27,7 +27,7 @@ public class DrdsWriter extends Writer {
             String writeMode = this.originalConfig.getString(Key.WRITE_MODE, DEFAULT_WRITEMODE);
             if (!DEFAULT_WRITEMODE.equalsIgnoreCase(writeMode) &&
                     !INSERT_IGNORE_WRITEMODE.equalsIgnoreCase(writeMode)) {
-                throw DataXException.asDataXException(DBUtilErrorCode.CONF_ERROR,
+                throw DataXException.build(DBUtilErrorCode.CONF_ERROR,
                         String.format("写入模式(writeMode)配置错误. DRDSWriter只支持两种写入模式为:[%s, %s], 但是您配置的写入模式为:%s. 请检查您的配置并作出修改.",
                                 DEFAULT_WRITEMODE, INSERT_IGNORE_WRITEMODE, writeMode));
             }

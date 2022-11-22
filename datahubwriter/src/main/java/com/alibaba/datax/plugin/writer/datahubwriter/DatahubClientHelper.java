@@ -37,6 +37,7 @@ public class DatahubClientHelper {
         if (null != httpConfig) {
             builder.setHttpConfig(httpConfig);
         }
+        
         DatahubClient datahubClient = builder.build();
         return datahubClient;
     }

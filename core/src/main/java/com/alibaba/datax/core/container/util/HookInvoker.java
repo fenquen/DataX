@@ -53,7 +53,7 @@ public class HookInvoker {
         });
 
         if (subDirs == null) {
-            throw DataXException.asDataXException(FrameworkErrorCode.HOOK_LOAD_ERROR, "获取HOOK子目录返回null");
+            throw DataXException.build(FrameworkErrorCode.HOOK_LOAD_ERROR, "获取HOOK子目录返回null");
         }
 
         for (String subDir : subDirs) {
@@ -77,7 +77,7 @@ public class HookInvoker {
             }
         } catch (Exception e) {
             LOG.error("Exception when invoke hook", e);
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     CommonErrorCode.HOOK_INTERNAL_ERROR, "Exception when invoke hook", e);
         } finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);

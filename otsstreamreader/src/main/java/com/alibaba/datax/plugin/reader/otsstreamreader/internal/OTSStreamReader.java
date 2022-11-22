@@ -13,7 +13,6 @@ import com.alicloud.openservices.tablestore.model.StreamShard;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 public class OTSStreamReader {
 
@@ -30,9 +29,9 @@ public class OTSStreamReader {
                 OTSStreamReaderConfig config = OTSStreamReaderConfig.load(getPluginJobConf());
                 proxy.init(config);
             } catch (TableStoreException ex) {
-                throw DataXException.asDataXException(new OTSReaderError(ex.getErrorCode(), "OTS ERROR"), ex.toString(), ex);
+                throw DataXException.build(new OTSReaderError(ex.getErrorCode(), "OTS ERROR"), ex.toString(), ex);
             } catch (Exception ex) {
-                throw DataXException.asDataXException(OTSReaderError.ERROR, ex.toString(), ex);
+                throw DataXException.build(OTSReaderError.ERROR, ex.toString(), ex);
             }
         }
 
@@ -62,9 +61,9 @@ public class OTSStreamReader {
                         (String) this.getPluginJobConf().get(OTSStreamReaderConstants.ALL_SHARDS));
                 proxy.init(config, streamJob, allShards, new HashSet<String>(ownedShards));
             } catch (TableStoreException ex) {
-                throw DataXException.asDataXException(new OTSReaderError(ex.getErrorCode(), "OTS ERROR"), ex.toString(), ex);
+                throw DataXException.build(new OTSReaderError(ex.getErrorCode(), "OTS ERROR"), ex.toString(), ex);
             } catch (Exception ex) {
-                throw DataXException.asDataXException(OTSReaderError.ERROR, ex.toString(), ex);
+                throw DataXException.build(OTSReaderError.ERROR, ex.toString(), ex);
             }
         }
 

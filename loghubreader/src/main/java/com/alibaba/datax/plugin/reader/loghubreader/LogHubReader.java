@@ -59,7 +59,7 @@ public class LogHubReader extends Reader {
             
             int batchSize = this.originalConfig.getInt(Key.BATCHSIZE);
             if (batchSize > 1000) {
-                throw DataXException.asDataXException(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
                         "Invalid batchSize[" + batchSize + "] value (0,1000]!");
             }
             
@@ -70,13 +70,13 @@ public class LogHubReader extends Reader {
                 try {
                     beginTimestampMillis = getUnixTimeFromDateTime(beginDateTime);
                 } catch (ParseException e) {
-                    throw DataXException.asDataXException(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
+                    throw DataXException.build(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
                             "Invalid beginDateTime[" + beginDateTime + "], format [yyyyMMddHHmmss or yyyyMMdd]!");    
                 }
             }
             
             if (beginTimestampMillis != null && beginTimestampMillis <= 0) {
-                throw DataXException.asDataXException(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
                         "Invalid beginTimestampMillis[" + beginTimestampMillis + "]!");               
             }
             
@@ -87,19 +87,19 @@ public class LogHubReader extends Reader {
                 try {
                     endTimestampMillis = getUnixTimeFromDateTime(endDateTime);
                 } catch (ParseException e) {
-                    throw DataXException.asDataXException(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
+                    throw DataXException.build(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
                             "Invalid beginDateTime[" + endDateTime + "], format [yyyyMMddHHmmss or yyyyMMdd]!");    
                 }
             }
             
             if (endTimestampMillis != null && endTimestampMillis <= 0) {
-                throw DataXException.asDataXException(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
                         "Invalid endTimestampMillis[" + endTimestampMillis + "]!");                
             }
             
             if (beginTimestampMillis != null && endTimestampMillis != null
                     && endTimestampMillis <= beginTimestampMillis) {
-                throw DataXException.asDataXException(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
                         "endTimestampMillis[" + endTimestampMillis + "] must bigger than beginTimestampMillis[" + beginTimestampMillis + "]!");  
             }
         }
@@ -110,7 +110,7 @@ public class LogHubReader extends Reader {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
                 return simpleDateFormat.parse(dateTime).getTime() / 1000;
             } catch (ParseException ignored) {
-                throw DataXException.asDataXException(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
                         "Invalid DateTime[" + dateTime + "]!");   
             }
         }
@@ -137,18 +137,18 @@ public class LogHubReader extends Reader {
                     }
                 }, DataXCaseEnvUtil.getRetryTimes(7), DataXCaseEnvUtil.getRetryInterval(1000L), DataXCaseEnvUtil.getRetryExponential(true));
             } catch (Exception e) {
-                throw DataXException.asDataXException(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
                         "get LogStore[" + logstore + "] error, please check ! detail error messsage: " + e.toString());
             } 
             
             if (logStore == null) {
-                throw DataXException.asDataXException(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
+                throw DataXException.build(LogHubReaderErrorCode.BAD_CONFIG_VALUE,
                         "LogStore[" + logstore + "] isn't exists, please check !");                
             }
             
             int splitNumber = logStore.size();
             if (0 == splitNumber) {
-                throw DataXException.asDataXException(LogHubReaderErrorCode.EMPTY_LOGSTORE_VALUE,
+                throw DataXException.build(LogHubReaderErrorCode.EMPTY_LOGSTORE_VALUE,
                         "LogStore[" + logstore + "] has 0 shard, please check !");
             }
             
@@ -168,7 +168,7 @@ public class LogHubReader extends Reader {
                         }
                     } catch (Exception e) {
                         LOG.error("Check Shard[" + logStore.get(i) + "] Error, please check !" + e.toString());
-                        throw DataXException.asDataXException(LogHubReaderErrorCode.LOG_HUB_ERROR, e);
+                        throw DataXException.build(LogHubReaderErrorCode.LOG_HUB_ERROR, e);
                     }
                 } 
                 Configuration splitedConfig = this.originalConfig.clone();
@@ -460,12 +460,12 @@ public class LogHubReader extends Reader {
                     LOG.info("logStore[" + logstore +"] Not Exits! detail error messsage: " + e.toString());
                 } else {
                     LOG.error("read LogStore[" + logstore + "] error, please check ! detail error messsage: " + e.toString());
-                    throw DataXException.asDataXException(LogHubReaderErrorCode.LOG_HUB_ERROR, e);             
+                    throw DataXException.build(LogHubReaderErrorCode.LOG_HUB_ERROR, e);
                 }
 
             } catch (Exception e) {
                 LOG.error("read LogStore[" + logstore + "] error, please check ! detail error messsage: " + e.toString());
-                throw DataXException.asDataXException(LogHubReaderErrorCode.LOG_HUB_ERROR, e);
+                throw DataXException.build(LogHubReaderErrorCode.LOG_HUB_ERROR, e);
             }
                         
             LOG.info("end read loghub shard...");

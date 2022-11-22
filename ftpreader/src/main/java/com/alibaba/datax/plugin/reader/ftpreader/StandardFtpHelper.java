@@ -8,7 +8,6 @@ import java.util.HashSet;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.slf4j.Logger;
@@ -47,7 +46,7 @@ public class StandardFtpHelper extends FtpHelper {
 				String message = String.format("与ftp服务器建立连接失败,请检查用户名和密码是否正确: [%s]",
 						"message:host =" + host + ",username = " + username + ",port =" + port);
 				LOG.error(message);
-				throw DataXException.asDataXException(FtpReaderErrorCode.FAIL_LOGIN, message);
+				throw DataXException.build(FtpReaderErrorCode.FAIL_LOGIN, message);
 			}
 			//设置命令传输编码
 			String fileEncoding = System.getProperty("file.encoding");
@@ -55,16 +54,16 @@ public class StandardFtpHelper extends FtpHelper {
 		} catch (UnknownHostException e) {
 			String message = String.format("请确认ftp服务器地址是否正确，无法连接到地址为: [%s] 的ftp服务器", host);
 			LOG.error(message);
-			throw DataXException.asDataXException(FtpReaderErrorCode.FAIL_LOGIN, message, e);
+			throw DataXException.build(FtpReaderErrorCode.FAIL_LOGIN, message, e);
 		} catch (IllegalArgumentException e) {
 			String message = String.format("请确认连接ftp服务器端口是否正确，错误的端口: [%s] ", port);
 			LOG.error(message);
-			throw DataXException.asDataXException(FtpReaderErrorCode.FAIL_LOGIN, message, e);
+			throw DataXException.build(FtpReaderErrorCode.FAIL_LOGIN, message, e);
 		} catch (Exception e) {
 			String message = String.format("与ftp服务器建立连接失败 : [%s]",
 					"message:host =" + host + ",username = " + username + ",port =" + port);
 			LOG.error(message);
-			throw DataXException.asDataXException(FtpReaderErrorCode.FAIL_LOGIN, message, e);
+			throw DataXException.build(FtpReaderErrorCode.FAIL_LOGIN, message, e);
 		}
 
 	}
@@ -78,7 +77,7 @@ public class StandardFtpHelper extends FtpHelper {
 			} catch (IOException e) {
 				String message = "与ftp服务器断开连接失败";
 				LOG.error(message);
-				throw DataXException.asDataXException(FtpReaderErrorCode.FAIL_DISCONNECT, message, e);
+				throw DataXException.build(FtpReaderErrorCode.FAIL_DISCONNECT, message, e);
 			}finally {
 				if(ftpClient.isConnected()){
 					try {
@@ -86,7 +85,7 @@ public class StandardFtpHelper extends FtpHelper {
 					} catch (IOException e) {
 						String message = "与ftp服务器断开连接失败";
 						LOG.error(message);
-						throw DataXException.asDataXException(FtpReaderErrorCode.FAIL_DISCONNECT, message, e);
+						throw DataXException.build(FtpReaderErrorCode.FAIL_DISCONNECT, message, e);
 					}
 				}
 
@@ -101,7 +100,7 @@ public class StandardFtpHelper extends FtpHelper {
 		} catch (IOException e) {
 			String message = String.format("进入目录：[%s]时发生I/O异常,请确认与ftp服务器的连接正常", directoryPath);
 			LOG.error(message);
-			throw DataXException.asDataXException(FtpReaderErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
+			throw DataXException.build(FtpReaderErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
 		}
 	}
 
@@ -116,7 +115,7 @@ public class StandardFtpHelper extends FtpHelper {
 		} catch (IOException e) {
 			String message = String.format("获取文件：[%s] 属性时发生I/O异常,请确认与ftp服务器的连接正常", filePath);
 			LOG.error(message);
-			throw DataXException.asDataXException(FtpReaderErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
+			throw DataXException.build(FtpReaderErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
 		}
 		return isExitFlag;
 	}
@@ -132,7 +131,7 @@ public class StandardFtpHelper extends FtpHelper {
 		} catch (IOException e) {
 			String message = String.format("获取文件：[%s] 属性时发生I/O异常,请确认与ftp服务器的连接正常", filePath);
 			LOG.error(message);
-			throw DataXException.asDataXException(FtpReaderErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
+			throw DataXException.build(FtpReaderErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
 		}
 		return isExitFlag;
 	}
@@ -152,7 +151,7 @@ public class StandardFtpHelper extends FtpHelper {
 					String message = String.format("不能进入目录：[%s]," + "请确认您的配置项path:[%s]存在，且配置的用户有权限进入", subPath,
 							directoryPath);
 					LOG.error(message);
-					throw DataXException.asDataXException(FtpReaderErrorCode.FILE_NOT_EXISTS, message);
+					throw DataXException.build(FtpReaderErrorCode.FILE_NOT_EXISTS, message);
 				}
 			} else if (isDirExist(directoryPath)) {
 				// path是目录
@@ -169,11 +168,11 @@ public class StandardFtpHelper extends FtpHelper {
 				//path是链接文件
 				String message = String.format("文件:[%s]是链接文件，当前不支持链接文件的读取", directoryPath);
 				LOG.error(message);
-				throw DataXException.asDataXException(FtpReaderErrorCode.LINK_FILE, message);
+				throw DataXException.build(FtpReaderErrorCode.LINK_FILE, message);
 			}else {
 				String message = String.format("请确认您的配置项path:[%s]存在，且配置的用户有权限读取", directoryPath);
 				LOG.error(message);
-				throw DataXException.asDataXException(FtpReaderErrorCode.FILE_NOT_EXISTS, message);
+				throw DataXException.build(FtpReaderErrorCode.FILE_NOT_EXISTS, message);
 			}
 
 			try {
@@ -193,17 +192,17 @@ public class StandardFtpHelper extends FtpHelper {
 						//是链接文件
 						String message = String.format("文件:[%s]是链接文件，当前不支持链接文件的读取", filePath);
 						LOG.error(message);
-						throw DataXException.asDataXException(FtpReaderErrorCode.LINK_FILE, message);
+						throw DataXException.build(FtpReaderErrorCode.LINK_FILE, message);
 					}else {
 						String message = String.format("请确认path:[%s]存在，且配置的用户有权限读取", filePath);
 						LOG.error(message);
-						throw DataXException.asDataXException(FtpReaderErrorCode.FILE_NOT_EXISTS, message);
+						throw DataXException.build(FtpReaderErrorCode.FILE_NOT_EXISTS, message);
 					}
 				} // end for FTPFile
 			} catch (IOException e) {
 				String message = String.format("获取path：[%s] 下文件列表时发生I/O异常,请确认与ftp服务器的连接正常", directoryPath);
 				LOG.error(message);
-				throw DataXException.asDataXException(FtpReaderErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
+				throw DataXException.build(FtpReaderErrorCode.COMMAND_FTP_IO_EXCEPTION, message, e);
 			}
 			return sourceFiles;
 			
@@ -211,7 +210,7 @@ public class StandardFtpHelper extends FtpHelper {
 			//超出最大递归层数
 			String message = String.format("获取path：[%s] 下文件列表时超出最大层数,请确认路径[%s]下不存在软连接文件", directoryPath, directoryPath);
 			LOG.error(message);
-			throw DataXException.asDataXException(FtpReaderErrorCode.OUT_MAX_DIRECTORY_LEVEL, message);
+			throw DataXException.build(FtpReaderErrorCode.OUT_MAX_DIRECTORY_LEVEL, message);
 		}
 	}
 
@@ -222,7 +221,7 @@ public class StandardFtpHelper extends FtpHelper {
 		} catch (IOException e) {
 			String message = String.format("读取文件 : [%s] 时出错,请确认文件：[%s]存在且配置的用户有权限读取", filePath, filePath);
 			LOG.error(message);
-			throw DataXException.asDataXException(FtpReaderErrorCode.OPEN_FILE_ERROR, message);
+			throw DataXException.build(FtpReaderErrorCode.OPEN_FILE_ERROR, message);
 		}
 	}
 

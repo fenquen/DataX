@@ -66,7 +66,7 @@ public class BufferedRecordTransformerExchanger extends TransformerExchanger imp
                             CoreConstant.DATAX_CORE_TRANSPORT_RECORD_CLASS,
                             "com.alibaba.datax.core.transport.record.DefaultRecord")));
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.CONFIG_ERROR, e);
         }
     }
@@ -76,7 +76,7 @@ public class BufferedRecordTransformerExchanger extends TransformerExchanger imp
         try {
             return BufferedRecordTransformerExchanger.RECORD_CLASS.newInstance();
         } catch (Exception e) {
-            throw DataXException.asDataXException(
+            throw DataXException.build(
                     FrameworkErrorCode.CONFIG_ERROR, e);
         }
     }
@@ -84,7 +84,7 @@ public class BufferedRecordTransformerExchanger extends TransformerExchanger imp
     @Override
     public void sendToWriter(Record record) {
         if (shutdown) {
-            throw DataXException.asDataXException(CommonErrorCode.SHUT_DOWN_TASK, "");
+            throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK, "");
         }
 
         Validate.notNull(record, "record不能为空.");
@@ -113,7 +113,7 @@ public class BufferedRecordTransformerExchanger extends TransformerExchanger imp
     @Override
     public void flush() {
         if (shutdown) {
-            throw DataXException.asDataXException(CommonErrorCode.SHUT_DOWN_TASK, "");
+            throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK, "");
         }
         this.channel.pushAll(this.buffer);
         //和channel的统计保持同步
@@ -126,7 +126,7 @@ public class BufferedRecordTransformerExchanger extends TransformerExchanger imp
     @Override
     public void terminate() {
         if (shutdown) {
-            throw DataXException.asDataXException(CommonErrorCode.SHUT_DOWN_TASK, "");
+            throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK, "");
         }
         flush();
         this.channel.pushTerminate(TerminateRecord.get());
@@ -135,7 +135,7 @@ public class BufferedRecordTransformerExchanger extends TransformerExchanger imp
     @Override
     public Record getFromReader() {
         if (shutdown) {
-            throw DataXException.asDataXException(CommonErrorCode.SHUT_DOWN_TASK, "");
+            throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK, "");
         }
         boolean isEmpty = (this.bufferIndex >= this.buffer.size());
         if (isEmpty) {

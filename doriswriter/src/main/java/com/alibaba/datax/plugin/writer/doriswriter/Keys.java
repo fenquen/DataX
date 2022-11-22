@@ -156,7 +156,7 @@ public class Keys implements Serializable {
         List<String> urlList = getLoadUrlList();
         for (String host : urlList) {
             if (host.split(":").length < 2) {
-                throw DataXException.asDataXException(DBUtilErrorCode.CONF_ERROR,
+                throw DataXException.build(DBUtilErrorCode.CONF_ERROR,
                         "The format of loadUrl is not correct, please enter:[`fe_ip:fe_http_ip;fe_ip:fe_http_ip`].");
             }
         }

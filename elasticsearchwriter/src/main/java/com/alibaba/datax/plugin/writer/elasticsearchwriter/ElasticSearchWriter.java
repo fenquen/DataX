@@ -112,7 +112,7 @@ public class ElasticSearchWriter extends Writer {
             boolean hasId = this.hasID();
             this.conf.set("hasId", hasId);
             if (ActionType.UPDATE.equals(actionType) && !hasId && !hasPrimaryKeyInfo()) {
-                throw DataXException.asDataXException(ElasticSearchWriterErrorCode.UPDATE_WITH_ID, "Update mode must specify column type with id or primaryKeyInfo config");
+                throw DataXException.build(ElasticSearchWriterErrorCode.UPDATE_WITH_ID, "Update mode must specify column type with id or primaryKeyInfo config");
             }
             
             try {
@@ -160,13 +160,13 @@ public class ElasticSearchWriter extends Writer {
                     // 强制创建,内部自动忽略已存在的情况
                     if (!esClient.createIndexIfNotExists(indexName, typeName, mappings, this.settingsCache, dynamic,
                             isGreaterOrEqualThan7)) {
-                        throw DataXException.asDataXException(ElasticSearchWriterErrorCode.ES_MAPPINGS, "");
+                        throw DataXException.build(ElasticSearchWriterErrorCode.ES_MAPPINGS, "");
                     }
 
                     return true;
                 }, DataXCaseEnvUtil.getRetryTimes(this.retryTimes), DataXCaseEnvUtil.getRetryInterval(this.sleepTimeInMilliSecond), DataXCaseEnvUtil.getRetryExponential(false));
             } catch (Exception ex) {
-                throw DataXException.asDataXException(ElasticSearchWriterErrorCode.ES_MAPPINGS, ex.getMessage(), ex);
+                throw DataXException.build(ElasticSearchWriterErrorCode.ES_MAPPINGS, ex.getMessage(), ex);
             } finally {
                 try {
                     esClient.closeJestClient();
@@ -214,11 +214,11 @@ public class ElasticSearchWriter extends Writer {
                     String colName = jo.getString("name");
                     String colTypeStr = jo.getString("type");
                     if (colTypeStr == null) {
-                        throw DataXException.asDataXException(ElasticSearchWriterErrorCode.BAD_CONFIG_VALUE, col.toString() + " column must have type");
+                        throw DataXException.build(ElasticSearchWriterErrorCode.BAD_CONFIG_VALUE, col.toString() + " column must have type");
                     }
                     ElasticSearchFieldType colType = ElasticSearchFieldType.getESFieldType(colTypeStr);
                     if (colType == null) {
-                        throw DataXException.asDataXException(ElasticSearchWriterErrorCode.BAD_CONFIG_VALUE, col.toString() + " unsupported type");
+                        throw DataXException.build(ElasticSearchWriterErrorCode.BAD_CONFIG_VALUE, col.toString() + " unsupported type");
                     }
 
                     ElasticSearchColumn columnItem = new ElasticSearchColumn();
@@ -370,7 +370,7 @@ public class ElasticSearchWriter extends Writer {
                 mappings = JSON.toJSONString(rootMappings);
             }
             if (StringUtils.isBlank(mappings)) {
-                throw DataXException.asDataXException(ElasticSearchWriterErrorCode.BAD_CONFIG_VALUE, "must have mappings");
+                throw DataXException.build(ElasticSearchWriterErrorCode.BAD_CONFIG_VALUE, "must have mappings");
             }
 
             return mappings;
@@ -394,7 +394,7 @@ public class ElasticSearchWriter extends Writer {
                 try {
                     esClient.alias(Key.getIndexName(conf), alias, Key.isNeedCleanAlias(conf));
                 } catch (IOException e) {
-                    throw DataXException.asDataXException(ElasticSearchWriterErrorCode.ES_ALIAS_MODIFY, e);
+                    throw DataXException.build(ElasticSearchWriterErrorCode.ES_ALIAS_MODIFY, e);
                 }
             }
         }
@@ -504,7 +504,7 @@ public class ElasticSearchWriter extends Writer {
                         }
                     }
                     if (!foundKeyInColumn) {
-                        throw DataXException.asDataXException(ElasticSearchWriterErrorCode.RECORD_FIELD_NOT_FOUND,
+                        throw DataXException.build(ElasticSearchWriterErrorCode.RECORD_FIELD_NOT_FOUND,
                                 "primaryKeyInfo has column not exists in column");
                     }
                 }
@@ -522,7 +522,7 @@ public class ElasticSearchWriter extends Writer {
                         }
                     }
                     if (!foundKeyInColumn) {
-                        throw DataXException.asDataXException(ElasticSearchWriterErrorCode.RECORD_FIELD_NOT_FOUND,
+                        throw DataXException.build(ElasticSearchWriterErrorCode.RECORD_FIELD_NOT_FOUND,
                                 "esPartitionColumn has column not exists in column");
                     }
                 }
@@ -624,7 +624,7 @@ public class ElasticSearchWriter extends Writer {
                         String message = String.format(
                                 "column number not equal error, reader column size is %s, but the writer column size is %s",
                                 record.getColumnNumber(), this.columnList.size());
-                        throw DataXException.asDataXException(ElasticSearchWriterErrorCode.BAD_CONFIG_VALUE, message);
+                        throw DataXException.build(ElasticSearchWriterErrorCode.BAD_CONFIG_VALUE, message);
                     }
                     columnSizeChecked = true;
                 }
@@ -866,7 +866,7 @@ public class ElasticSearchWriter extends Writer {
                                     }
                                     break;
                                 default:
-                                throw DataXException.asDataXException(ElasticSearchWriterErrorCode.BAD_CONFIG_VALUE, String.format(
+                                throw DataXException.build(ElasticSearchWriterErrorCode.BAD_CONFIG_VALUE, String.format(
                                         "Type error: unsupported type %s for column %s", columnType, columnName));
                             }
                         }
@@ -1012,7 +1012,7 @@ public class ElasticSearchWriter extends Writer {
                             for (BulkResult.BulkResultItem item : failedItems) {
                                 if (item.status != 400) {
                                     // 400 BAD_REQUEST 如果非数据异常,请求异常,则不允许忽略
-                                    throw DataXException.asDataXException(ElasticSearchWriterErrorCode.ES_INDEX_INSERT,
+                                    throw DataXException.build(ElasticSearchWriterErrorCode.ES_INDEX_INSERT,
                                             String.format("status:[%d], error: %s", item.status, item.error));
                                 } else {
                                     // 如果用户选择不忽略解析错误,则抛异常,默认为忽略
@@ -1034,7 +1034,7 @@ public class ElasticSearchWriter extends Writer {
                             default:
                                 break;
                             }
-                            throw DataXException.asDataXException(ElasticSearchWriterErrorCode.ES_INDEX_INSERT,
+                            throw DataXException.build(ElasticSearchWriterErrorCode.ES_INDEX_INSERT,
                                     jestResult.getErrorMessage());
                         }
                     }
@@ -1043,7 +1043,7 @@ public class ElasticSearchWriter extends Writer {
                 if (Key.isIgnoreWriteError(this.conf)) {
                     LOGGER.warn(String.format("Retry [%d] write failed, ignore the error, continue to write!", trySize));
                 } else {
-                    throw DataXException.asDataXException(ElasticSearchWriterErrorCode.ES_INDEX_INSERT, e.getMessage(), e);
+                    throw DataXException.build(ElasticSearchWriterErrorCode.ES_INDEX_INSERT, e.getMessage(), e);
                 }
             }
             
@@ -1076,11 +1076,11 @@ public class ElasticSearchWriter extends Writer {
             }
 
             if (columns == null || columns.isEmpty()) {
-                throw DataXException.asDataXException(ElasticSearchWriterErrorCode.RECORD_FIELD_NOT_FOUND, columnName);
+                throw DataXException.build(ElasticSearchWriterErrorCode.RECORD_FIELD_NOT_FOUND, columnName);
             }
 
             if (columns != null && columns.size() > 1) {
-                throw DataXException.asDataXException(
+                throw DataXException.build(
                     ElasticSearchWriterErrorCode.RECORD_FIELD_NOT_FOUND,
                     "record has multiple columns found by name: " + columnName);
             }
@@ -1095,7 +1095,7 @@ public class ElasticSearchWriter extends Writer {
                 int colIndex = getRecordColumnIndex(record, field);
                 Column col = record.getColumnNumber() <= colIndex ? null : record.getColumn(colIndex);
                 if (col == null) {
-                    throw DataXException.asDataXException(ElasticSearchWriterErrorCode.RECORD_FIELD_NOT_FOUND, field);
+                    throw DataXException.build(ElasticSearchWriterErrorCode.RECORD_FIELD_NOT_FOUND, field);
                 }
                 values.add(col.asString());
             }

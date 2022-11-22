@@ -83,7 +83,7 @@ public class MongoDBWriter extends Writer{
             Configuration conConf = Configuration.from(preSql);
             if(Strings.isNullOrEmpty(database) || Strings.isNullOrEmpty(collection)
                     || mongoClient == null || mongodbColumnMeta == null || batchSize == null) {
-                throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(MongoDBWriterErrorCode.ILLEGAL_VALUE,
                         MongoDBWriterErrorCode.ILLEGAL_VALUE.getDescription());
             }
             MongoDatabase db = mongoClient.getDatabase(database);
@@ -125,7 +125,7 @@ public class MongoDBWriter extends Writer{
         public void startWrite(RecordReceiver lineReceiver) {
             if(Strings.isNullOrEmpty(database) || Strings.isNullOrEmpty(collection)
                     || mongoClient == null || mongodbColumnMeta == null || batchSize == null) {
-                throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(MongoDBWriterErrorCode.ILLEGAL_VALUE,
                                                 MongoDBWriterErrorCode.ILLEGAL_VALUE.getDescription());
             }
             MongoDatabase db = mongoClient.getDatabase(database);
@@ -183,7 +183,7 @@ public class MongoDBWriter extends Writer{
                             } else if (KeyConstant.isArrayType(type.toLowerCase())) {
                                 String splitter = columnMeta.getJSONObject(i).getString(KeyConstant.COLUMN_SPLITTER);
                                 if (Strings.isNullOrEmpty(splitter)) {
-                                    throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE,
+                                    throw DataXException.build(MongoDBWriterErrorCode.ILLEGAL_VALUE,
                                             MongoDBWriterErrorCode.ILLEGAL_VALUE.getDescription());
                                 }
                                 String itemType = columnMeta.getJSONObject(i).getString(KeyConstant.ITEM_TYPE);
@@ -305,7 +305,7 @@ public class MongoDBWriter extends Writer{
                     }
                     collection.bulkWrite(replaceOneModelList, new BulkWriteOptions().ordered(false));
                 } else {
-                    throw DataXException.asDataXException(MongoDBWriterErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(MongoDBWriterErrorCode.ILLEGAL_VALUE,
                             MongoDBWriterErrorCode.ILLEGAL_VALUE.getDescription());
                 }
             } else {

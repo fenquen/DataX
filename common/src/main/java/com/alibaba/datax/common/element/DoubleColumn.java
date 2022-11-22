@@ -65,7 +65,7 @@ public class DoubleColumn extends Column {
 		try {
 			return new BigDecimal((String) this.getRawData());
 		} catch (NumberFormatException e) {
-			throw DataXException.asDataXException(
+			throw DataXException.build(
 					CommonErrorCode.CONVERT_NOT_SUPPORT,
 					String.format("String[%s] 无法转换为Double类型 .",
 							(String) this.getRawData()));
@@ -123,25 +123,25 @@ public class DoubleColumn extends Column {
 
 	@Override
 	public Boolean asBoolean() {
-		throw DataXException.asDataXException(
+		throw DataXException.build(
 				CommonErrorCode.CONVERT_NOT_SUPPORT, "Double类型无法转为Bool .");
 	}
 
 	@Override
 	public Date asDate() {
-		throw DataXException.asDataXException(
+		throw DataXException.build(
 				CommonErrorCode.CONVERT_NOT_SUPPORT, "Double类型无法转为Date类型 .");
 	}
 	
 	@Override
 	public Date asDate(String dateFormat) {
-		throw DataXException.asDataXException(
+		throw DataXException.build(
 				CommonErrorCode.CONVERT_NOT_SUPPORT, "Double类型无法转为Date类型 .");
 	}
 
 	@Override
 	public byte[] asBytes() {
-		throw DataXException.asDataXException(
+		throw DataXException.build(
 				CommonErrorCode.CONVERT_NOT_SUPPORT, "Double类型无法转为Bytes类型 .");
 	}
 
@@ -158,7 +158,7 @@ public class DoubleColumn extends Column {
 		try {
 			new BigDecimal(data);
 		} catch (Exception e) {
-			throw DataXException.asDataXException(
+			throw DataXException.build(
 					CommonErrorCode.CONVERT_NOT_SUPPORT,
 					String.format("String[%s]无法转为Double类型 .", data));
 		}

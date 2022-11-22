@@ -61,7 +61,7 @@ public class OssSingleObject {
                 ossWriterProxy.uploadOnePartForSingleObject(lastBlockBuffer, uploadId, allPartETags, object, headerProvider);
             } catch (Exception e) {
                 logger.error("upload part error: {}", e.getMessage(), e);
-                throw DataXException.asDataXException(e.getMessage());
+                throw DataXException.build(e.getMessage());
             }
             //currentPartNumber自增
             currentPartNumber.incrementAndGet();

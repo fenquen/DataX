@@ -138,7 +138,7 @@ public class AdsHelper {
                 columnInfoList.add(columnInfo);
             }
             if (columnInfoList.isEmpty()) {
-                throw DataXException.asDataXException(AdsWriterErrorCode.NO_ADS_TABLE, table + "不存在或者查询不到列信息. ");
+                throw DataXException.build(AdsWriterErrorCode.NO_ADS_TABLE, table + "不存在或者查询不到列信息. ");
             }
             tableInfo.setColumns(columnInfoList);
             tableInfo.setTableSchema(schema);

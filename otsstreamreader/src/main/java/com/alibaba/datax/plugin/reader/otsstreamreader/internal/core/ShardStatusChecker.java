@@ -63,7 +63,7 @@ public class ShardStatusChecker {
                         break;
                     default:
                         LOG.error("Unexpected state '{}' for shard '{}'.", entry.getValue(), shard);
-                        throw DataXException.asDataXException(OTSReaderError.ERROR, "Unexpected state '" + entry.getValue() + "' for shard '" + shard + "'.");
+                        throw DataXException.build(OTSReaderError.ERROR, "Unexpected state '" + entry.getValue() + "' for shard '" + shard + "'.");
                 }
             }
         }

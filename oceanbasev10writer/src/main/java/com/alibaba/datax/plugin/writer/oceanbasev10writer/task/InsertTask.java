@@ -268,7 +268,7 @@ public class InsertTask implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			throw DataXException.asDataXException(
+			throw DataXException.build(
 					DBUtilErrorCode.WRITE_DATA_ERROR, e);
 		} finally {
 			DBUtil.closeDBResources(preparedStatement, null);

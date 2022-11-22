@@ -53,7 +53,7 @@ public class HbaseSQLWriterTask {
             while ((record = lineReceiver.getFromReader()) != null) {
                 // 校验列数量是否符合预期
                 if (record.getColumnNumber() != numberOfColumnsToRead) {
-                    throw DataXException.asDataXException(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
                             "数据源给出的列数量[" + record.getColumnNumber() + "]与您配置中的列数量[" + numberOfColumnsToRead +
                             "]不同, 请检查您的配置 或者 联系 Hbase 管理员.");
                 }
@@ -72,7 +72,7 @@ public class HbaseSQLWriterTask {
             }
         } catch (Throwable t) {
             // 确保所有异常都转化为DataXException
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.PUT_HBASE_ERROR, t);
+            throw DataXException.build(HbaseSQLWriterErrorCode.PUT_HBASE_ERROR, t);
         } finally {
             close();
         }
@@ -130,7 +130,7 @@ public class HbaseSQLWriterTask {
             connection.rollback();
             doSingleUpsert(records);
         } catch (Exception e) {
-            throw DataXException.asDataXException(HbaseSQLWriterErrorCode.PUT_HBASE_ERROR, e);
+            throw DataXException.build(HbaseSQLWriterErrorCode.PUT_HBASE_ERROR, e);
         }
     }
 
@@ -290,7 +290,7 @@ public class HbaseSQLWriterTask {
                     break;
 
                 default:
-                    throw DataXException.asDataXException(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
                             "不支持您配置的列类型:" + sqlType + ", 请检查您的配置 或者 联系 Hbase 管理员.");
 
             } // end switch
@@ -310,7 +310,7 @@ public class HbaseSQLWriterTask {
 
                 default:
                     // nullMode的合法性在初始化配置的时候已经校验过，这里一定不会出错
-                    throw DataXException.asDataXException(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
+                    throw DataXException.build(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
                         "Hbasewriter 不支持该 nullMode 类型: " + cfg.getNullMode() +
                         ", 目前支持的 nullMode 类型是:" + Arrays.asList(NullModeType.values()));
             }
@@ -372,7 +372,7 @@ public class HbaseSQLWriterTask {
                 return new byte[0];
 
             default:
-                throw DataXException.asDataXException(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
+                throw DataXException.build(HbaseSQLWriterErrorCode.ILLEGAL_VALUE,
                         "不支持您配置的列类型:" + sqlType + ", 请检查您的配置 或者 联系 Hbase 管理员.");
         }
     }

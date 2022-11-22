@@ -221,13 +221,13 @@ public class OTSStreamReaderSlaveProxy {
             }
 
         } catch (TableStoreException ex) {
-            throw DataXException.asDataXException(new OTSReaderError(ex.getErrorCode(), "SyncClientInterface Error"), ex.toString(), ex);
+            throw DataXException.build(new OTSReaderError(ex.getErrorCode(), "SyncClientInterface Error"), ex.toString(), ex);
         } catch (OTSStreamReaderException ex) {
             LOG.error("SlaveId: {}, OwnedShards: {}.", slaveId, ownedShards, ex);
-            throw DataXException.asDataXException(OTSReaderError.ERROR, ex.toString(), ex);
+            throw DataXException.build(OTSReaderError.ERROR, ex.toString(), ex);
         } catch (Exception ex) {
             LOG.error("SlaveId: {}, OwnedShards: {}.", slaveId, ownedShards, ex);
-            throw DataXException.asDataXException(OTSReaderError.ERROR, ex.toString(), ex);
+            throw DataXException.build(OTSReaderError.ERROR, ex.toString(), ex);
         } finally {
             try {
                 executorService.shutdownNow();
@@ -273,13 +273,13 @@ public class OTSStreamReaderSlaveProxy {
             String version = entry.getValue().getVersion();
             if (!streamJob.getShardIds().contains(shardId)) {
                 LOG.info("Shard '{}' is not found in job. Job: {}.", entry.getKey(), streamJob.getShardIds());
-                throw DataXException.asDataXException(OTSReaderError.ERROR, "Some shard from checkpoint is not belong to this job: " + shardId);
+                throw DataXException.build(OTSReaderError.ERROR, "Some shard from checkpoint is not belong to this job: " + shardId);
             }
 
             if (!version.equals(streamJob.getVersion())) {
                 LOG.info("Version of shard '{}' in checkpoint is not equal with version of this job. " +
                         "Checkpoint version: {}, job version: {}.", shardId, version, streamJob.getVersion());
-                throw DataXException.asDataXException(OTSReaderError.ERROR, "Version of checkpoint is not equal with version of this job.");
+                throw DataXException.build(OTSReaderError.ERROR, "Version of checkpoint is not equal with version of this job.");
             }
         }
     }

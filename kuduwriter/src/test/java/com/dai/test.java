@@ -34,7 +34,7 @@ public class test {
             }
         } catch (Exception e) {
             LOG.error("write failed! the task will exit!");
-            throw DataXException.asDataXException(Kudu11xWriterErrorcode.PUT_KUDU_ERROR, e);
+            throw DataXException.build(Kudu11xWriterErrorcode.PUT_KUDU_ERROR, e);
         }
     }
 }

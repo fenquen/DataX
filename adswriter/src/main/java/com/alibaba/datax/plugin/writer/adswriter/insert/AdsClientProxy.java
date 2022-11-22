@@ -87,7 +87,7 @@ public class AdsClientProxy implements AdsProxy {
         String url = configuration.getString(Key.ADS_URL);
         String[] hostAndPort = StringUtils.split(url, ":");
         if (hostAndPort.length != 2) {
-            throw DataXException.asDataXException(AdsWriterErrorCode.INVALID_CONFIG_VALUE,
+            throw DataXException.build(AdsWriterErrorCode.INVALID_CONFIG_VALUE,
                     "url should be in host:port format!");
         }
         this.table = table.toLowerCase();
@@ -193,7 +193,7 @@ public class AdsClientProxy implements AdsProxy {
             }
 
         } catch (Exception e) {
-            throw DataXException.asDataXException(DBUtilErrorCode.WRITE_DATA_ERROR, e);
+            throw DataXException.build(DBUtilErrorCode.WRITE_DATA_ERROR, e);
         } finally {
             DBUtil.closeDBResources(null, null, connection);
         }

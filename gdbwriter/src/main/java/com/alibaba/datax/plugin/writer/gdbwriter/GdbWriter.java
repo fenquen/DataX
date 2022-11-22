@@ -87,7 +87,7 @@ public class GdbWriter extends Writer {
             try {
                 globalGraph = GdbGraphManager.instance().getGraph(this.jobConfig, false);
             } catch (final RuntimeException e) {
-                throw DataXException.asDataXException(GdbWriterErrorCode.FAIL_CLIENT_CONNECT, e.getMessage());
+                throw DataXException.build(GdbWriterErrorCode.FAIL_CLIENT_CONNECT, e.getMessage());
             }
         }
 
