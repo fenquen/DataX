@@ -38,7 +38,7 @@ public abstract class HbaseAbstractTask {
         this.bufferedMutator = Hbase11xHelper.getBufferedMutator(configuration);
         this.columns = configuration.getListConfiguration(Key.COLUMN);
         this.rowkeyColumn = configuration.getListConfiguration(Key.ROWKEY_COLUMN);
-        this.versionColumn = configuration.getConfiguration(Key.VERSION_COLUMN);
+        this.versionColumn = configuration.getConfig(Key.VERSION_COLUMN);
         this.encoding = configuration.getString(Key.ENCODING,Constant.DEFAULT_ENCODING);
         this.nullMode = NullModeType.getByTypeName(configuration.getString(Key.NULL_MODE,Constant.DEFAULT_NULL_MODE));
         this.walFlag = configuration.getBool(Key.WAL_FLAG, false);

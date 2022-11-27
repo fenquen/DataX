@@ -88,7 +88,7 @@ public class OssWriter extends Writer {
 
         @Override
         public void init() {
-            this.writerSliceConfig = this.getPluginJobConf();
+            this.writerSliceConfig = this.getPluginJobReaderWriterParamConf();
             this.basicValidateParameter();
             this.fileFormat = this.writerSliceConfig.getString(
                     com.alibaba.datax.plugin.unstructuredstorage.writer.Key.FILE_FORMAT,
@@ -96,19 +96,19 @@ public class OssWriter extends Writer {
             this.encoding = this.writerSliceConfig.getString(
                     com.alibaba.datax.plugin.unstructuredstorage.writer.Key.ENCODING,
                     com.alibaba.datax.plugin.unstructuredstorage.writer.Constant.DEFAULT_ENCODING);
-            this.useHdfsWriterProxy  = HdfsParquetUtil.isUseHdfsWriterProxy(this.fileFormat);
-            if(useHdfsWriterProxy){
+            this.useHdfsWriterProxy = HdfsParquetUtil.isUseHdfsWriterProxy(this.fileFormat);
+            if (useHdfsWriterProxy) {
                 this.hdfsWriterJob = new HdfsWriter.Job();
                 HdfsParquetUtil.adaptConfiguration(this.hdfsWriterJob, this.writerSliceConfig);
 
-                this.hdfsWriterJob.setJobPluginCollector(this.getJobPluginCollector());
-                this.hdfsWriterJob.setPeerPluginJobConf(this.getPeerPluginJobConf());
+                this.hdfsWriterJob.jobPluginCollector = jobPluginCollector;
+                this.hdfsWriterJob.setPeerPluginJobReaderWriterParamConf(this.getPeerPluginJobReaderWriterParamConf());
                 this.hdfsWriterJob.setPeerPluginName(this.getPeerPluginName());
-                this.hdfsWriterJob.setPluginJobConf(this.getPluginJobConf());
+                this.hdfsWriterJob.setPluginJobReaderWriterParamConf(this.getPluginJobReaderWriterParamConf());
                 this.hdfsWriterJob.init();
                 return;
             }
-            this.peerPluginJobConf = this.getPeerPluginJobConf();
+            this.peerPluginJobConf = this.getPeerPluginJobReaderWriterParamConf();
             this.isBinaryFile = FileFormat.getFileFormatByConfiguration(this.peerPluginJobConf).isBinary();
             this.syncMode = this.writerSliceConfig
                     .getString(com.alibaba.datax.plugin.unstructuredstorage.writer.Key.SYNC_MODE, "");
@@ -120,7 +120,7 @@ public class OssWriter extends Writer {
             this.ossWriterProxy = new OssWriterProxy(this.writerSliceConfig, this.ossClient);
         }
 
-        private void basicValidateParameter(){
+        private void basicValidateParameter() {
             this.writerSliceConfig.getNecessaryValue(Key.ENDPOINT, OssWriterErrorCode.REQUIRED_VALUE);
             this.writerSliceConfig.getNecessaryValue(Key.ACCESSID, OssWriterErrorCode.REQUIRED_VALUE);
             this.writerSliceConfig.getNecessaryValue(Key.ACCESSKEY, OssWriterErrorCode.REQUIRED_VALUE);
@@ -130,7 +130,7 @@ public class OssWriter extends Writer {
         private void validateParameter() {
             this.writerSliceConfig.getBool(Key.ENCRYPT);
 
-            if (this.isBinaryFile){
+            if (this.isBinaryFile) {
                 BinaryFileWriterUtil.validateParameter(this.writerSliceConfig);
                 return;
             }
@@ -159,7 +159,7 @@ public class OssWriter extends Writer {
         @Override
         public void prepare() {
             LOG.info("begin do prepare...");
-            if(useHdfsWriterProxy){
+            if (useHdfsWriterProxy) {
                 this.hdfsWriterJob.prepare();
                 return;
             }
@@ -204,7 +204,7 @@ public class OssWriter extends Writer {
                                     JSON.toJSONString(deleteResult.getDeletedObjects()));
                         }
 
-                    }else {
+                    } else {
                         throw DataXException.build(OssWriterErrorCode.ILLEGAL_VALUE,
                                 "only support truncate writeMode in copy sync mode.");
                     }
@@ -212,7 +212,7 @@ public class OssWriter extends Writer {
                     if (TRUNCATE.equals(writeMode)) {
                         sourceFileName = this.peerPluginJobConf.getList(com.alibaba.datax.plugin.unstructuredstorage.writer.Constant.SOURCE_FILE, new ArrayList<String>(),
                                 String.class);
-                        List<String> readerPath =  this.peerPluginJobConf.getList(com.alibaba.datax.plugin.unstructuredstorage.writer.Key.PATH, new ArrayList<String>(),
+                        List<String> readerPath = this.peerPluginJobConf.getList(com.alibaba.datax.plugin.unstructuredstorage.writer.Key.PATH, new ArrayList<String>(),
                                 String.class);
                         int parentPathLength = OssWriter.parseParentPathLength(readerPath);
                         this.writerSliceConfig.set("__parentPathLength", parentPathLength);
@@ -363,7 +363,7 @@ public class OssWriter extends Writer {
 
         @Override
         public void post() {
-            if(useHdfsWriterProxy){
+            if (useHdfsWriterProxy) {
                 this.hdfsWriterJob.post();
                 return;
             }
@@ -381,7 +381,7 @@ public class OssWriter extends Writer {
                     if (OssSingleObject.allPartETags.size() == 0) {
                         LOG.warn("allPartETags size is 0, there is no part of data need to be complete uploaded, "
                                 + "skip complete multipart upload!");
-                        this.ossWriterProxy.abortMultipartUpload(this.object,OssSingleObject.uploadId);
+                        this.ossWriterProxy.abortMultipartUpload(this.object, OssSingleObject.uploadId);
                         return;
                     }
 
@@ -431,7 +431,7 @@ public class OssWriter extends Writer {
 
         @Override
         public void destroy() {
-            if(useHdfsWriterProxy){
+            if (useHdfsWriterProxy) {
                 this.hdfsWriterJob.destroy();
                 return;
             }
@@ -445,13 +445,13 @@ public class OssWriter extends Writer {
         @Override
         public List<Configuration> split(int mandatoryNumber) {
             LOG.info("begin do split...");
-            if(useHdfsWriterProxy){
+            if (useHdfsWriterProxy) {
                 return this.hdfsWriterJob.split(mandatoryNumber);
             }
             List<Configuration> writerSplitConfigs = new ArrayList<Configuration>();
 
             // warn: 这个地方其实可能有bug，datax frame其实会shuffle, 文件内部切分也不好支持这个诉求
-            if(this.isPeer2PeerCopyMode()){
+            if (this.isPeer2PeerCopyMode()) {
                 // 有这个需求风险: 源头oss的文件 abc/123/data.txt yixiao.txt 2个文件对等拷贝过来， 这个场景下data.txt
                 // yixiao.txt 只能放一个目录
                 List<Configuration> readerSplitConfigs = this.getReaderPluginSplitConf();
@@ -616,17 +616,17 @@ public class OssWriter extends Writer {
 
         @Override
         public void init() {
-            this.writerSliceConfig = this.getPluginJobConf();
+            this.writerSliceConfig = this.getPluginJobReaderWriterParamConf();
             this.fileFormat = this.writerSliceConfig
                     .getString(
                             com.alibaba.datax.plugin.unstructuredstorage.writer.Key.FILE_FORMAT,
                             com.alibaba.datax.plugin.unstructuredstorage.writer.Constant.FILE_FORMAT_TEXT);
-            this.useHdfsWriterProxy  = HdfsParquetUtil.isUseHdfsWriterProxy(this.fileFormat);
-            if(useHdfsWriterProxy){
+            this.useHdfsWriterProxy = HdfsParquetUtil.isUseHdfsWriterProxy(this.fileFormat);
+            if (useHdfsWriterProxy) {
                 this.hdfsWriterTask = new HdfsWriter.Task();
-                this.hdfsWriterTask.setPeerPluginJobConf(this.getPeerPluginJobConf());
+                this.hdfsWriterTask.setPeerPluginJobReaderWriterParamConf(this.getPeerPluginJobReaderWriterParamConf());
                 this.hdfsWriterTask.setPeerPluginName(this.getPeerPluginName());
-                this.hdfsWriterTask.setPluginJobConf(this.getPluginJobConf());
+                this.hdfsWriterTask.setPluginJobReaderWriterParamConf(this.getPluginJobReaderWriterParamConf());
                 this.hdfsWriterTask.setReaderPluginSplitConf(this.getReaderPluginSplitConf());
                 this.hdfsWriterTask.setTaskGroupId(this.getTaskGroupId());
                 this.hdfsWriterTask.setTaskId(this.getTaskId());
@@ -685,12 +685,12 @@ public class OssWriter extends Writer {
             this.ossWriterProxy = new OssWriterProxy(this.writerSliceConfig, this.ossClient);
             this.partition = this.writerSliceConfig.getList(Key.PARTITION, new ArrayList<>(), String.class);
             //是否生成空文件开关
-            this.generateEmptyFile = this.writerSliceConfig.getBool(Key.GENERATE_EMPTY_FILE,true);
+            this.generateEmptyFile = this.writerSliceConfig.getBool(Key.GENERATE_EMPTY_FILE, true);
         }
 
         @Override
         public void startWrite(RecordReceiver lineReceiver) {
-            if(useHdfsWriterProxy){
+            if (useHdfsWriterProxy) {
                 hdfsWriterTask.startWrite(lineReceiver);
                 return;
             }
@@ -700,7 +700,7 @@ public class OssWriter extends Writer {
             } else if (this.writeSingleObject) {
                 this.startWriteSingleObjectUnstructedStorageFile(lineReceiver);
             } else {
-                this.startWriteUnstructedStorageFile(lineReceiver,generateEmptyFile);
+                this.startWriteUnstructedStorageFile(lineReceiver, generateEmptyFile);
             }
         }
 
@@ -907,7 +907,7 @@ public class OssWriter extends Writer {
          *
          * @param lineReceiver
          */
-        private void startWriteUnstructedStorageFile(RecordReceiver lineReceiver, boolean generateEmptyFile){
+        private void startWriteUnstructedStorageFile(RecordReceiver lineReceiver, boolean generateEmptyFile) {
             // 设置每块字符串长度
             long numberCacul = (this.maxFileSize * 1024 * 1024L) / this.blockSizeInByte;
             final long maxPartNumber = numberCacul >= 1 ? numberCacul : 1;
@@ -1048,10 +1048,10 @@ public class OssWriter extends Writer {
                             currentPartETags);
                     if (gotData) {
                         completeUpload(completeMultipartUploadRequest);
-                    } else{
+                    } else {
                         if (generateEmptyFile) {
                             LOG.info("Due to without data, oss will generate empty file, " +
-                                    "the generateEmptyFile is {}, you can set it false to avoid this",generateEmptyFile);
+                                    "the generateEmptyFile is {}, you can set it false to avoid this", generateEmptyFile);
                             completeUpload(completeMultipartUploadRequest);
                         } else {
                             LOG.info("The generateEmptyFile is false, datax will not generate empty file");
@@ -1078,7 +1078,7 @@ public class OssWriter extends Writer {
 
 
         private String getCurrentObject(int objectRollingNumber, Record record) {
-            String currentObject  = this.object;
+            String currentObject = this.object;
 
             if (!this.partition.isEmpty()) {
                 String partitionValues = getPartitionValues(record);
@@ -1122,7 +1122,7 @@ public class OssWriter extends Writer {
          * 如果你用同一个part号码，上传了新的数据，那么OSS上已有的这个号码的Part数据将被覆盖。
          *
          * @throws Exception
-         * */
+         */
         private void uploadOnePart(
                 final StringWriter sw,
                 final int partNumber,
@@ -1136,7 +1136,7 @@ public class OssWriter extends Writer {
 
         @Override
         public void prepare() {
-            if(useHdfsWriterProxy){
+            if (useHdfsWriterProxy) {
                 hdfsWriterTask.prepare();
                 return;
             }
@@ -1144,7 +1144,7 @@ public class OssWriter extends Writer {
 
         @Override
         public void post() {
-            if(useHdfsWriterProxy){
+            if (useHdfsWriterProxy) {
                 hdfsWriterTask.post();
                 return;
             }
@@ -1152,7 +1152,7 @@ public class OssWriter extends Writer {
 
         @Override
         public void destroy() {
-            if(useHdfsWriterProxy){
+            if (useHdfsWriterProxy) {
                 hdfsWriterTask.destroy();
                 return;
             }

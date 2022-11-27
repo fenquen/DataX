@@ -33,7 +33,7 @@ public class OcsWriter extends Writer {
 
         @Override
         public void init() {
-            this.configuration = super.getPluginJobConf();
+            this.configuration = super.getPluginJobReaderWriterParamConf();
             //参数有效性检查
             ConfigurationChecker.check(this.configuration);
         }
@@ -70,7 +70,7 @@ public class OcsWriter extends Writer {
 
         @Override
         public void init() {
-            this.configuration = this.getPluginJobConf();
+            this.configuration = this.getPluginJobReaderWriterParamConf();
             this.taskPluginCollector = super.getTaskPluginCollector();
         }
 

@@ -250,14 +250,14 @@ public class Kudu11xHelper {
     public static void setTablePartition(Configuration configuration,
                                          CreateTableOptions tableOptions,
                                          Schema schema) {
-        Configuration partition = configuration.getConfiguration(Key.PARTITION);
+        Configuration partition = configuration.getConfig(Key.PARTITION);
         if (partition == null) {
             ColumnSchema columnSchema = schema.getColumns().get(0);
             tableOptions.addHashPartitions(Collections.singletonList(columnSchema.getName()), 3);
             return;
         }
         //range分区
-        Configuration range = partition.getConfiguration(Key.RANGE);
+        Configuration range = partition.getConfig(Key.RANGE);
         if (range != null) {
             List<String> rangeColums = new ArrayList<>(range.getKeys());
             tableOptions.setRangePartitionColumns(rangeColums);
@@ -275,7 +275,7 @@ public class Kudu11xHelper {
         }
 
         // 设置Hash分区
-        Configuration hash = partition.getConfiguration(Key.HASH);
+        Configuration hash = partition.getConfig(Key.HASH);
         if (hash != null) {
             List<String> hashColums = hash.getList(Key.COLUMN, String.class);
             Integer hashPartitionNum = configuration.getInt(Key.HASH_NUM, 3);

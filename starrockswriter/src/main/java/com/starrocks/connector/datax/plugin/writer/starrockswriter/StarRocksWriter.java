@@ -31,12 +31,12 @@ public class StarRocksWriter extends Writer {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
-            String selectedDatabase = super.getPluginJobConf().getString(StarRocksWriterOptions.KEY_SELECTED_DATABASE);
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
+            String selectedDatabase = super.getPluginJobReaderWriterParamConf().getString(StarRocksWriterOptions.KEY_SELECTED_DATABASE);
             if(StringUtils.isBlank(this.originalConfig.getString(StarRocksWriterOptions.KEY_DATABASE)) && StringUtils.isNotBlank(selectedDatabase)){
                 this.originalConfig.set(StarRocksWriterOptions.KEY_DATABASE, selectedDatabase);
             }
-            options = new StarRocksWriterOptions(super.getPluginJobConf());
+            options = new StarRocksWriterOptions(super.getPluginJobReaderWriterParamConf());
             options.doPretreatment();
         }
 
@@ -97,7 +97,7 @@ public class StarRocksWriter extends Writer {
 
         @Override
         public void init() {
-            options = new StarRocksWriterOptions(super.getPluginJobConf());
+            options = new StarRocksWriterOptions(super.getPluginJobReaderWriterParamConf());
             if (options.isWildcardColumn()) {
                 Connection conn = DBUtil.getConnection(DataBaseType.MySql, options.getJdbcUrl(), options.getUsername(), options.getPassword());
                 List<String> columns = StarRocksWriterUtil.getStarRocksColumns(conn, options.getDatabase(), options.getTable());

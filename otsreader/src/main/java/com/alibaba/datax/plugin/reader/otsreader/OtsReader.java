@@ -22,7 +22,7 @@ public class OtsReader extends Reader {
         public void init() {
             LOG.info("init() begin ...");
             try {
-                this.proxy.init(getPluginJobConf());
+                this.proxy.init(getPluginJobReaderWriterParamConf());
             } catch (OTSException e) {
                 LOG.error("OTSException. ErrorCode:{}, ErrorMsg:{}, RequestId:{}", 
                         new Object[]{e.getErrorCode(), e.getMessage(), e.getRequestId()});
@@ -99,7 +99,7 @@ public class OtsReader extends Reader {
         public void startRead(RecordSender recordSender) {
             LOG.info("startRead() begin ...");
             try {
-                this.proxy.read(recordSender,getPluginJobConf());
+                this.proxy.read(recordSender, getPluginJobReaderWriterParamConf());
             } catch (OTSException e) {
                 LOG.error("OTSException. ErrorCode:{}, ErrorMsg:{}, RequestId:{}", 
                         new Object[]{e.getErrorCode(), e.getMessage(), e.getRequestId()});

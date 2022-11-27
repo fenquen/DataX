@@ -92,7 +92,7 @@ public class OdpsWriter extends Writer {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
 
 
             OdpsUtil.checkNecessaryConfig(this.originalConfig);
@@ -469,7 +469,7 @@ public class OdpsWriter extends Writer {
 
         @Override
         public void init() {
-            this.sliceConfig = super.getPluginJobConf();
+            this.sliceConfig = super.getPluginJobReaderWriterParamConf();
 
             // 默认十分钟超时时间
             this.writeTimeOutInMs = this.sliceConfig.getLong(Key.WRITE_TIMEOUT_IN_MS, 10 * 60 * 1000);

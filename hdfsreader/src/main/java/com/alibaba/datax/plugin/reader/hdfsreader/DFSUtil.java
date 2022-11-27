@@ -61,7 +61,7 @@ public class DFSUtil {
         hadoopConf = new org.apache.hadoop.conf.Configuration();
         //io.file.buffer.size 性能参数
         //http://blog.csdn.net/yangjl38/article/details/7583374
-        Configuration hadoopSiteParams = taskConfig.getConfiguration(Key.HADOOP_CONFIG);
+        Configuration hadoopSiteParams = taskConfig.getConfig(Key.HADOOP_CONFIG);
         JSONObject hadoopSiteParamsAsJsonObject = JSON.parseObject(taskConfig.getString(Key.HADOOP_CONFIG));
         if (null != hadoopSiteParams) {
             Set<String> paramKeys = hadoopSiteParams.getKeys();

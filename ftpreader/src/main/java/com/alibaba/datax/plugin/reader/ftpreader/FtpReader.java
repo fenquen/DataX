@@ -38,7 +38,7 @@ public class FtpReader extends Reader {
 
 		@Override
 		public void init() {
-			this.originConfig = this.getPluginJobConf();
+			this.originConfig = this.getPluginJobReaderWriterParamConf();
 			this.sourceFiles = new HashSet<String>();
 
 			this.validateParameter();
@@ -187,7 +187,7 @@ public class FtpReader extends Reader {
 		@Override
 		public void init() {//连接重试
 			/* for ftp connection */
-			this.readerSliceConfig = this.getPluginJobConf();
+			this.readerSliceConfig = this.getPluginJobReaderWriterParamConf();
 			this.host = readerSliceConfig.getString(Key.HOST);
 			this.protocol = readerSliceConfig.getString(Key.PROTOCOL);
 			this.username = readerSliceConfig.getString(Key.USERNAME);

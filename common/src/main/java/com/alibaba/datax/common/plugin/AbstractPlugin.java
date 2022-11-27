@@ -6,18 +6,16 @@ import com.alibaba.datax.common.util.Configuration;
 import java.util.List;
 
 public abstract class AbstractPlugin extends BaseObject implements Pluginable {
-	//作业的config
-    private Configuration pluginJobConf;
+	// 作业的config DATAX_JOB_CONTENT_READER_PARAMETER 分割之前的
+    private Configuration pluginJobReaderWriterParamConf;
 
-    //插件本身的plugin
-	private Configuration pluginConf;
+    // 对端的作业configuration DATAX_JOB_CONTENT_WRITER_PARAMETER 分割之前的
+    private Configuration peerPluginJobReaderWriterParamConf;
 
-    // by qiangsi.lq。 修改为对端的作业configuration
-    private Configuration peerPluginJobConf;
+    // 插件本身的plugin
+    private Configuration pluginConf;
 
     private String peerPluginName;
-
-    private List<Configuration> readerPluginSplitConf;
 
     @Override
 	public String getPluginName() {
@@ -38,13 +36,13 @@ public abstract class AbstractPlugin extends BaseObject implements Pluginable {
 	}
 
     @Override
-	public Configuration getPluginJobConf() {
-		return pluginJobConf;
+	public Configuration getPluginJobReaderWriterParamConf() {
+		return pluginJobReaderWriterParamConf;
 	}
 
     @Override
-	public void setPluginJobConf(Configuration pluginJobConf) {
-		this.pluginJobConf = pluginJobConf;
+	public void setPluginJobReaderWriterParamConf(Configuration pluginJobReaderParamConf) {
+		this.pluginJobReaderWriterParamConf = pluginJobReaderParamConf;
 	}
 
     @Override
@@ -53,13 +51,13 @@ public abstract class AbstractPlugin extends BaseObject implements Pluginable {
 	}
 
     @Override
-    public Configuration getPeerPluginJobConf() {
-        return peerPluginJobConf;
+    public Configuration getPeerPluginJobReaderWriterParamConf() {
+        return peerPluginJobReaderWriterParamConf;
     }
 
     @Override
-    public void setPeerPluginJobConf(Configuration peerPluginJobConf) {
-        this.peerPluginJobConf = peerPluginJobConf;
+    public void setPeerPluginJobReaderWriterParamConf(Configuration peerPluginJobConf) {
+        this.peerPluginJobReaderWriterParamConf = peerPluginJobConf;
     }
 
     @Override
@@ -89,8 +87,11 @@ public abstract class AbstractPlugin extends BaseObject implements Pluginable {
 
     }
 
+    // 以下只是用在oss的reader writer
+    private List<Configuration> readerPluginSplitConf;
+
     public List<Configuration> getReaderPluginSplitConf(){
-        return this.readerPluginSplitConf;
+        return readerPluginSplitConf;
     }
 
     public void setReaderPluginSplitConf(List<Configuration> readerPluginSplitConf){

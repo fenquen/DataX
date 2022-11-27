@@ -132,7 +132,7 @@ public final class CommunicationTool {
             sb.append(" | ");
             if (communication.getLongCounter(CommunicationTool.TRANSFORMER_USED_TIME) > 0
                     || communication.getLongCounter(CommunicationTool.TRANSFORMER_SUCCEED_RECORDS) > 0
-                    ||communication.getLongCounter(CommunicationTool.TRANSFORMER_FAILED_RECORDS) > 0
+                    || communication.getLongCounter(CommunicationTool.TRANSFORMER_FAILED_RECORDS) > 0
                     || communication.getLongCounter(CommunicationTool.TRANSFORMER_FILTER_RECORDS) > 0) {
                 sb.append("Transfermor Success ");
                 sb.append(String.format("%d records", communication.getLongCounter(CommunicationTool.TRANSFORMER_SUCCEED_RECORDS)));

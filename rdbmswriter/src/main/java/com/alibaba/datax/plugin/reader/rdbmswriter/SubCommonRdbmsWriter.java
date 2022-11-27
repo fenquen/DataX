@@ -27,9 +27,11 @@ public class SubCommonRdbmsWriter extends CommonRdbmsWriter {
         }
 
         @Override
-        protected PreparedStatement fillPreparedStatementColumnType(
-                PreparedStatement preparedStatement, int columnIndex,
-                int columnSqltype, String typeName, Column column) throws SQLException {
+        protected PreparedStatement fillPreparedStatementColumnType(PreparedStatement preparedStatement,
+                                                                    int columnIndex,
+                                                                    int columnSqltype,
+                                                                    String typeName,
+                                                                    Column column) throws SQLException {
             java.util.Date utilDate;
             try {
                 switch (columnSqltype) {
@@ -44,11 +46,9 @@ public class SubCommonRdbmsWriter extends CommonRdbmsWriter {
                     if (null == column.getRawData()) {
                         preparedStatement.setObject(columnIndex + 1, null);
                     } else {
-                        preparedStatement.setString(columnIndex + 1,
-                                column.asString());
+                        preparedStatement.setString(columnIndex + 1, column.asString());
                     }
                     break;
-
                 case Types.SMALLINT:
                 case Types.INTEGER:
                 case Types.BIGINT:
@@ -59,8 +59,7 @@ public class SubCommonRdbmsWriter extends CommonRdbmsWriter {
                     } else if (null == column.getRawData()) {
                         preparedStatement.setObject(columnIndex + 1, null);
                     } else {
-                        preparedStatement.setLong(columnIndex + 1,
-                                column.asLong());
+                        preparedStatement.setLong(columnIndex + 1, column.asLong());
                     }
                     break;
                 case Types.NUMERIC:
@@ -74,8 +73,7 @@ public class SubCommonRdbmsWriter extends CommonRdbmsWriter {
                     } else if (null == column.getRawData()) {
                         preparedStatement.setObject(columnIndex + 1, null);
                     } else {
-                        preparedStatement.setDouble(columnIndex + 1,
-                                column.asDouble());
+                        preparedStatement.setDouble(columnIndex + 1, column.asDouble());
                     }
                     break;
 

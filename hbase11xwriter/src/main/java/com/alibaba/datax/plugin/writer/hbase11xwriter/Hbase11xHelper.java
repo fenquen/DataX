@@ -279,7 +279,7 @@ public class Hbase11xHelper {
     }
 
     private static void validateVersionColumn(com.alibaba.datax.common.util.Configuration originalConfig){
-        Configuration versionColumn = originalConfig.getConfiguration(Key.VERSION_COLUMN);
+        Configuration versionColumn = originalConfig.getConfig(Key.VERSION_COLUMN);
         //为null,表示用当前时间;指定列,需要index
         if(versionColumn != null){
             Integer index = versionColumn.getInt(Key.INDEX);

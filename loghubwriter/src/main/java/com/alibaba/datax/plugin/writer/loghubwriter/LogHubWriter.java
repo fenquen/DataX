@@ -42,7 +42,7 @@ public class LogHubWriter extends Writer {
         @Override
         public void init() {
             info(LOG, "loghub writer job init begin ...");
-            this.jobConfig = super.getPluginJobConf();
+            this.jobConfig = super.getPluginJobReaderWriterParamConf();
             validateParameter(jobConfig);
             info(LOG, "loghub writer job init end.");
         }
@@ -91,7 +91,7 @@ public class LogHubWriter extends Writer {
         private boolean isHashKey;
         private List<Shard> shards;
         public void init() {
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
             String endpoint = taskConfig.getString(Key.ENDPOINT);
             String accessKeyId = taskConfig.getString(Key.ACCESS_KEY_ID);
             String accessKeySecret = taskConfig.getString(Key.ACCESS_KEY_SECRET);

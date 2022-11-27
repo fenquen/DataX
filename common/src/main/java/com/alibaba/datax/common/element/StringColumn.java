@@ -18,8 +18,7 @@ public class StringColumn extends Column {
 	}
 
 	public StringColumn(final String rawData) {
-		super(rawData, Column.Type.STRING, (null == rawData ? 0 : rawData
-				.length()));
+		super(rawData, Column.Type.STRING, (null == rawData ? 0 : rawData.length()));
 	}
 
 	@Override

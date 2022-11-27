@@ -19,15 +19,15 @@ public class VMInfo {
     private static final Logger LOG = LoggerFactory.getLogger(VMInfo.class);
     static final long MB = 1024 * 1024;
     static final long GB = 1024 * 1024 * 1024;
-    public static Object lock = new Object();
-    private static VMInfo vmInfo;
+    public static final Object LOCK = new Object();
+    private static volatile VMInfo vmInfo;
 
     /**
      * @return null or vmInfo. null is something error, job no care it.
      */
     public static VMInfo getVmInfo() {
         if (vmInfo == null) {
-            synchronized (lock) {
+            synchronized (LOCK) {
                 if (vmInfo == null) {
                     try {
                         vmInfo = new VMInfo();
@@ -93,14 +93,14 @@ public class VMInfo {
             }
         }
 
-        //初始化processGCStatus;
+        // 初始化processGCStatus;
         for (GarbageCollectorMXBean garbage : garbageCollectorMXBeanList) {
             GCStatus gcStatus = new GCStatus();
             gcStatus.name = garbage.getName();
             processGCStatus.gcStatusMap.put(garbage.getName(), gcStatus);
         }
 
-        //初始化processMemoryStatus
+        // 初始化processMemoryStatus
         if (memoryPoolMXBeanList != null && !memoryPoolMXBeanList.isEmpty()) {
             for (MemoryPoolMXBean pool : memoryPoolMXBeanList) {
                 MemoryStatus memoryStatus = new MemoryStatus();

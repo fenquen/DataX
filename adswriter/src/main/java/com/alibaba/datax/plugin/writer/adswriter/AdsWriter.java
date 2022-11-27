@@ -69,7 +69,7 @@ public class AdsWriter extends Writer {
         @Override
         public void init() {
             startTime = System.currentTimeMillis();
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
             this.writeMode = this.originalConfig.getString(Key.WRITE_MODE);
             if(null == this.writeMode) {
                 LOG.warn("您未指定[writeMode]参数,  默认采用load模式, load模式只能用于离线表");
@@ -152,7 +152,7 @@ public class AdsWriter extends Writer {
 
             Configuration newConf = AdsUtil.generateConf(this.originalConfig, this.odpsTransTableName,
                     tableMeta, this.transProjConf);
-            odpsWriterJobProxy.setPluginJobConf(newConf);
+            odpsWriterJobProxy.setPluginJobReaderWriterParamConf(newConf);
             odpsWriterJobProxy.init();
         }
 
@@ -162,7 +162,7 @@ public class AdsWriter extends Writer {
          * 其中accessId、accessKey是忽略掉iao的。
          */
         private void transferFromOdpsAndExit() {
-            this.readerConfig = super.getPeerPluginJobConf();
+            this.readerConfig = super.getPeerPluginJobReaderWriterParamConf();
             String odpsTableName = this.readerConfig.getString(Key.ODPSTABLENAME);
             List<String> userConfiguredPartitions = this.readerConfig.getList(Key.PARTITION, String.class);
 
@@ -320,13 +320,13 @@ public class AdsWriter extends Writer {
 
         @Override
         public void init() {
-            writerSliceConfig = super.getPluginJobConf();
+            writerSliceConfig = super.getPluginJobReaderWriterParamConf();
             this.writeMode = this.writerSliceConfig.getString(Key.WRITE_MODE);
             this.schema = writerSliceConfig.getString(Key.SCHEMA);
             this.table =  writerSliceConfig.getString(Key.ADS_TABLE);
 
             if(Constant.LOADMODE.equalsIgnoreCase(this.writeMode)) {
-                odpsWriterTaskProxy.setPluginJobConf(writerSliceConfig);
+                odpsWriterTaskProxy.setPluginJobReaderWriterParamConf(writerSliceConfig);
                 odpsWriterTaskProxy.init();
             } else if(Constant.INSERTMODE.equalsIgnoreCase(this.writeMode) || Constant.STREAMMODE.equalsIgnoreCase(this.writeMode)) {
 

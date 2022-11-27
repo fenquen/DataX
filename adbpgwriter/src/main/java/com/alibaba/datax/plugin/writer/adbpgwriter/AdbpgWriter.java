@@ -1,7 +1,6 @@
 package com.alibaba.datax.plugin.writer.adbpgwriter;
 
 import com.alibaba.datax.common.plugin.RecordReceiver;
-import com.alibaba.datax.common.plugin.RecordSender;
 import com.alibaba.datax.common.spi.Writer;
 import com.alibaba.datax.common.util.Configuration;
 
@@ -10,15 +9,10 @@ import java.util.List;
 
 import com.alibaba.datax.plugin.rdbms.util.DataBaseType;
 import com.alibaba.datax.plugin.rdbms.writer.CommonRdbmsWriter;
-import com.alibaba.datax.plugin.rdbms.writer.Key;
-import com.alibaba.datax.plugin.rdbms.writer.util.OriginalConfPretreatmentUtil;
 import com.alibaba.datax.plugin.writer.adbpgwriter.copy.Adb4pgClientProxy;
 import com.alibaba.datax.plugin.writer.adbpgwriter.util.Adb4pgUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.alibaba.datax.plugin.rdbms.util.DBUtilErrorCode.*;
-import static com.alibaba.datax.plugin.rdbms.util.DataBaseType.PostgreSQL;
 
 /**
  * @author yuncheng
@@ -34,7 +28,7 @@ public class AdbpgWriter extends Writer {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
             LOG.info("in Job.init(), config is:[\n{}\n]", originalConfig.toJSON());
             this.commonRdbmsWriterMaster =  new CommonRdbmsWriter.Job(DATABASE_TYPE);
             //convert to DatabaseConfig, use DatabaseConfig to check user configuration
@@ -78,7 +72,7 @@ public class AdbpgWriter extends Writer {
         //Adb4pgClient client;
         @Override
         public void init() {
-            this.writerSliceConfig = super.getPluginJobConf();
+            this.writerSliceConfig = super.getPluginJobReaderWriterParamConf();
             this.adb4pgClientProxy = new Adb4pgClientProxy(writerSliceConfig, super.getTaskPluginCollector());
             this.commonRdbmsWriterSlave = new CommonRdbmsWriter.Task(DATABASE_TYPE){
                 @Override

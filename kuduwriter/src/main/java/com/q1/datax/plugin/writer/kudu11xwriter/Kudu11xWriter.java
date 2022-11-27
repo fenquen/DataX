@@ -1,6 +1,5 @@
 package com.q1.datax.plugin.writer.kudu11xwriter;
 
-import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.plugin.RecordReceiver;
 import com.alibaba.datax.common.spi.Writer;
 import com.alibaba.datax.common.util.Configuration;
@@ -20,7 +19,7 @@ public class Kudu11xWriter extends Writer {
         private Configuration config = null;
         @Override
         public void init() {
-            this.config = this.getPluginJobConf();
+            this.config = this.getPluginJobReaderWriterParamConf();
             Kudu11xHelper.validateParameter(this.config);
         }
 
@@ -60,7 +59,7 @@ public class Kudu11xWriter extends Writer {
         private static final Logger LOG = LoggerFactory.getLogger(Job.class);
         @Override
         public void init() {
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
             this.kuduTaskProxy = new KuduWriterTask(this.taskConfig);
         }
         @Override

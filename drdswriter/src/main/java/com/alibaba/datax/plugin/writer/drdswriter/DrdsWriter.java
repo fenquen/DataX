@@ -23,7 +23,7 @@ public class DrdsWriter extends Writer {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
             String writeMode = this.originalConfig.getString(Key.WRITE_MODE, DEFAULT_WRITEMODE);
             if (!DEFAULT_WRITEMODE.equalsIgnoreCase(writeMode) &&
                     !INSERT_IGNORE_WRITEMODE.equalsIgnoreCase(writeMode)) {
@@ -67,7 +67,7 @@ public class DrdsWriter extends Writer {
 
         @Override
         public void init() {
-            this.writerSliceConfig = super.getPluginJobConf();
+            this.writerSliceConfig = super.getPluginJobReaderWriterParamConf();
             this.commonRdbmsWriterTask = new CommonRdbmsWriter.Task(DATABASE_TYPE);
             this.commonRdbmsWriterTask.init(this.writerSliceConfig);
         }

@@ -22,13 +22,13 @@ public class TDengineReaderTest {
                 "\"beginDateTime\": \"2021-01-01 00:00:00\"," +
                 "\"endDateTime\": \"2021-01-01 12:00:00\"" +
                 "}");
-        job.setPluginJobConf(configuration);
+        job.setPluginJobReaderWriterParamConf(configuration);
 
         // when
         job.init();
 
         // assert
-        Configuration conf = job.getPluginJobConf();
+        Configuration conf = job.getPluginJobReaderWriterParamConf();
 
         Assert.assertEquals("root", conf.getString(Key.USERNAME));
         Assert.assertEquals("taosdata", conf.getString("password"));
@@ -49,13 +49,13 @@ public class TDengineReaderTest {
                 "\"password\": \"taosdata\"," +
                 "\"connection\": [{\"querySql\":[\"select * from weather\"],\"jdbcUrl\":[\"jdbc:TAOS-RS://master:6041/test\"]}]," +
                 "}");
-        job.setPluginJobConf(configuration);
+        job.setPluginJobReaderWriterParamConf(configuration);
 
         // when
         job.init();
 
         // assert
-        Configuration conf = job.getPluginJobConf();
+        Configuration conf = job.getPluginJobReaderWriterParamConf();
 
         Assert.assertEquals("root", conf.getString(Key.USERNAME));
         Assert.assertEquals("taosdata", conf.getString("password"));
@@ -76,7 +76,7 @@ public class TDengineReaderTest {
                 "\"beginDateTime\": \"2021-01-01 00:00:00\"," +
                 "\"endDateTime\": \"2021-01-01 12:00:00\"" +
                 "}");
-        job.setPluginJobConf(configuration);
+        job.setPluginJobReaderWriterParamConf(configuration);
 
         // when
         job.init();
@@ -103,7 +103,7 @@ public class TDengineReaderTest {
                 "\"connection\": [{\"querySql\":[\"select * from weather\"],\"jdbcUrl\":[\"jdbc:TAOS-RS://master:6041/test\"]}]," +
                 "\"column\": [\"ts\",\"current\",\"voltage\",\"phase\"]," +
                 "}");
-        job.setPluginJobConf(configuration);
+        job.setPluginJobReaderWriterParamConf(configuration);
 
         // when
         job.init();
@@ -128,7 +128,7 @@ public class TDengineReaderTest {
                 "\"connection\": [{\"querySql\":[\"select * from weather\",\"select * from test.meters\"],\"jdbcUrl\":[\"jdbc:TAOS-RS://master:6041/test\", \"jdbc:TAOS://master:6030/test\"]}]," +
                 "\"column\": [\"ts\",\"current\",\"voltage\",\"phase\"]," +
                 "}");
-        job.setPluginJobConf(configuration);
+        job.setPluginJobReaderWriterParamConf(configuration);
 
         // when
         job.init();

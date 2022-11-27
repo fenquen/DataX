@@ -15,7 +15,7 @@ public class HbaseSQLReader extends Reader {
 
         @Override
         public void init() {
-            readerConfig = HbaseSQLHelper.parseConfig(this.getPluginJobConf());
+            readerConfig = HbaseSQLHelper.parseConfig(this.getPluginJobReaderWriterParamConf());
         }
 
         @Override
@@ -37,7 +37,7 @@ public class HbaseSQLReader extends Reader {
 
         @Override
         public void init() {
-            hbase11SQLReaderTask = new HbaseSQLReaderTask(this.getPluginJobConf());
+            hbase11SQLReaderTask = new HbaseSQLReaderTask(this.getPluginJobReaderWriterParamConf());
             this.hbase11SQLReaderTask.init();
         }
 

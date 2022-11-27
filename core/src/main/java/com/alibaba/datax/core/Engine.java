@@ -38,15 +38,15 @@ public class Engine {
     private static String RUNTIME_MODE;
 
     /* check job model (job/task) first */
-    public void start(Configuration totalConf) {
+    public void start(Configuration totalConfig) {
 
         // 绑定column转换信息
-        ColumnCast.bind(totalConf);
+        ColumnCast.bind(totalConfig);
 
         // 初始化PluginLoader，可以获取各种插件配置
-        LoadUtil.bind(totalConf);
+        LoadUtil.bind(totalConfig);
 
-        boolean isJob = !("taskGroup".equalsIgnoreCase(totalConf.getString(CoreConstant.DATAX_CORE_CONTAINER_MODEL)));
+        boolean isJob = !("taskGroup".equalsIgnoreCase(totalConfig.getString(CoreConstant.DATAX_CORE_CONTAINER_MODEL)));
 
         //JobContainer会在schedule后再行进行设置和调整值
         int channelNumber = 0;
@@ -55,19 +55,19 @@ public class Engine {
         long instanceId;
         int taskGroupId = -1;
         if (isJob) {
-            totalConf.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_MODE, RUNTIME_MODE);
-            abstractContainer = new JobContainer(totalConf);
-            instanceId = totalConf.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID, 0);
-        } else {
-            abstractContainer = new TaskGroupContainer(totalConf);
-            instanceId = totalConf.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID);
-            taskGroupId = totalConf.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_ID);
-            channelNumber = totalConf.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL);
+            totalConfig.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_MODE, RUNTIME_MODE);
+            abstractContainer = new JobContainer(totalConfig);
+            instanceId = totalConfig.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID, 0);
+        } else { // 应该是分布式版本中的其他节点收到的任务的片段
+            abstractContainer = new TaskGroupContainer(totalConfig);
+            instanceId = totalConfig.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID);
+            taskGroupId = totalConfig.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_ID);
+            channelNumber = totalConfig.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL);
         }
 
         // 缺省打开perfTrace
-        boolean traceEnable = totalConf.getBool(CoreConstant.DATAX_CORE_CONTAINER_TRACE_ENABLE, true);
-        boolean perfReportEnable = totalConf.getBool(CoreConstant.DATAX_CORE_REPORT_DATAX_PERFLOG, true);
+        boolean traceEnable = totalConfig.getBool(CoreConstant.DATAX_CORE_CONTAINER_TRACE_ENABLE, true);
+        boolean perfReportEnable = totalConfig.getBool(CoreConstant.DATAX_CORE_REPORT_DATAX_PERFLOG, true);
 
         //standalone模式的 datax shell任务不进行汇报
         if (instanceId == -1) {
@@ -81,7 +81,7 @@ public class Engine {
             LOG.warn("prioriy set to 0, because NumberFormatException, the value is: " + System.getProperty("PROIORY"));
         }
 
-        Configuration jobInfoConfig = totalConf.getConfiguration(CoreConstant.DATAX_JOB_JOBINFO);
+        Configuration jobInfoConfig = totalConfig.getConfig(CoreConstant.DATAX_JOB_JOBINFO);
         //初始化PerfTrace
         PerfTrace perfTrace = PerfTrace.getInstance(isJob, instanceId, taskGroupId, priority, traceEnable);
         perfTrace.setJobInfo(jobInfoConfig, perfReportEnable, channelNumber);
@@ -92,9 +92,9 @@ public class Engine {
 
     // 注意屏蔽敏感信息
     public static String filterJobConfiguration(final Configuration configuration) {
-        Configuration jobConfWithSetting = configuration.getConfiguration("job").clone();
+        Configuration jobConfWithSetting = configuration.getConfig("job").clone();
 
-        Configuration jobContent = jobConfWithSetting.getConfiguration("content");
+        Configuration jobContent = jobConfWithSetting.getConfig("content");
 
         filterSensitiveConfiguration(jobContent);
 
@@ -120,17 +120,16 @@ public class Engine {
         options.addOption("job", true, "Job config.");
         options.addOption("jobid", true, "Job unique id.");
         options.addOption("mode", true, "Job runtime mode.");
+        BasicParser basicParser = new BasicParser();
 
-        BasicParser parser = new BasicParser();
-        CommandLine cl = parser.parse(options, args);
-
-        String jobPath = cl.getOptionValue("job");
-
+        CommandLine commandLine = basicParser.parse(options, args);
+        String jobPath = commandLine.getOptionValue("job");
         // 如果用户没有明确指定jobid, 则 datax.py 会指定 jobid 默认值为-1
-        String jobIdString = cl.getOptionValue("jobid");
-        RUNTIME_MODE = cl.getOptionValue("mode");
+        String jobIdString = commandLine.getOptionValue("jobid");
+        RUNTIME_MODE = commandLine.getOptionValue("mode");
 
         Configuration configuration = ConfigParser.parse(jobPath);
+
         // 绑定i18n信息
         MessageSource.init(configuration);
         MessageSource.reloadResourceBundle(Configuration.class);
@@ -152,7 +151,7 @@ public class Engine {
         boolean isStandAloneMode = "standalone".equalsIgnoreCase(RUNTIME_MODE);
         if (!isStandAloneMode && jobId == -1) {
             // 如果不是 standalone 模式，那么 jobId 一定不能为-1
-            throw DataXException.build(FrameworkErrorCode.CONFIG_ERROR, "非 standalone 模式必须在 URL 中提供有效的 jobId.");
+            throw DataXException.build(FrameworkErrorCode.CONFIG_ERROR, "非standalone模式必须提供有效的jobId");
         }
 
         configuration.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID, jobId);
@@ -163,8 +162,8 @@ public class Engine {
             LOG.info(vmInfo.toString());
         }
 
-        LOG.info("\n" + Engine.filterJobConfiguration(configuration) + "\n");
-        LOG.info(configuration.toJSON());
+       // LOG.info("\n" + Engine.filterJobConfiguration(configuration) + "\n");
+        LOG.info(configuration.beautify());
 
         ConfigurationValidate.doValidate(configuration);
 
@@ -204,7 +203,7 @@ public class Engine {
             Engine.entry(args);
         } catch (Throwable e) {
             exitCode = 1;
-            LOG.error("\n\n经DataX智能分析,该任务最可能的错误原因是:\n" + ExceptionTracker.trace(e));
+            LOG.error("\n\n,该任务最可能的错误原因是:\n" + ExceptionTracker.trace(e));
 
             if (e instanceof DataXException) {
                 DataXException tempException = (DataXException) e;
@@ -217,6 +216,7 @@ public class Engine {
 
             System.exit(exitCode);
         }
+
         System.exit(exitCode);
     }
 

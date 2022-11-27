@@ -26,7 +26,7 @@ public class OTSStreamReader {
 
         public void init() {
             try {
-                OTSStreamReaderConfig config = OTSStreamReaderConfig.load(getPluginJobConf());
+                OTSStreamReaderConfig config = OTSStreamReaderConfig.load(getPluginJobReaderWriterParamConf());
                 proxy.init(config);
             } catch (TableStoreException ex) {
                 throw DataXException.build(new OTSReaderError(ex.getErrorCode(), "OTS ERROR"), ex.toString(), ex);
@@ -52,13 +52,13 @@ public class OTSStreamReader {
         public void init() {
             try {
                 OTSStreamReaderConfig config = GsonParser.jsonToConfig(
-                        (String) this.getPluginJobConf().get(OTSStreamReaderConstants.CONF));
+                        (String) this.getPluginJobReaderWriterParamConf().get(OTSStreamReaderConstants.CONF));
                 StreamJob streamJob = StreamJob.fromJson(
-                        (String) this.getPluginJobConf().get(OTSStreamReaderConstants.STREAM_JOB));
+                        (String) this.getPluginJobReaderWriterParamConf().get(OTSStreamReaderConstants.STREAM_JOB));
                 List<String> ownedShards = GsonParser.jsonToList(
-                        (String) this.getPluginJobConf().get(OTSStreamReaderConstants.OWNED_SHARDS));
+                        (String) this.getPluginJobReaderWriterParamConf().get(OTSStreamReaderConstants.OWNED_SHARDS));
                 List<StreamShard> allShards = GsonParser.fromJson(
-                        (String) this.getPluginJobConf().get(OTSStreamReaderConstants.ALL_SHARDS));
+                        (String) this.getPluginJobReaderWriterParamConf().get(OTSStreamReaderConstants.ALL_SHARDS));
                 proxy.init(config, streamJob, allShards, new HashSet<String>(ownedShards));
             } catch (TableStoreException ex) {
                 throw DataXException.build(new OTSReaderError(ex.getErrorCode(), "OTS ERROR"), ex.toString(), ex);

@@ -46,7 +46,7 @@ public class TSDBWriter extends Writer {
 
         @Override
         public void init() {
-            originalConfig = super.getPluginJobConf();
+            originalConfig = super.getPluginJobReaderWriterParamConf();
 
             // check source db type
             String sourceDbType = originalConfig.getString(Key.SOURCE_DB_TYPE);
@@ -187,7 +187,7 @@ public class TSDBWriter extends Writer {
 
         @Override
         public void init() {
-            Configuration writerSliceConfig = getPluginJobConf();
+            Configuration writerSliceConfig = getPluginJobReaderWriterParamConf();
 
             // single field | multi fields
             this.multiField = writerSliceConfig.getBool(Key.MULTI_FIELD, false);

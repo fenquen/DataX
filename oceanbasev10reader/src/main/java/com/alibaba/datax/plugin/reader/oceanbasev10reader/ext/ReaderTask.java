@@ -87,19 +87,19 @@ public class ReaderTask extends CommonRdbmsReader.Task {
      * 否则,则使用旧模式
      */
     @Override
-    public void startRead(Configuration readerSliceConfig, RecordSender recordSender,
+    public void startRead(Configuration pluginJobReaderParamConf, RecordSender recordSender,
                           TaskPluginCollector taskPluginCollector, int fetchSize) {
-        String querySql = readerSliceConfig.getString(Key.QUERY_SQL);
-        String table = readerSliceConfig.getString(Key.TABLE);
+        String querySql = pluginJobReaderParamConf.getString(Key.QUERY_SQL);
+        String table = pluginJobReaderParamConf.getString(Key.TABLE);
         PerfTrace.getInstance().addTaskDetails(taskId, table + "," + jdbcUrl);
-        List<String> columns = readerSliceConfig.getList(Key.COLUMN_LIST, String.class);
-        String where = readerSliceConfig.getString(Key.WHERE);
-        boolean weakRead = readerSliceConfig.getBool(Key.WEAK_READ, true); // default true, using weak read
-        String userSavePoint = readerSliceConfig.getString(Key.SAVE_POINT, null);
-        reuseConn = readerSliceConfig.getBool(Key.REUSE_CONN, false);
-        String partitionName = readerSliceConfig.getString(Key.PARTITION_NAME, null);
+        List<String> columns = pluginJobReaderParamConf.getList(Key.COLUMN_LIST, String.class);
+        String where = pluginJobReaderParamConf.getString(Key.WHERE);
+        boolean weakRead = pluginJobReaderParamConf.getBool(Key.WEAK_READ, true); // default true, using weak read
+        String userSavePoint = pluginJobReaderParamConf.getString(Key.SAVE_POINT, null);
+        reuseConn = pluginJobReaderParamConf.getBool(Key.REUSE_CONN, false);
+        String partitionName = pluginJobReaderParamConf.getString(Key.PARTITION_NAME, null);
         // 从配置文件中取readBatchSize,若无则用默认值
-        readBatchSize = readerSliceConfig.getInt(Config.READ_BATCH_SIZE, Config.DEFAULT_READ_BATCH_SIZE);
+        readBatchSize = pluginJobReaderParamConf.getInt(Config.READ_BATCH_SIZE, Config.DEFAULT_READ_BATCH_SIZE);
         // 不能少于1万
         if (readBatchSize < 10000) {
             readBatchSize = 10000;
@@ -115,7 +115,7 @@ public class ReaderTask extends CommonRdbmsReader.Task {
         context.setUserSavePoint(userSavePoint);
         PerfRecord allPerf = new PerfRecord(taskGroupId, taskId, PerfRecord.PHASE.RESULT_NEXT_ALL);
         allPerf.start();
-        boolean isTableMode = readerSliceConfig.getBool(Constant.IS_TABLE_MODE);
+        boolean isTableMode = pluginJobReaderParamConf.getBool(Constant.IS_TABLE_MODE);
         try {
             startRead0(isTableMode, context, recordSender, taskPluginCollector);
         } finally {

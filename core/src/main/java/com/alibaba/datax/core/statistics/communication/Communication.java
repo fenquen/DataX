@@ -2,6 +2,7 @@ package com.alibaba.datax.core.statistics.communication;
 
 import com.alibaba.datax.common.base.BaseObject;
 import com.alibaba.datax.dataxservice.face.domain.enums.State;
+import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
@@ -14,74 +15,57 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * DataX所有的状态及统计信息交互类，job、taskGroup、task等的消息汇报都走该类
  */
+@Data
 public class Communication extends BaseObject implements Cloneable {
     /**
-     * 所有的数值key-value对 *
+     * 所有的数值key-value对
      */
-    private Map<String, Number> counter;
+    private Map<String, Number> key_number;
 
     /**
-     * 运行状态 *
+     * 运行状态
      */
     private State state;
 
     /**
-     * 异常记录 *
+     * 异常记录
      */
     private Throwable throwable;
 
     /**
-     * 记录的timestamp *
+     * 记录的timestamp
      */
     private long timestamp;
 
     /**
-     * task给job的信息 *
+     * task给job的信息
      */
-    Map<String, List<String>> message;
+    Map<String, List<String>> id_messageList;
 
     public Communication() {
-        this.init();
+        init();
     }
 
     public synchronized void reset() {
-        this.init();
+        init();
     }
 
     private void init() {
-        this.counter = new ConcurrentHashMap<String, Number>();
+        this.key_number = new ConcurrentHashMap<>();
         this.state = State.RUNNING;
         this.throwable = null;
-        this.message = new ConcurrentHashMap<String, List<String>>();
+        this.id_messageList = new ConcurrentHashMap<>();
         this.timestamp = System.currentTimeMillis();
     }
 
-    public Map<String, Number> getCounter() {
-        return this.counter;
-    }
+    public void setState(State state, boolean isForce) {
+        synchronized (this) {
+            if (!isForce && this.state.equals(State.FAILED)) {
+                return;
+            }
 
-    public State getState() {
-        return this.state;
-    }
-
-    public synchronized void setState(State state, boolean isForce) {
-        if (!isForce && this.state.equals(State.FAILED)) {
-            return;
+            this.state = state;
         }
-
-        this.state = state;
-    }
-
-    public synchronized void setState(State state) {
-        setState(state, false);
-    }
-
-    public Throwable getThrowable() {
-        return this.throwable;
-    }
-
-    public synchronized String getThrowableMessage() {
-        return this.throwable == null ? "" : this.throwable.getMessage();
     }
 
     public void setThrowable(Throwable throwable) {
@@ -96,68 +80,55 @@ public class Communication extends BaseObject implements Cloneable {
         }
     }
 
-    public long getTimestamp() {
-        return this.timestamp;
+    public synchronized String getThrowableMessage() {
+        return throwable == null ? "" : throwable.getMessage();
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public List<String> getMessageListByKey(String key) {
+        return id_messageList.get(key);
     }
 
-    public Map<String, List<String>> getMessage() {
-        return message;
-    }
-
-    public List<String> getMessage(final String key) {
-        return message.get(key);
-    }
-
-    public synchronized void addMessage(final String key, final String value) {
+    public synchronized void addMessage(String key, String value) {
         Validate.isTrue(StringUtils.isNotBlank(key), "增加message的key不能为空");
-        List<String> valueList = message.computeIfAbsent(key, k -> new ArrayList<>());
+        List<String> valueList = id_messageList.computeIfAbsent(key, k -> new ArrayList<>());
 
         valueList.add(value);
     }
 
     public synchronized Long getLongCounter(final String key) {
-        Number value = this.counter.get(key);
-
+        Number value = this.key_number.get(key);
         return value == null ? 0 : value.longValue();
     }
 
-    public synchronized void setLongCounter(final String key, final long value) {
+    public synchronized void setLongCounter(String key, long value) {
         Validate.isTrue(StringUtils.isNotBlank(key), "设置counter的key不能为空");
-        this.counter.put(key, value);
+        this.key_number.put(key, value);
     }
 
     public synchronized Double getDoubleCounter(final String key) {
-        Number value = this.counter.get(key);
-
+        Number value = key_number.get(key);
         return value == null ? 0.0d : value.doubleValue();
     }
 
     public synchronized void setDoubleCounter(final String key, final double value) {
         Validate.isTrue(StringUtils.isNotBlank(key), "设置counter的key不能为空");
-        this.counter.put(key, value);
+        this.key_number.put(key, value);
     }
 
     public synchronized void increaseCounter(final String key, final long deltaValue) {
         Validate.isTrue(StringUtils.isNotBlank(key), "增加counter的key不能为空");
 
         long value = this.getLongCounter(key);
-
-        this.counter.put(key, value + deltaValue);
+        key_number.put(key, value + deltaValue);
     }
 
     @Override
     public Communication clone() {
         Communication communication = new Communication();
 
-        /**
-         * clone counter
-         */
-        if (this.counter != null) {
-            for (Map.Entry<String, Number> entry : this.counter.entrySet()) {
+        // clone counter
+        if (this.key_number != null) {
+            for (Map.Entry<String, Number> entry : this.key_number.entrySet()) {
                 String key = entry.getKey();
                 Number value = entry.getValue();
                 if (value instanceof Long) {
@@ -172,16 +143,14 @@ public class Communication extends BaseObject implements Cloneable {
         communication.setThrowable(this.throwable, true);
         communication.setTimestamp(this.timestamp);
 
-        /**
-         * clone message
-         */
-        if (this.message != null) {
-            for (final Map.Entry<String, List<String>> entry : this.message.entrySet()) {
+        // clone message
+        if (this.id_messageList != null) {
+            for (final Map.Entry<String, List<String>> entry : this.id_messageList.entrySet()) {
                 String key = entry.getKey();
-                List value = new ArrayList() {{
+                List<String> value = new ArrayList<String>(entry.getValue()) {{
                     addAll(entry.getValue());
                 }};
-                communication.getMessage().put(key, value);
+                communication.getId_messageList().put(key, value);
             }
         }
 
@@ -197,14 +166,14 @@ public class Communication extends BaseObject implements Cloneable {
          * counter的合并，将otherComm的值累加到this中，不存在的则创建
          * 同为long
          */
-        for (Entry<String, Number> entry : otherComm.getCounter().entrySet()) {
+        for (Entry<String, Number> entry : otherComm.getKey_number().entrySet()) {
             String key = entry.getKey();
             Number otherValue = entry.getValue();
             if (otherValue == null) {
                 continue;
             }
 
-            Number value = this.counter.get(key);
+            Number value = this.key_number.get(key);
             if (value == null) {
                 value = otherValue;
             } else {
@@ -215,7 +184,7 @@ public class Communication extends BaseObject implements Cloneable {
                 }
             }
 
-            this.counter.put(key, value);
+            key_number.put(key, value);
         }
 
         // 合并state
@@ -234,12 +203,12 @@ public class Communication extends BaseObject implements Cloneable {
         /**
          * message的合并采取求并的方式，即全部累计在一起
          */
-        for (Entry<String, List<String>> entry : otherComm.getMessage().entrySet()) {
+        for (Entry<String, List<String>> entry : otherComm.getId_messageList().entrySet()) {
             String key = entry.getKey();
-            List<String> valueList = this.message.get(key);
+            List<String> valueList = this.id_messageList.get(key);
             if (valueList == null) {
                 valueList = new ArrayList<String>();
-                this.message.put(key, valueList);
+                this.id_messageList.put(key, valueList);
             }
 
             valueList.addAll(entry.getValue());
@@ -258,20 +227,22 @@ public class Communication extends BaseObject implements Cloneable {
             return retState;
         }
 
-        if (this.state == State.FAILED || otherComm.getState() == State.FAILED
-                || this.state == State.KILLED || otherComm.getState() == State.KILLED) {
+        if (state == State.FAILED || otherComm.getState() == State.FAILED ||
+                state == State.KILLED || otherComm.getState() == State.KILLED) {
             retState = State.FAILED;
-        } else if (this.state.isRunning() || otherComm.state.isRunning()) {
+        } else if (state.isRunning() || otherComm.state.isRunning()) {
             retState = State.RUNNING;
         }
 
-        this.setState(retState);
+        state = retState;
+
         return retState;
     }
-    
-    public synchronized boolean isFinished(){
-    	return this.state == State.SUCCEEDED || this.state == State.FAILED	
-    			|| this.state == State.KILLED;
+
+    public synchronized boolean isFinished() {
+        return state == State.SUCCEEDED ||
+                state == State.FAILED ||
+                state == State.KILLED;
     }
-    
+
 }

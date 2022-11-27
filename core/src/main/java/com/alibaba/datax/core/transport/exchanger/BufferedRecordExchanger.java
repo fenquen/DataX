@@ -28,9 +28,9 @@ public class BufferedRecordExchanger implements RecordSender, RecordReceiver {
 
     private int bufferSize;
 
-    protected final int byteCapacity;
+    protected final int channelByteCapacity;
 
-    private final AtomicInteger memoryBytes = new AtomicInteger(0);
+    private final AtomicInteger memoryUsed = new AtomicInteger(0);
 
     private int bufferIndex = 0;
 
@@ -47,24 +47,18 @@ public class BufferedRecordExchanger implements RecordSender, RecordReceiver {
 
         this.channel = channel;
         this.pluginCollector = pluginCollector;
-        this.configuration = channel.getConfiguration();
+        configuration = channel.getConfiguration();
 
-        this.bufferSize = configuration
-                .getInt(CoreConstant.DATAX_CORE_TRANSPORT_EXCHANGER_BUFFERSIZE);
-        this.buffer = new ArrayList<Record>(bufferSize);
+        bufferSize = configuration.getInt(CoreConstant.DATAX_CORE_TRANSPORT_EXCHANGER_BUFFERSIZE);
+        buffer = new ArrayList<>(bufferSize);
 
-        //channel的queue默认大小为8M，原来为64M
-        this.byteCapacity = configuration.getInt(
-                CoreConstant.DATAX_CORE_TRANSPORT_CHANNEL_CAPACITY_BYTE, 8 * 1024 * 1024);
+        channelByteCapacity = configuration.getInt(CoreConstant.DATAX_CORE_TRANSPORT_CHANNEL_CAPACITY_BYTE, 8 * 1024 * 1024);
 
         try {
-            BufferedRecordExchanger.RECORD_CLASS = ((Class<? extends Record>) Class
-                    .forName(configuration.getString(
-                            CoreConstant.DATAX_CORE_TRANSPORT_RECORD_CLASS,
-                            "com.alibaba.datax.core.transport.record.DefaultRecord")));
+            BufferedRecordExchanger.RECORD_CLASS =
+                    ((Class<? extends Record>) Class.forName(configuration.getString(CoreConstant.DATAX_CORE_TRANSPORT_RECORD_CLASS, "com.alibaba.datax.core.transport.record.DefaultRecord")));
         } catch (Exception e) {
-            throw DataXException.build(
-                    FrameworkErrorCode.CONFIG_ERROR, e);
+            throw DataXException.build(FrameworkErrorCode.CONFIG_ERROR, e);
         }
     }
 
@@ -73,8 +67,7 @@ public class BufferedRecordExchanger implements RecordSender, RecordReceiver {
         try {
             return BufferedRecordExchanger.RECORD_CLASS.newInstance();
         } catch (Exception e) {
-            throw DataXException.build(
-                    FrameworkErrorCode.CONFIG_ERROR, e);
+            throw DataXException.build(FrameworkErrorCode.CONFIG_ERROR, e);
         }
     }
 
@@ -86,19 +79,20 @@ public class BufferedRecordExchanger implements RecordSender, RecordReceiver {
 
         Validate.notNull(record, "record不能为空.");
 
-        if (record.getMemorySize() > this.byteCapacity) {
-            this.pluginCollector.collectDirtyRecord(record, new Exception(String.format("单条记录超过大小限制，当前限制为:%s", this.byteCapacity)));
+        if (record.getMemorySize() > channelByteCapacity) {
+            pluginCollector.collectDirtyRecord(record, new Exception(String.format("单条记录超过大小限制，当前限制为:%s", channelByteCapacity)));
             return;
         }
 
-        boolean isFull = (this.bufferIndex >= this.bufferSize || this.memoryBytes.get() + record.getMemorySize() > this.byteCapacity);
+        boolean isFull = (bufferIndex >= bufferSize || memoryUsed.get() + record.getMemorySize() > channelByteCapacity);
         if (isFull) {
             flush();
         }
 
-        this.buffer.add(record);
-        this.bufferIndex++;
-        memoryBytes.addAndGet(record.getMemorySize());
+        buffer.add(record);
+        bufferIndex++;
+
+        memoryUsed.addAndGet(record.getMemorySize());
     }
 
     @Override
@@ -106,16 +100,19 @@ public class BufferedRecordExchanger implements RecordSender, RecordReceiver {
         if (shutdown) {
             throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK, "");
         }
-        this.channel.pushAll(this.buffer);
-        this.buffer.clear();
-        this.bufferIndex = 0;
-        this.memoryBytes.set(0);
+
+        channel.pushAll(buffer);
+
+        buffer.clear();
+        bufferIndex = 0;
+
+        memoryUsed.set(0);
     }
 
     @Override
     public void terminate() {
         if (shutdown) {
-            throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK, "");
+            throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK);
         }
         flush();
         this.channel.pushTerminate(TerminateRecord.get());
@@ -124,17 +121,19 @@ public class BufferedRecordExchanger implements RecordSender, RecordReceiver {
     @Override
     public Record getFromReader() {
         if (shutdown) {
-            throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK, "");
+            throw DataXException.build(CommonErrorCode.SHUT_DOWN_TASK);
         }
+
         boolean isEmpty = (bufferIndex >= buffer.size());
         if (isEmpty) {
             receive();
         }
 
-        Record record = this.buffer.get(this.bufferIndex++);
+        Record record = buffer.get(bufferIndex++);
         if (record instanceof TerminateRecord) {
             record = null;
         }
+
         return record;
     }
 
@@ -150,8 +149,8 @@ public class BufferedRecordExchanger implements RecordSender, RecordReceiver {
     }
 
     private void receive() {
-        this.channel.pullAll(buffer);
-        this.bufferIndex = 0;
-        this.bufferSize = this.buffer.size();
+        channel.pullAll(buffer);
+        bufferIndex = 0;
+        bufferSize = buffer.size();
     }
 }

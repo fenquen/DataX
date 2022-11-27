@@ -60,7 +60,7 @@ public class OssReader extends Reader {
         @Override
         public void init() {
             LOG.debug("init() begin...");
-            this.readerOriginConfig = this.getPluginJobConf();
+            this.readerOriginConfig = this.getPluginJobReaderWriterParamConf();
             this.basicValidateParameter();
             this.fileFormat = this.readerOriginConfig.getString(com.alibaba.datax.plugin.unstructuredstorage.reader.Key.FILE_FORMAT,
                     com.alibaba.datax.plugin.unstructuredstorage.reader.Constant.DEFAULT_FILE_FORMAT);
@@ -68,10 +68,10 @@ public class OssReader extends Reader {
             if(useHdfsReaderProxy){
                 HdfsParquetUtil.adaptConfiguration(this.readerOriginConfig);
                 this.hdfsReaderJob = new HdfsReader.Job();
-                this.hdfsReaderJob.setJobPluginCollector(this.getJobPluginCollector());
-                this.hdfsReaderJob.setPeerPluginJobConf(this.getPeerPluginJobConf());
+                this.hdfsReaderJob.jobPluginCollector = jobPluginCollector;
+                this.hdfsReaderJob.setPeerPluginJobReaderWriterParamConf(this.getPeerPluginJobReaderWriterParamConf());
                 this.hdfsReaderJob.setPeerPluginName(this.getPeerPluginName());
-                this.hdfsReaderJob.setPluginJobConf(this.getPluginJobConf());
+                this.hdfsReaderJob.setPluginJobReaderWriterParamConf(this.getPluginJobReaderWriterParamConf());
                 this.hdfsReaderJob.init();
                 return;
             }
@@ -391,15 +391,15 @@ public class OssReader extends Reader {
 
         @Override
         public void init() {
-            this.readerSliceConfig = this.getPluginJobConf();
+            this.readerSliceConfig = this.getPluginJobReaderWriterParamConf();
             this.fileFormat = this.readerSliceConfig.getString(com.alibaba.datax.plugin.unstructuredstorage.reader.Key.FILE_FORMAT,
                     com.alibaba.datax.plugin.unstructuredstorage.reader.Constant.DEFAULT_FILE_FORMAT);
             this.useHdfsReaderProxy  = HdfsParquetUtil.isUseHdfsWriterProxy(this.fileFormat);
             if(useHdfsReaderProxy){
                 this.hdfsReaderTask = new HdfsReader.Task();
-                this.hdfsReaderTask.setPeerPluginJobConf(this.getPeerPluginJobConf());
+                this.hdfsReaderTask.setPeerPluginJobReaderWriterParamConf(this.getPeerPluginJobReaderWriterParamConf());
                 this.hdfsReaderTask.setPeerPluginName(this.getPeerPluginName());
-                this.hdfsReaderTask.setPluginJobConf(this.getPluginJobConf());
+                this.hdfsReaderTask.setPluginJobReaderWriterParamConf(this.getPluginJobReaderWriterParamConf());
                 this.hdfsReaderTask.setReaderPluginSplitConf(this.getReaderPluginSplitConf());
                 this.hdfsReaderTask.setTaskGroupId(this.getTaskGroupId());
                 this.hdfsReaderTask.setTaskId(this.getTaskId());

@@ -4,7 +4,6 @@ import com.alibaba.datax.common.spi.ErrorCode;
 
 public enum SqlServerReaderErrorCode implements ErrorCode {
     ;
-
     private String code;
     private String description;
 

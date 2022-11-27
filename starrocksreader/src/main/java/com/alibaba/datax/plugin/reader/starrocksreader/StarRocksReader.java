@@ -28,7 +28,7 @@ public class StarRocksReader extends Reader {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
             int fetchSize = this.originalConfig.getInt(Constant.FETCH_SIZE,
                     Integer.MIN_VALUE);
             this.originalConfig.set(Constant.FETCH_SIZE, fetchSize);
@@ -88,7 +88,7 @@ public class StarRocksReader extends Reader {
 
         @Override
         public void init() {
-            this.readerSliceConfig = super.getPluginJobConf();
+            this.readerSliceConfig = super.getPluginJobReaderWriterParamConf();
             this.commonRdbmsReaderTask = new CommonRdbmsReader.Task(DATABASE_TYPE, super.getTaskGroupId(), super.getTaskId());
             this.commonRdbmsReaderTask.init(this.readerSliceConfig);
 

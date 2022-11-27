@@ -9,15 +9,16 @@ import com.alibaba.datax.common.plugin.TaskPluginCollector;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.core.util.FrameworkErrorCode;
 
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Created by jingxing on 14-9-11.
  */
+@Getter
 public abstract class AbstractTaskPluginCollector extends TaskPluginCollector {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(AbstractTaskPluginCollector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractTaskPluginCollector.class);
 
     private Communication communication;
 
@@ -32,26 +33,13 @@ public abstract class AbstractTaskPluginCollector extends TaskPluginCollector {
         this.pluginType = type;
     }
 
-    public Communication getCommunication() {
-        return communication;
-    }
-
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public PluginType getPluginType() {
-        return pluginType;
-    }
-
     @Override
     final public void collectMessage(String key, String value) {
-        this.communication.addMessage(key, value);
+        communication.addMessage(key, value);
     }
 
     @Override
-    public void collectDirtyRecord(Record dirtyRecord, Throwable t,
-                                   String errorMessage) {
+    public void collectDirtyRecord(Record dirtyRecord, Throwable t, String errorMessage) {
 
         if (null == dirtyRecord) {
             LOG.warn("脏数据record=null.");

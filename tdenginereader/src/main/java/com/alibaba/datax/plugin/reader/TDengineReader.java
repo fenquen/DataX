@@ -27,7 +27,7 @@ public class TDengineReader extends Reader {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
             // check username
             String username = this.originalConfig.getString(Key.USERNAME);
             if (StringUtils.isBlank(username))
@@ -147,7 +147,7 @@ public class TDengineReader extends Reader {
 
         @Override
         public void init() {
-            this.readerSliceConfig = super.getPluginJobConf();
+            this.readerSliceConfig = super.getPluginJobReaderWriterParamConf();
 
             String user = readerSliceConfig.getString(Key.USERNAME);
             String password = readerSliceConfig.getString(Key.PASSWORD);

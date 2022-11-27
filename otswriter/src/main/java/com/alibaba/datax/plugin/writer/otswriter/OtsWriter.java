@@ -22,7 +22,7 @@ public class OtsWriter {
         public void init() {
             LOG.info("init() begin ...");
             try {
-                this.proxy.init(getPluginJobConf());
+                this.proxy.init(getPluginJobReaderWriterParamConf());
             } catch (OTSException e) {
                 LOG.error("OTSException: {}",  e.getMessage(), e);
                 throw DataXException.build(new OtsWriterError(e.getErrorCode(), "OTS端的错误"), Common.getDetailMessage(e), e);
@@ -71,7 +71,7 @@ public class OtsWriter {
         public void startWrite(RecordReceiver lineReceiver) {
             LOG.info("startWrite() begin ...");
             try {
-                this.proxy.init(this.getPluginJobConf());
+                this.proxy.init(this.getPluginJobReaderWriterParamConf());
                 this.proxy.write(lineReceiver, this.getTaskPluginCollector());
             } catch (OTSException e) {
                 LOG.error("OTSException: {}",  e.getMessage(), e);

@@ -57,7 +57,7 @@ public class OceanBaseV10Writer extends Writer {
 		 */
 		@Override
 		public void init() {
-			this.originalConfig = super.getPluginJobConf();
+			this.originalConfig = super.getPluginJobReaderWriterParamConf();
 			checkCompatibleMode(originalConfig);
 			//将config中的column和table中的关键字进行转义
 			List<String> columns = originalConfig.getList(Key.COLUMN, String.class);
@@ -210,7 +210,7 @@ public class OceanBaseV10Writer extends Writer {
 		 */
 		@Override
 		public void init() {
-			this.writerSliceConfig = super.getPluginJobConf();
+			this.writerSliceConfig = super.getPluginJobReaderWriterParamConf();
 			int tableNumber = writerSliceConfig.getInt(Constant.TABLE_NUMBER_MARK);
 			if (tableNumber == 1) {
 				// always use concurrentTableWriter

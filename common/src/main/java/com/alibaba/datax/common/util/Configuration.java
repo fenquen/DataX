@@ -56,10 +56,9 @@ public class Configuration {
      * 对于加密的keyPath，需要记录下来
      * 为的是后面分布式情况下将该值加密后抛到DataXServer中
      */
-    private Set<String> secretKeyPathSet =
-            new HashSet<String>();
+    private Set<String> secretKeyPathSet = new HashSet<>();
 
-    private Object root = null;
+    private Object root;
 
     /**
      * 初始化空白的Configuration
@@ -191,7 +190,7 @@ public class Configuration {
      * <br>
      * 如果path获取的路径或者对象不存在，返回null
      */
-    public Configuration getConfiguration(final String path) {
+    public Configuration getConfig(final String path) {
         Object object = this.get(path);
         if (null == object) {
             return null;
@@ -589,8 +588,7 @@ public class Configuration {
      * 格式化Configuration输出
      */
     public String beautify() {
-        return JSON.toJSONString(this.getInternal(),
-                SerializerFeature.PrettyFormat);
+        return JSON.toJSONString(this, SerializerFeature.PrettyFormat);
     }
 
     /**

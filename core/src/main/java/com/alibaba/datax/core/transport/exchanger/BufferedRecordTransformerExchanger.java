@@ -52,11 +52,10 @@ public class BufferedRecordTransformerExchanger extends TransformerExchanger imp
         this.channel = channel;
         this.configuration = channel.getConfiguration();
 
-        this.bufferSize = configuration
-                .getInt(CoreConstant.DATAX_CORE_TRANSPORT_EXCHANGER_BUFFERSIZE);
+        this.bufferSize = configuration.getInt(CoreConstant.DATAX_CORE_TRANSPORT_EXCHANGER_BUFFERSIZE);
         this.buffer = new ArrayList<Record>(bufferSize);
 
-        //channel的queue默认大小为8M，原来为64M
+        // channel的queue默认大小为8M，原来为64M
         this.byteCapacity = configuration.getInt(
                 CoreConstant.DATAX_CORE_TRANSPORT_CHANNEL_CAPACITY_BYTE, 8 * 1024 * 1024);
 

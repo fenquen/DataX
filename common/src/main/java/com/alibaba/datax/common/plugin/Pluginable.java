@@ -15,15 +15,15 @@ public interface Pluginable {
 
     String getPluginName();
 
-    Configuration getPluginJobConf();
+    Configuration getPluginJobReaderWriterParamConf();
 
-    Configuration getPeerPluginJobConf();
+    Configuration getPeerPluginJobReaderWriterParamConf();
 
     public String getPeerPluginName();
 
-    void setPluginJobConf(Configuration jobConf);
+    void setPluginJobReaderWriterParamConf(Configuration jobConf);
 
-    void setPeerPluginJobConf(Configuration peerPluginJobConf);
+    void setPeerPluginJobReaderWriterParamConf(Configuration peerPluginJobConf);
 
     public void setPeerPluginName(String peerPluginName);
 

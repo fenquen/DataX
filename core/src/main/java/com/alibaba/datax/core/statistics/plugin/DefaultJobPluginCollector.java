@@ -11,21 +11,21 @@ import java.util.Map;
  * Created by jingxing on 14-9-9.
  */
 public final class DefaultJobPluginCollector implements JobPluginCollector {
-    private AbstractContainerCommunicator jobCollector;
+    private AbstractContainerCommunicator abstractContainerCommunicator;
 
     public DefaultJobPluginCollector(AbstractContainerCommunicator containerCollector) {
-        this.jobCollector = containerCollector;
+        this.abstractContainerCommunicator = containerCollector;
     }
 
     @Override
     public Map<String, List<String>> getMessage() {
-        Communication totalCommunication = this.jobCollector.collect();
-        return totalCommunication.getMessage();
+        Communication totalCommunication = abstractContainerCommunicator.collect();
+        return totalCommunication.getId_messageList();
     }
 
     @Override
     public List<String> getMessage(String key) {
-        Communication totalCommunication = this.jobCollector.collect();
-        return totalCommunication.getMessage(key);
+        Communication totalCommunication = abstractContainerCommunicator.collect();
+        return totalCommunication.getMessageListByKey(key);
     }
 }

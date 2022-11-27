@@ -15,8 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ReaderRunner extends AbstractRunner implements Runnable {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ReaderRunner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReaderRunner.class);
 
     private RecordSender recordSender;
 
@@ -36,6 +35,7 @@ public class ReaderRunner extends AbstractRunner implements Runnable {
 
         //统计waitWriterTime，并且在finally才end。
         PerfRecord channelWaitWrite = new PerfRecord(getTaskGroupId(), getTaskId(), PerfRecord.PHASE.WAIT_WRITE_TIME);
+
         try {
             channelWaitWrite.start();
 
@@ -57,8 +57,8 @@ public class ReaderRunner extends AbstractRunner implements Runnable {
             taskReader.startRead(recordSender);
             recordSender.terminate();
 
-            dataPerfRecord.addCount(CommunicationTool.getTotalReadRecords(super.getRunnerCommunication()));
-            dataPerfRecord.addSize(CommunicationTool.getTotalReadBytes(super.getRunnerCommunication()));
+            dataPerfRecord.addCount(CommunicationTool.getTotalReadRecords(super.getCommunication()));
+            dataPerfRecord.addSize(CommunicationTool.getTotalReadBytes(super.getCommunication()));
             dataPerfRecord.end();
 
             LOG.debug("task reader starts to do post ...");
@@ -78,9 +78,9 @@ public class ReaderRunner extends AbstractRunner implements Runnable {
             super.destroy();
             desPerfRecord.end();
 
-            channelWaitWrite.end(super.getRunnerCommunication().getLongCounter(CommunicationTool.WAIT_WRITER_TIME));
+            channelWaitWrite.end(super.getCommunication().getLongCounter(CommunicationTool.WAIT_WRITER_TIME));
 
-            long transformerUsedTime = super.getRunnerCommunication().getLongCounter(CommunicationTool.TRANSFORMER_USED_TIME);
+            long transformerUsedTime = super.getCommunication().getLongCounter(CommunicationTool.TRANSFORMER_USED_TIME);
             if (transformerUsedTime > 0) {
                 PerfRecord transformerRecord = new PerfRecord(getTaskGroupId(), getTaskId(), PerfRecord.PHASE.TRANSFORMER_TIME);
                 transformerRecord.start();
@@ -89,7 +89,7 @@ public class ReaderRunner extends AbstractRunner implements Runnable {
         }
     }
 
-    public void shutdown(){
+    public void shutdown() {
         recordSender.shutdown();
     }
 }

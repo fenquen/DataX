@@ -40,18 +40,18 @@ public final class ConfigParser {
         String postHandlerName = configuration.getString(
                 CoreConstant.DATAX_JOB_POSTHANDLER_PLUGINNAME);
 
-        Set<String> pluginList = new HashSet<String>();
-        pluginList.add(readerPluginName);
-        pluginList.add(writerPluginName);
+        Set<String> pluginNameSet = new HashSet<>();
+        pluginNameSet.add(readerPluginName);
+        pluginNameSet.add(writerPluginName);
 
         if(StringUtils.isNotEmpty(preHandlerName)) {
-            pluginList.add(preHandlerName);
+            pluginNameSet.add(preHandlerName);
         }
         if(StringUtils.isNotEmpty(postHandlerName)) {
-            pluginList.add(postHandlerName);
+            pluginNameSet.add(postHandlerName);
         }
         try {
-            configuration.merge(parsePluginConfig(new ArrayList<>(pluginList)), false);
+            configuration.merge(parsePluginConfig(new ArrayList<>(pluginNameSet)), false);
         }catch (Exception e){
             //吞掉异常，保持log干净。这里message足够。
             LOG.warn(String.format("插件[%s,%s]加载失败，1s后重试... Exception:%s ", readerPluginName, writerPluginName, e.getMessage()));
@@ -60,7 +60,7 @@ public final class ConfigParser {
             } catch (InterruptedException e1) {
                 //
             }
-            configuration.merge(parsePluginConfig(new ArrayList<>(pluginList)), false);
+            configuration.merge(parsePluginConfig(new ArrayList<>(pluginNameSet)), false);
         }
 
         return configuration;

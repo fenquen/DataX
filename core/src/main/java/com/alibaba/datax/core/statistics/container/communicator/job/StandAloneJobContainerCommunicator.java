@@ -3,6 +3,7 @@ package com.alibaba.datax.core.statistics.container.communicator.job;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.core.statistics.communication.Communication;
 import com.alibaba.datax.core.statistics.communication.CommunicationTool;
+import com.alibaba.datax.core.statistics.communication.LocalTGCommunicationManager;
 import com.alibaba.datax.core.statistics.container.collector.ProcessInnerCollector;
 import com.alibaba.datax.core.statistics.container.communicator.AbstractContainerCommunicator;
 import com.alibaba.datax.core.statistics.container.report.ProcessInnerReporter;
@@ -15,29 +16,27 @@ import java.util.List;
 import java.util.Map;
 
 public class StandAloneJobContainerCommunicator extends AbstractContainerCommunicator {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(StandAloneJobContainerCommunicator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StandAloneJobContainerCommunicator.class);
 
     public StandAloneJobContainerCommunicator(Configuration configuration) {
         super(configuration);
-        super.setCollector(new ProcessInnerCollector(configuration.getLong(
-                CoreConstant.DATAX_CORE_CONTAINER_JOB_ID)));
-        super.setReporter(new ProcessInnerReporter());
+        abstractCollector = new ProcessInnerCollector(configuration.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID));
+        abstractReporter = new ProcessInnerReporter();
     }
 
     @Override
-    public void registerCommunication(List<Configuration> configurationList) {
-        super.getCollector().registerTGCommunication(configurationList);
+    public void registerCommunication(List<Configuration> taskGroupConfigList) {
+        abstractCollector.registerTGCommunication(taskGroupConfigList);
     }
 
     @Override
     public Communication collect() {
-        return super.getCollector().collectFromTaskGroup();
+        return abstractCollector.collectFromTaskGroup();
     }
 
     @Override
     public State collectState() {
-        return this.collect().getState();
+        return collect().getState();
     }
 
     /**
@@ -45,7 +44,7 @@ public class StandAloneJobContainerCommunicator extends AbstractContainerCommuni
      */
     @Override
     public void report(Communication communication) {
-        super.getReporter().reportJobCommunication(super.getJobId(), communication);
+        getAbstractReporter().reportJobCommunication(super.getJobId(), communication);
 
         LOG.info(CommunicationTool.Stringify.getSnapshot(communication));
         reportVmInfo();
@@ -53,11 +52,11 @@ public class StandAloneJobContainerCommunicator extends AbstractContainerCommuni
 
     @Override
     public Communication getCommunication(Integer taskGroupId) {
-        return super.getCollector().getTGCommunication(taskGroupId);
+        return abstractCollector.getTGCommunication(taskGroupId);
     }
 
     @Override
     public Map<Integer, Communication> getCommunicationMap() {
-        return super.getCollector().getTGCommunicationMap();
+        return LocalTGCommunicationManager.taskGroupId_communication;
     }
 }

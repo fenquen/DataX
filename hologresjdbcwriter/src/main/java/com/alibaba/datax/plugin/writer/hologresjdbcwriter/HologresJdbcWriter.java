@@ -16,7 +16,7 @@ public class HologresJdbcWriter extends Writer {
 
 		@Override
 		public void init() {
-			this.originalConfig = super.getPluginJobConf();
+			this.originalConfig = super.getPluginJobReaderWriterParamConf();
 			this.baseWriterMaster = new BaseWriter.Job(DATABASE_TYPE);
 			this.baseWriterMaster.init(this.originalConfig);
 		}
@@ -49,7 +49,7 @@ public class HologresJdbcWriter extends Writer {
 
 		@Override
 		public void init() {
-			this.writerSliceConfig = super.getPluginJobConf();
+			this.writerSliceConfig = super.getPluginJobReaderWriterParamConf();
 			this.baseWriterSlave = new BaseWriter.Task(DATABASE_TYPE);
 			this.baseWriterSlave.init(this.writerSliceConfig);
 		}

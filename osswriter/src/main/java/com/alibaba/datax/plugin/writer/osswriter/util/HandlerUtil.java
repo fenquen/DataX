@@ -21,9 +21,9 @@ public class HandlerUtil {
      */
     public static void preHandler(Configuration jobConfiguration) {
         LOG.info("================ OssWriter Phase 1 preHandler starting... ================ ");
-        Configuration writerOriginPluginConf = jobConfiguration.getConfiguration(
+        Configuration writerOriginPluginConf = jobConfiguration.getConfig(
                 CoreConstant.DATAX_JOB_CONTENT_WRITER_PARAMETER);
-        Configuration writerOssPluginConf = writerOriginPluginConf.getConfiguration(Key.OSS_CONFIG);
+        Configuration writerOssPluginConf = writerOriginPluginConf.getConfig(Key.OSS_CONFIG);
         Configuration newWriterPluginConf = Configuration.newDefault();
         jobConfiguration.remove(CoreConstant.DATAX_JOB_CONTENT_WRITER_PARAMETER);
         //将postgresqlwriter的pg配置注入到postgresqlConfig中, 供后面的postHandler使用

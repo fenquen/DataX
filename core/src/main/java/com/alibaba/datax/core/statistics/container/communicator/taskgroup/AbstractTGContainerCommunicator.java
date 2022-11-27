@@ -29,21 +29,19 @@ public abstract class AbstractTGContainerCommunicator extends AbstractContainerC
 
     public AbstractTGContainerCommunicator(Configuration configuration) {
         super(configuration);
-        this.jobId = configuration.getInt(
-                CoreConstant.DATAX_CORE_CONTAINER_JOB_ID);
-        super.setCollector(new ProcessInnerCollector(this.jobId));
-        this.taskGroupId = configuration.getInt(
-                CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_ID);
+        jobId = configuration.getInt(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID);
+        abstractCollector = new ProcessInnerCollector(this.jobId);
+        this.taskGroupId = configuration.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_ID);
     }
 
     @Override
-    public void registerCommunication(List<Configuration> configurationList) {
-        super.getCollector().registerTaskCommunication(configurationList);
+    public void registerCommunication(List<Configuration> elementContentConfigList) {
+       abstractCollector.registerTaskCommunication(elementContentConfigList);
     }
 
     @Override
     public final Communication collect() {
-        return this.getCollector().collectFromTask();
+        return abstractCollector.collectFromTask();
     }
 
     @Override
@@ -51,8 +49,7 @@ public abstract class AbstractTGContainerCommunicator extends AbstractContainerC
         Communication communication = new Communication();
         communication.setState(State.SUCCEEDED);
 
-        for (Communication taskCommunication :
-                super.getCollector().getTaskCommunicationMap().values()) {
+        for (Communication taskCommunication : super.getAbstractCollector().getTaskId_communication().values()) {
             communication.mergeStateFrom(taskCommunication);
         }
 
@@ -62,13 +59,12 @@ public abstract class AbstractTGContainerCommunicator extends AbstractContainerC
     @Override
     public final Communication getCommunication(Integer taskId) {
         Validate.isTrue(taskId >= 0, "注册的taskId不能小于0");
-
-        return super.getCollector().getTaskCommunication(taskId);
+        return abstractCollector.getTaskCommunication(taskId);
     }
 
     @Override
     public final Map<Integer, Communication> getCommunicationMap() {
-        return super.getCollector().getTaskCommunicationMap();
+        return abstractCollector.taskId_communication;
     }
 
 }

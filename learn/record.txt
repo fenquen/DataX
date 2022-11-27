@@ -1,0 +1,7 @@
+固定数量的threadPool
+    1个taskGroup占用1个线程 taskGroupRunner.run()内容
+        1个task的split
+            1个reader 占用1个线程 new Thread(readerRunner).start()
+            1个writer 占用1个线程 new Thread(writerRunner).start()
+            1个channel用来沟通reader writer
+            a

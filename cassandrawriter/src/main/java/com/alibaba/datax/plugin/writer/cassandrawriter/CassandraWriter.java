@@ -50,7 +50,7 @@ public class CassandraWriter extends Writer {
     }
 
     @Override public void init() {
-      originalConfig = getPluginJobConf();
+      originalConfig = getPluginJobReaderWriterParamConf();
     }
 
     @Override public void destroy() {
@@ -154,7 +154,7 @@ public class CassandraWriter extends Writer {
 
 
     @Override public void init() {
-      this.taskConfig = super.getPluginJobConf();
+      this.taskConfig = super.getPluginJobReaderWriterParamConf();
       String username = taskConfig.getString(Key.USERNAME);
       String password = taskConfig.getString(Key.PASSWORD);
       String hosts = taskConfig.getString(Key.HOST);

@@ -32,7 +32,7 @@ public class StreamReader extends Reader {
 
 		@Override
 		public void init() {
-			this.originalConfig = super.getPluginJobConf();
+			this.originalConfig = super.getPluginJobReaderWriterParamConf();
 			// warn: 忽略大小写
 			this.mixupFunctionPattern = Pattern.compile(Constant.MIXUP_FUNCTION_PATTERN, Pattern.CASE_INSENSITIVE);
 			dealColumn(this.originalConfig);
@@ -204,7 +204,7 @@ public class StreamReader extends Reader {
 
 		@Override
 		public void init() {
-			this.readerSliceConfig = super.getPluginJobConf();
+			this.readerSliceConfig = super.getPluginJobReaderWriterParamConf();
 			this.columns = this.readerSliceConfig.getList(Key.COLUMN,
 					String.class);
 

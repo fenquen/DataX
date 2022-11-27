@@ -21,7 +21,7 @@ public class Hbase11xReader extends Reader {
 
         @Override
         public void init() {
-            this.originConfig = this.getPluginJobConf();
+            this.originConfig = this.getPluginJobReaderWriterParamConf();
             Hbase11xHelper.validateParameter(this.originConfig);
         }
 
@@ -43,7 +43,7 @@ public class Hbase11xReader extends Reader {
         private HbaseAbstractTask hbaseTaskProxy;
         @Override
         public void init() {
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
             String mode = this.taskConfig.getString(Key.MODE);
             ModeType modeType = ModeType.getByTypeName(mode);
 

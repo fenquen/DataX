@@ -55,7 +55,7 @@ public class DatahubWriter extends Writer {
 
         @Override
         public void init() {
-            this.jobConfig = super.getPluginJobConf();
+            this.jobConfig = super.getPluginJobReaderWriterParamConf();
             jobConfig.getNecessaryValue(Key.CONFIG_KEY_ENDPOINT, DatahubWriterErrorCode.MISSING_REQUIRED_VALUE);
             jobConfig.getNecessaryValue(Key.CONFIG_KEY_ACCESS_ID, DatahubWriterErrorCode.MISSING_REQUIRED_VALUE);
             jobConfig.getNecessaryValue(Key.CONFIG_KEY_ACCESS_KEY, DatahubWriterErrorCode.MISSING_REQUIRED_VALUE);
@@ -130,7 +130,7 @@ public class DatahubWriter extends Writer {
         
         @Override
         public void init() {
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
             project = taskConfig.getNecessaryValue(Key.CONFIG_KEY_PROJECT, DatahubWriterErrorCode.MISSING_REQUIRED_VALUE);
             topic = taskConfig.getNecessaryValue(Key.CONFIG_KEY_TOPIC, DatahubWriterErrorCode.MISSING_REQUIRED_VALUE);
             maxCommitSize = taskConfig.getInt(Key.CONFIG_KEY_MAX_COMMIT_SIZE, 1024*1024);

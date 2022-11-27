@@ -28,7 +28,7 @@ public class OracleReader extends Reader {
 
 		@Override
 		public void init() {
-			this.originalConfig = super.getPluginJobConf();
+			this.originalConfig = super.getPluginJobReaderWriterParamConf();
 			
 			dealFetchSize(this.originalConfig);
 
@@ -96,7 +96,7 @@ public class OracleReader extends Reader {
 
 		@Override
 		public void init() {
-			this.readerSliceConfig = super.getPluginJobConf();
+			this.readerSliceConfig = super.getPluginJobReaderWriterParamConf();
 			this.commonRdbmsReaderTask = new CommonRdbmsReader.Task(
 					DATABASE_TYPE ,super.getTaskGroupId(), super.getTaskId());
 			this.commonRdbmsReaderTask.init(this.readerSliceConfig);

@@ -35,7 +35,7 @@ public class DatahubReader extends Reader {
         @Override
         public void init() {
             LOG.info("datahub reader job init begin ...");
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
             validateParameter(originalConfig);
             this.datahubClient = DatahubClientHelper.getDatahubClient(this.originalConfig);
             LOG.info("datahub reader job init end.");
@@ -168,7 +168,7 @@ public class DatahubReader extends Reader {
         
         @Override
         public void init() {
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
             
             this.accessId = this.taskConfig.getString(Key.ACCESSKEYID);
             this.accessKey = this.taskConfig.getString(Key.ACCESSKEYSECRET);

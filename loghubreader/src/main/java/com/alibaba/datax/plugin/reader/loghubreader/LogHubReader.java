@@ -38,7 +38,7 @@ public class LogHubReader extends Reader {
         @Override
         public void init() {            
             LOG.info("loghub reader job init begin ...");
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
             validateParameter(originalConfig);
             
             String endPoint = this.originalConfig.getString(Key.ENDPOINT);
@@ -225,7 +225,7 @@ public class LogHubReader extends Reader {
                 
         @Override
         public void init() {
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
             
             endPoint = this.taskConfig.getString(Key.ENDPOINT);
             accessKeyId = this.taskConfig.getString(Key.ACCESSKEYID);

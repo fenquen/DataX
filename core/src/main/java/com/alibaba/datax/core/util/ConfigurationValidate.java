@@ -11,23 +11,17 @@ import org.apache.commons.lang.Validate;
 public class ConfigurationValidate {
     public static void doValidate(Configuration allConfig) {
         Validate.isTrue(allConfig!=null, "");
-
         coreValidate(allConfig);
-
         pluginValidate(allConfig);
-
         jobValidate(allConfig);
     }
 
     private static void coreValidate(Configuration allconfig) {
-        return;
     }
 
     private static void pluginValidate(Configuration allConfig) {
-        return;
     }
 
     private static void jobValidate(Configuration allConfig) {
-        return;
     }
 }

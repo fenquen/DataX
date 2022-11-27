@@ -32,7 +32,7 @@ public class MemoryChannel extends Channel {
 
     public MemoryChannel(final Configuration configuration) {
         super(configuration);
-        this.queue = new ArrayBlockingQueue<Record>(this.getCapacity());
+        this.queue = new ArrayBlockingQueue<>(capacity);
         this.bufferSize = configuration.getInt(CoreConstant.DATAX_CORE_TRANSPORT_EXCHANGER_BUFFERSIZE);
 
         lock = new ReentrantLock();
@@ -49,11 +49,6 @@ public class MemoryChannel extends Channel {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
-    }
-
-    @Override
-    public void clear() {
-        this.queue.clear();
     }
 
     @Override
@@ -74,7 +69,7 @@ public class MemoryChannel extends Channel {
             long startTime = System.nanoTime();
             lock.lockInterruptibly();
             int bytes = getRecordBytes(rs);
-            while (memoryByteCount.get() + bytes > this.byteCapacity || rs.size() > this.queue.remainingCapacity()) {
+            while (memoryByteCount.get() + bytes > byteCapacity || rs.size() > queue.remainingCapacity()) {
                 notInsufficient.await(200L, TimeUnit.MILLISECONDS);
             }
             this.queue.addAll(rs);
@@ -135,12 +130,16 @@ public class MemoryChannel extends Channel {
 
     @Override
     public int size() {
-        return this.queue.size();
+        return queue.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return this.queue.isEmpty();
+        return queue.isEmpty();
     }
 
+    @Override
+    public void clear() {
+        queue.clear();
+    }
 }

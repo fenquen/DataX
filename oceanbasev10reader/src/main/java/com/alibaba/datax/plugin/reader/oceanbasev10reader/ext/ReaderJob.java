@@ -11,9 +11,9 @@ import com.alibaba.datax.plugin.reader.oceanbasev10reader.OceanBaseReader;
 import com.alibaba.datax.plugin.reader.oceanbasev10reader.util.ObReaderUtils;
 import com.alibaba.datax.plugin.reader.oceanbasev10reader.util.PartitionSplitUtil;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class ReaderJob extends CommonRdbmsReader.Job {
     private Logger LOG = LoggerFactory.getLogger(OceanBaseReader.Task.class);
@@ -39,25 +39,25 @@ public class ReaderJob extends CommonRdbmsReader.Job {
             if (tables != null) {
                 ObReaderUtils.escapeDatabaseKeyword(tables);
                 originalConfig.set(String.format("%s[%d].%s", Constant.CONN_MARK, i, Key.TABLE),
-                    tables);
+                        tables);
             }
         }
         super.init(originalConfig);
     }
 
     @Override
-    public List<Configuration> split(Configuration originalConfig, int adviceNumber) {
+    public List<Configuration> split(Configuration pluginJobReaderWriterParamConfCopy, int adviceNumber) {
         List<Configuration> list;
         // readByPartition is lower priority than splitPk.
         // and readByPartition only works in table mode.
-        if (!isSplitPkValid(originalConfig) &&
-                originalConfig.getBool(Constant.IS_TABLE_MODE) &&
-                originalConfig.getBool(ObReaderKey.READ_BY_PARTITION, false)) {
+        if (!isSplitPkValid(pluginJobReaderWriterParamConfCopy) &&
+                pluginJobReaderWriterParamConfCopy.getBool(Constant.IS_TABLE_MODE) &&
+                pluginJobReaderWriterParamConfCopy.getBool(ObReaderKey.READ_BY_PARTITION, false)) {
             LOG.info("try to split reader job by partition.");
-            list = PartitionSplitUtil.splitByPartition(originalConfig);
+            list = PartitionSplitUtil.splitByPartition(pluginJobReaderWriterParamConfCopy);
         } else {
             LOG.info("try to split reader job by splitPk.");
-            list = super.split(originalConfig, adviceNumber);
+            list = super.split(pluginJobReaderWriterParamConfCopy, adviceNumber);
         }
 
         for (Configuration config : list) {
@@ -70,8 +70,7 @@ public class ReaderJob extends CommonRdbmsReader.Job {
     }
 
     private boolean isSplitPkValid(Configuration originalConfig) {
-        String splitPk = originalConfig.getString(Key.SPLIT_PK);
-        return splitPk != null && splitPk.trim().length() > 0;
+        return StringUtils.isNotBlank(originalConfig.getString(Key.SPLIT_PK));
     }
 
     private String getObRegionName(String jdbcUrl) {

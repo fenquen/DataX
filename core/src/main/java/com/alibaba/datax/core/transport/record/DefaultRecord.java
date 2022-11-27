@@ -20,7 +20,7 @@ public class DefaultRecord implements Record {
 
 	private static final int RECORD_AVERGAE_COLUMN_NUMBER = 16;
 
-	private List<Column> columns;
+	private List<Column> columns = new ArrayList<>(RECORD_AVERGAE_COLUMN_NUMBER);
 
 	private int byteSize;
 
@@ -30,7 +30,6 @@ public class DefaultRecord implements Record {
 	private Map<String, String> meta;
 
 	public DefaultRecord() {
-		this.columns = new ArrayList<Column>(RECORD_AVERGAE_COLUMN_NUMBER);
 	}
 
 	@Override
@@ -95,7 +94,7 @@ public class DefaultRecord implements Record {
 		return this.meta;
 	}
 
-	private void decrByteSize(final Column column) {
+	private void decrByteSize(Column column) {
 		if (null == column) {
 			return;
 		}
@@ -106,7 +105,7 @@ public class DefaultRecord implements Record {
 		memorySize = memorySize -  ClassSize.ColumnHead - column.getByteSize();
 	}
 
-	private void incrByteSize(final Column column) {
+	private void incrByteSize(Column column) {
 		if (null == column) {
 			return;
 		}

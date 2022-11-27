@@ -21,7 +21,7 @@ public class KingbaseesReader extends Reader {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
             int fetchSize = this.originalConfig.getInt(com.alibaba.datax.plugin.rdbms.reader.Constant.FETCH_SIZE,
                     Constant.DEFAULT_FETCH_SIZE);
             if (fetchSize < 1) {
@@ -58,7 +58,7 @@ public class KingbaseesReader extends Reader {
 
         @Override
         public void init() {
-            this.readerSliceConfig = super.getPluginJobConf();
+            this.readerSliceConfig = super.getPluginJobReaderWriterParamConf();
             this.commonRdbmsReaderSlave = new CommonRdbmsReader.Task(DATABASE_TYPE, super.getTaskGroupId(), super.getTaskId());
             this.commonRdbmsReaderSlave.init(this.readerSliceConfig);
         }

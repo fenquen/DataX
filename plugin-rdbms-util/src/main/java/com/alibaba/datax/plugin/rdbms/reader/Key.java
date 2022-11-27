@@ -14,9 +14,10 @@ public final class Key {
     
     public final static String MANDATORY_ENCODING = "mandatoryEncoding";
 
-    // 是数组配置
+    // ","
     public final static String COLUMN = "column";
-    
+
+    // 是数组配置
     public final static String COLUMN_LIST = "columnList";
 
     public final static String WHERE = "where";

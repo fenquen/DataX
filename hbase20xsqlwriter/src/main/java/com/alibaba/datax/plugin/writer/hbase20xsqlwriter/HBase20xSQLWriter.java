@@ -15,7 +15,7 @@ public class HBase20xSQLWriter extends Writer {
 
         @Override
         public void init() {
-            this.config = this.getPluginJobConf();
+            this.config = this.getPluginJobReaderWriterParamConf();
             HBase20xSQLHelper.validateParameter(this.config);
         }
 
@@ -40,7 +40,7 @@ public class HBase20xSQLWriter extends Writer {
 
         @Override
         public void init() {
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
             this.writerTask = new HBase20xSQLWriterTask(this.taskConfig);
         }
 

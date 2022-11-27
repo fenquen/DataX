@@ -13,7 +13,7 @@ public class HBase20xSQLReader extends Reader {
         private HBase20SQLReaderHelper readerHelper;
         @Override
         public void init() {
-            this.originalConfig = this.getPluginJobConf();
+            this.originalConfig = this.getPluginJobReaderWriterParamConf();
             this.readerHelper = new HBase20SQLReaderHelper(this.originalConfig);
             readerHelper.validateParameter();
         }
@@ -35,7 +35,7 @@ public class HBase20xSQLReader extends Reader {
 
         @Override
         public void init() {
-            this.readerConfig = super.getPluginJobConf();
+            this.readerConfig = super.getPluginJobReaderWriterParamConf();
             hbase20xSQLReaderTask = new HBase20xSQLReaderTask(readerConfig, super.getTaskGroupId(), super.getTaskId());
         }
 

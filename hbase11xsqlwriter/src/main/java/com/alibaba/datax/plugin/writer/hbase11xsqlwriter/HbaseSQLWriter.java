@@ -18,7 +18,7 @@ public class HbaseSQLWriter extends Writer {
         @Override
         public void init() {
             // 解析配置
-            config = HbaseSQLHelper.parseConfig(this.getPluginJobConf());
+            config = HbaseSQLHelper.parseConfig(this.getPluginJobReaderWriterParamConf());
 
             // 校验配置，会访问集群来检查表
             HbaseSQLHelper.validateConfig(config);
@@ -54,7 +54,7 @@ public class HbaseSQLWriter extends Writer {
 
         @Override
         public void init() {
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
             this.hbaseSQLWriterTask = new HbaseSQLWriterTask(this.taskConfig);
         }
 

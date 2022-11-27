@@ -15,79 +15,75 @@ public class RdbmsReader extends Reader {
     private static final DataBaseType DATABASE_TYPE = DataBaseType.RDBMS;
 
     static {
-        // 加载插件下面配置的驱动类
         DBUtil.loadDriverClass("reader", "rdbms");
     }
 
     public static class Job extends Reader.Job {
+        private Configuration pluginJobReaderWriterParamConfCopy;
 
-        private Configuration originalConfig;
         private CommonRdbmsReader.Job commonRdbmsReaderMaster;
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
-            int fetchSize = originalConfig.getInt(
-                    com.alibaba.datax.plugin.rdbms.reader.Constant.FETCH_SIZE,
-                    Constant.DEFAULT_FETCH_SIZE);
+            pluginJobReaderWriterParamConfCopy = super.getPluginJobReaderWriterParamConf();
+
+            int fetchSize = pluginJobReaderWriterParamConfCopy.getInt(
+                    com.alibaba.datax.plugin.rdbms.reader.Constant.FETCH_SIZE, Constant.DEFAULT_FETCH_SIZE);
 
             if (fetchSize < 1) {
-                throw DataXException.build(
-                        DBUtilErrorCode.REQUIRED_VALUE,
-                        String.format("您配置的fetchSize:[%d]不对,设置值不能小于 1.", fetchSize));
+                throw DataXException.build(DBUtilErrorCode.REQUIRED_VALUE,
+                        String.format("您配置的fetchSize:[%d]不对,不能小于 1.", fetchSize));
             }
 
-            originalConfig.set(com.alibaba.datax.plugin.rdbms.reader.Constant.FETCH_SIZE, fetchSize);
+            pluginJobReaderWriterParamConfCopy.set(com.alibaba.datax.plugin.rdbms.reader.Constant.FETCH_SIZE, fetchSize);
 
-            commonRdbmsReaderMaster = new SubCommonRdbmsReader.Job(DATABASE_TYPE);
-            commonRdbmsReaderMaster.init(originalConfig);
+            commonRdbmsReaderMaster = new CommonRdbmsReader.Job(DATABASE_TYPE);
+            commonRdbmsReaderMaster.init(pluginJobReaderWriterParamConfCopy);
         }
 
         @Override
         public List<Configuration> split(int adviceNumber) {
-            return commonRdbmsReaderMaster.split(originalConfig, adviceNumber);
+            return commonRdbmsReaderMaster.split(pluginJobReaderWriterParamConfCopy, adviceNumber);
         }
 
         @Override
         public void post() {
-            this.commonRdbmsReaderMaster.post(this.originalConfig);
+            this.commonRdbmsReaderMaster.post(pluginJobReaderWriterParamConfCopy);
         }
 
         @Override
         public void destroy() {
-            this.commonRdbmsReaderMaster.destroy(this.originalConfig);
+            this.commonRdbmsReaderMaster.destroy(pluginJobReaderWriterParamConfCopy);
         }
 
     }
 
     public static class Task extends Reader.Task {
 
-        private Configuration readerSliceConfig;
+        private Configuration pluginJobReaderParamConf;
         private CommonRdbmsReader.Task commonRdbmsReaderSlave;
 
         @Override
         public void init() {
-            this.readerSliceConfig = super.getPluginJobConf();
-            this.commonRdbmsReaderSlave = new SubCommonRdbmsReader.Task(DATABASE_TYPE);
-            this.commonRdbmsReaderSlave.init(this.readerSliceConfig);
+            pluginJobReaderParamConf = super.getPluginJobReaderWriterParamConf();
+            commonRdbmsReaderSlave = new CommonRdbmsReader.Task(DATABASE_TYPE);
+            commonRdbmsReaderSlave.init(pluginJobReaderParamConf);
         }
 
         @Override
         public void startRead(RecordSender recordSender) {
-            int fetchSize = this.readerSliceConfig.getInt(com.alibaba.datax.plugin.rdbms.reader.Constant.FETCH_SIZE);
-
-            this.commonRdbmsReaderSlave.startRead(this.readerSliceConfig,
-                    recordSender, super.getTaskPluginCollector(), fetchSize);
+            int fetchSize = pluginJobReaderParamConf.getInt(com.alibaba.datax.plugin.rdbms.reader.Constant.FETCH_SIZE);
+            commonRdbmsReaderSlave.startRead(pluginJobReaderParamConf, recordSender, super.getTaskPluginCollector(), fetchSize);
         }
 
         @Override
         public void post() {
-            this.commonRdbmsReaderSlave.post(this.readerSliceConfig);
+            this.commonRdbmsReaderSlave.post(this.pluginJobReaderParamConf);
         }
 
         @Override
         public void destroy() {
-            this.commonRdbmsReaderSlave.destroy(this.readerSliceConfig);
+            this.commonRdbmsReaderSlave.destroy(this.pluginJobReaderParamConf);
         }
     }
 }

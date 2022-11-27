@@ -44,7 +44,7 @@ public class GdbReader extends Reader {
 
         @Override
         public void init() {
-            this.jobConfig = super.getPluginJobConf();
+            this.jobConfig = super.getPluginJobReaderWriterParamConf();
 
             /**
              * 注意：此方法仅执行一次。
@@ -136,7 +136,7 @@ public class GdbReader extends Reader {
 
         @Override
         public void init() {
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
 
             /**
              * 注意：此方法每个 Task 都会执行一次。

@@ -23,7 +23,7 @@ public class TDengineWriter extends Writer {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
             this.originalConfig.set(PEER_PLUGIN_NAME, getPeerPluginName());
 
             // check username
@@ -86,7 +86,7 @@ public class TDengineWriter extends Writer {
 
         @Override
         public void init() {
-            this.writerSliceConfig = getPluginJobConf();
+            this.writerSliceConfig = getPluginJobReaderWriterParamConf();
             this.taskPluginCollector = super.getTaskPluginCollector();
         }
 

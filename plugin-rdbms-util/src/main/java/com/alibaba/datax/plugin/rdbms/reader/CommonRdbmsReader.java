@@ -42,8 +42,7 @@ import java.util.concurrent.Future;
 public class CommonRdbmsReader {
 
     public static class Job {
-        private static final Logger LOG = LoggerFactory
-                .getLogger(Job.class);
+        private static final Logger LOG = LoggerFactory.getLogger(Job.class);
 
         public Job(DataBaseType dataBaseType) {
             OriginalConfPretreatmentUtil.DATABASE_TYPE = dataBaseType;
@@ -51,9 +50,7 @@ public class CommonRdbmsReader {
         }
 
         public void init(Configuration originalConfig) {
-
             OriginalConfPretreatmentUtil.doPretreatment(originalConfig);
-
             LOG.debug("After job init(), job config now is:[\n{}\n]", originalConfig.toJSON());
         }
 
@@ -71,8 +68,8 @@ public class CommonRdbmsReader {
                 exec = Executors.newFixedThreadPool(10);
             }
             Collection<PreCheckTask> taskList = new ArrayList<PreCheckTask>();
-            for (int i = 0, len = connList.size(); i < len; i++) {
-                Configuration connConf = Configuration.from(connList.get(i).toString());
+            for (Object o : connList) {
+                Configuration connConf = Configuration.from(o.toString());
                 PreCheckTask t = new PreCheckTask(username, password, connConf, dataBaseType, splitPK);
                 taskList.add(t);
             }
@@ -87,8 +84,7 @@ public class CommonRdbmsReader {
                 try {
                     result.get();
                 } catch (ExecutionException e) {
-                    DataXException de = (DataXException) e.getCause();
-                    throw de;
+                    throw (DataXException) e.getCause();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -97,16 +93,15 @@ public class CommonRdbmsReader {
         }
 
 
-        public List<Configuration> split(Configuration originalConfig, int adviceNumber) {
-            return ReaderSplitUtil.doSplit(originalConfig, adviceNumber);
+        public List<Configuration> split(Configuration pluginJobReaderWriterParamConfCopy,
+                                         int adviceNumber) {
+            return ReaderSplitUtil.doSplit(pluginJobReaderWriterParamConfCopy, adviceNumber);
         }
 
         public void post(Configuration originalConfig) {
-            // do nothing
         }
 
         public void destroy(Configuration originalConfig) {
-            // do nothing
         }
 
     }
@@ -118,8 +113,8 @@ public class CommonRdbmsReader {
         protected final byte[] EMPTY_CHAR_ARRAY = new byte[0];
 
         private DataBaseType dataBaseType;
-        private int taskGroupId = -1;
-        private int taskId = -1;
+        private int taskGroupId;
+        private int taskId;
 
         private String username;
         private String password;
@@ -163,56 +158,53 @@ public class CommonRdbmsReader {
 
             this.mandatoryEncoding = readerSliceConfig.getString(Key.MANDATORY_ENCODING, "");
 
-            basicMsg = String.format("jdbcUrl:[%s]", this.jdbcUrl);
+            basicMsg = String.format("jdbcUrl:[%s]", jdbcUrl);
 
         }
 
-        public void startRead(Configuration readerSliceConfig,
+        public void startRead(Configuration pluginJobReaderParamConf,
                               RecordSender recordSender,
-                              TaskPluginCollector taskPluginCollector, int fetchSize) {
-            String querySql = readerSliceConfig.getString(Key.QUERY_SQL);
-            String table = readerSliceConfig.getString(Key.TABLE);
+                              TaskPluginCollector taskPluginCollector,
+                              int fetchSize) {
+
+            String querySql = pluginJobReaderParamConf.getString(Key.QUERY_SQL);
+            String table = pluginJobReaderParamConf.getString(Key.TABLE);
 
             PerfTrace.getInstance().addTaskDetails(taskId, table + "," + basicMsg);
 
-            LOG.info("Begin to read record by Sql: [{}\n] {}.",
-                    querySql, basicMsg);
+            LOG.info("Begin to read record by Sql: [{}\n] {}.", querySql, basicMsg);
+
             PerfRecord queryPerfRecord = new PerfRecord(taskGroupId, taskId, PerfRecord.PHASE.SQL_QUERY);
             queryPerfRecord.start();
 
-            Connection conn = DBUtil.getConnection(this.dataBaseType, jdbcUrl,
-                    username, password);
+            Connection conn = DBUtil.getConnection(this.dataBaseType, jdbcUrl, username, password);
 
             // session config .etc related
-            DBUtil.dealWithSessionConfig(conn, readerSliceConfig,
-                    this.dataBaseType, basicMsg);
+            DBUtil.dealWithSessionConfig(conn, pluginJobReaderParamConf, dataBaseType, basicMsg);
 
-            int columnNumber;
-            ResultSet rs;
             try {
-                rs = DBUtil.query(conn, querySql, fetchSize);
+                ResultSet resultSet = DBUtil.query(conn, querySql, fetchSize);
                 queryPerfRecord.end();
 
-                ResultSetMetaData metaData = rs.getMetaData();
-                columnNumber = metaData.getColumnCount();
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnNumber = metaData.getColumnCount();
 
-                //这个统计干净的result_Next时间
+                // 这个统计干净的result_Next时间
                 PerfRecord allResultPerfRecord = new PerfRecord(taskGroupId, taskId, PerfRecord.PHASE.RESULT_NEXT_ALL);
                 allResultPerfRecord.start();
 
                 long rsNextUsedTime = 0;
                 long lastTime = System.nanoTime();
-                while (rs.next()) {
+                while (resultSet.next()) {
                     rsNextUsedTime += (System.nanoTime() - lastTime);
-                    this.transportOneRecord(recordSender, rs,
-                            metaData, columnNumber, mandatoryEncoding, taskPluginCollector);
+                    transportOneRecord(recordSender, resultSet, metaData, columnNumber, mandatoryEncoding, taskPluginCollector);
                     lastTime = System.nanoTime();
                 }
 
                 allResultPerfRecord.end(rsNextUsedTime);
-                //目前大盘是依赖这个打印，而之前这个Finish read record是包含了sql查询和result next的全部时间
-                LOG.info("Finished read record by Sql: [{}\n] {}.",
-                        querySql, basicMsg);
+
+                // 目前大盘是依赖这个打印，而之前这个Finish read record是包含了sql查询和result next的全部时间
+                LOG.info("Finished read record by Sql: [{}\n] {}.", querySql, basicMsg);
 
             } catch (Exception e) {
                 throw RdbmsException.asQueryException(this.dataBaseType, e, querySql, table, username);
@@ -229,22 +221,34 @@ public class CommonRdbmsReader {
             // do nothing
         }
 
-        protected Record transportOneRecord(RecordSender recordSender, ResultSet rs,
-                                            ResultSetMetaData metaData, int columnNumber, String mandatoryEncoding,
-                                            TaskPluginCollector taskPluginCollector) {
-            Record record = buildRecord(recordSender, rs, metaData, columnNumber, mandatoryEncoding, taskPluginCollector);
+        protected void transportOneRecord(RecordSender recordSender,
+                                          ResultSet resultSet,
+                                          ResultSetMetaData metaData,
+                                          int columnNumber,
+                                          String mandatoryEncoding,
+                                          TaskPluginCollector taskPluginCollector) {
+            Record record = buildRecord(
+                    recordSender,
+                    resultSet,
+                    metaData,
+                    columnNumber,
+                    mandatoryEncoding,
+                    taskPluginCollector);
+
             recordSender.sendToWriter(record);
-            return record;
         }
 
-        protected Record buildRecord(RecordSender recordSender, ResultSet rs, ResultSetMetaData metaData, int columnNumber, String mandatoryEncoding,
+        protected Record buildRecord(RecordSender recordSender,
+                                     ResultSet rs,
+                                     ResultSetMetaData metaData,
+                                     int columnNumber,
+                                     String mandatoryEncoding,
                                      TaskPluginCollector taskPluginCollector) {
             Record record = recordSender.createRecord();
 
             try {
                 for (int i = 1; i <= columnNumber; i++) {
                     switch (metaData.getColumnType(i)) {
-
                         case Types.CHAR:
                         case Types.NCHAR:
                         case Types.VARCHAR:
@@ -260,34 +264,26 @@ public class CommonRdbmsReader {
                             }
                             record.addColumn(new StringColumn(rawData));
                             break;
-
                         case Types.CLOB:
                         case Types.NCLOB:
                             record.addColumn(new StringColumn(rs.getString(i)));
                             break;
-
                         case Types.SMALLINT:
                         case Types.TINYINT:
                         case Types.INTEGER:
                         case Types.BIGINT:
                             record.addColumn(new LongColumn(rs.getString(i)));
                             break;
-
                         case Types.NUMERIC:
                         case Types.DECIMAL:
-                            record.addColumn(new DoubleColumn(rs.getString(i)));
-                            break;
-
                         case Types.FLOAT:
                         case Types.REAL:
                         case Types.DOUBLE:
                             record.addColumn(new DoubleColumn(rs.getString(i)));
                             break;
-
                         case Types.TIME:
                             record.addColumn(new DateColumn(rs.getTime(i)));
                             break;
-
                         // for mysql bug, see http://bugs.mysql.com/bug.php?id=35115
                         case Types.DATE:
                             if (metaData.getColumnTypeName(i).equalsIgnoreCase("year")) {
@@ -296,25 +292,21 @@ public class CommonRdbmsReader {
                                 record.addColumn(new DateColumn(rs.getDate(i)));
                             }
                             break;
-
                         case Types.TIMESTAMP:
                             record.addColumn(new DateColumn(rs.getTimestamp(i)));
                             break;
-
                         case Types.BINARY:
                         case Types.VARBINARY:
                         case Types.BLOB:
                         case Types.LONGVARBINARY:
                             record.addColumn(new BytesColumn(rs.getBytes(i)));
                             break;
-
                         // warn: bit(1) -> Types.BIT 可使用BoolColumn
                         // warn: bit(>1) -> Types.VARBINARY 可使用BytesColumn
                         case Types.BOOLEAN:
                         case Types.BIT:
                             record.addColumn(new BoolColumn(rs.getBoolean(i)));
                             break;
-
                         case Types.NULL:
                             String stringData = null;
                             if (rs.getObject(i) != null) {
@@ -322,11 +314,8 @@ public class CommonRdbmsReader {
                             }
                             record.addColumn(new StringColumn(stringData));
                             break;
-
                         default:
-                            throw DataXException
-                                    .build(
-                                            DBUtilErrorCode.UNSUPPORTED_TYPE,
+                            throw DataXException.build(DBUtilErrorCode.UNSUPPORTED_TYPE,
                                             String.format(
                                                     "您的配置文件中的列配置信息有误. 因为DataX 不支持数据库读取这种字段类型. 字段名:[%s], 字段名称:[%s], 字段Java类型:[%s]. 请尝试使用数据库函数将其转换datax支持的类型 或者不同步该字段 .",
                                                     metaData.getColumnName(i),
@@ -347,6 +336,7 @@ public class CommonRdbmsReader {
             }
             return record;
         }
+
     }
 
 }

@@ -7,7 +7,7 @@ public class ProcessInnerReporter extends AbstractReporter {
 
     @Override
     public void reportJobCommunication(Long jobId, Communication communication) {
-        // do nothing
+
     }
 
     @Override

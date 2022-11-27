@@ -40,7 +40,7 @@ public class FtpWriter extends Writer {
 
         @Override
         public void init() {
-            this.writerSliceConfig = this.getPluginJobConf();
+            this.writerSliceConfig = this.getPluginJobReaderWriterParamConf();
             this.validateParameter();
             UnstructuredStorageWriterUtil
                     .validateParameter(this.writerSliceConfig);
@@ -214,7 +214,7 @@ public class FtpWriter extends Writer {
 
         @Override
         public void init() {
-            this.writerSliceConfig = this.getPluginJobConf();
+            this.writerSliceConfig = this.getPluginJobReaderWriterParamConf();
             this.path = this.writerSliceConfig.getString(Key.PATH);
             this.fileName = this.writerSliceConfig
                     .getString(com.alibaba.datax.plugin.unstructuredstorage.writer.Key.FILE_NAME);

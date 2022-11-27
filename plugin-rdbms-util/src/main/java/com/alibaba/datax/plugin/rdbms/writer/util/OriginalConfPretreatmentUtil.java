@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class OriginalConfPretreatmentUtil {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(OriginalConfPretreatmentUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OriginalConfPretreatmentUtil.class);
 
     public static DataBaseType DATABASE_TYPE;
 
@@ -154,7 +153,8 @@ public final class OriginalConfPretreatmentUtil {
         }
 
         boolean forceUseUpdate = false;
-        //ob10的处理
+
+        // oceanbase 10
         if (dataBaseType == DataBaseType.MySql && isOB10(jdbcUrl)) {
             forceUseUpdate = true;
         }

@@ -27,7 +27,7 @@ public class OceanBaseReader extends Reader {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
 
             Integer userConfigedFetchSize = this.originalConfig.getInt(Constant.FETCH_SIZE);
             if (userConfigedFetchSize != null) {
@@ -120,7 +120,7 @@ public class OceanBaseReader extends Reader {
 
         @Override
         public void init() {
-            this.readerSliceConfig = super.getPluginJobConf();
+            this.readerSliceConfig = super.getPluginJobReaderWriterParamConf();
             this.commonRdbmsReaderTask = new ReaderTask(super.getTaskGroupId(), super.getTaskId());
             this.commonRdbmsReaderTask.init(this.readerSliceConfig);
 

@@ -21,7 +21,7 @@ public class TDengineWriterTest {
                 "\"connection\": [{\"table\":[\"weather\"],\"jdbcUrl\":\"jdbc:TAOS-RS://master:6041/test\"}]," +
                 "\"batchSize\": \"1000\"" +
                 "}");
-        job.setPluginJobConf(configuration);
+        job.setPluginJobReaderWriterParamConf(configuration);
     }
 
     @Test
@@ -30,7 +30,7 @@ public class TDengineWriterTest {
         job.init();
 
         // assert
-        Configuration conf = job.getPluginJobConf();
+        Configuration conf = job.getPluginJobReaderWriterParamConf();
 
         Assert.assertEquals("root", conf.getString("username"));
         Assert.assertEquals("taosdata", conf.getString("password"));

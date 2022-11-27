@@ -48,7 +48,7 @@ public class ElasticSearchWriter extends Writer {
 
         @Override
         public void init() {
-            this.conf = super.getPluginJobConf();
+            this.conf = super.getPluginJobReaderWriterParamConf();
             //LOGGER.info("conf:{}", conf);
             this.retryTimes = this.conf.getInt("retryTimes", 3);
             this.sleepTimeInMilliSecond = this.conf.getLong("sleepTimeInMilliSecond", 10000L);
@@ -442,7 +442,7 @@ public class ElasticSearchWriter extends Writer {
 
         @Override
         public void init() {
-            this.conf = super.getPluginJobConf();
+            this.conf = super.getPluginJobReaderWriterParamConf();
             this.index = Key.getIndexName(conf);
             this.type = Key.getTypeName(conf);
             this.trySize = Key.getTrySize(conf);

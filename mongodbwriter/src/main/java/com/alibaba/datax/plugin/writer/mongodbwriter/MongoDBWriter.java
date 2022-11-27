@@ -41,7 +41,7 @@ public class MongoDBWriter extends Writer{
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
         }
 
         @Override
@@ -316,7 +316,7 @@ public class MongoDBWriter extends Writer{
 
         @Override
         public void init() {
-            this.writerSliceConfig = this.getPluginJobConf();
+            this.writerSliceConfig = this.getPluginJobReaderWriterParamConf();
             this.userName = writerSliceConfig.getString(KeyConstant.MONGO_USER_NAME);
             this.password = writerSliceConfig.getString(KeyConstant.MONGO_USER_PASSWORD);
             this.database = writerSliceConfig.getString(KeyConstant.MONGO_DB_NAME);

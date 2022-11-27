@@ -10,7 +10,7 @@ public interface Record {
 
     void addColumn(Column column);
 
-    void setColumn(int i, final Column column);
+    void setColumn(int i, Column column);
 
     Column getColumn(int i);
 

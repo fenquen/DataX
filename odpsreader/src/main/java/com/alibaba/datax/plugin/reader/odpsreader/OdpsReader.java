@@ -39,7 +39,7 @@ public class OdpsReader extends Reader {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
             this.successOnNoPartition = this.originalConfig.getBool(Key.SUCCESS_ON_NO_PATITION, false);
 
             //如果用户没有配置accessId/accessKey,尝试从环境变量获取
@@ -421,7 +421,7 @@ public class OdpsReader extends Reader {
 
         @Override
         public void init() {
-            this.readerSliceConf = super.getPluginJobConf();
+            this.readerSliceConf = super.getPluginJobReaderWriterParamConf();
             this.tunnelServer = this.readerSliceConf.getString(
                 Key.TUNNEL_SERVER, null);
 

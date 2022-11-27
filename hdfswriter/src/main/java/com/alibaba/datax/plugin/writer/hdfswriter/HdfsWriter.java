@@ -40,7 +40,7 @@ public class HdfsWriter extends Writer {
 
         @Override
         public void init() {
-            this.writerSliceConfig = this.getPluginJobConf();
+            this.writerSliceConfig = this.getPluginJobReaderWriterParamConf();
             this.validateParameter();
 
             //创建textfile存储
@@ -387,7 +387,7 @@ public class HdfsWriter extends Writer {
 
         @Override
         public void init() {
-            this.writerSliceConfig = this.getPluginJobConf();
+            this.writerSliceConfig = this.getPluginJobReaderWriterParamConf();
 
             this.defaultFS = this.writerSliceConfig.getString(Key.DEFAULT_FS);
             this.fileType = this.writerSliceConfig.getString(Key.FILE_TYPE);

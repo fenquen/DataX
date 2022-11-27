@@ -17,7 +17,7 @@ public class Hbase11xWriter extends Writer {
         private Configuration originConfig = null;
         @Override
         public void init() {
-            this.originConfig = this.getPluginJobConf();
+            this.originConfig = this.getPluginJobReaderWriterParamConf();
             Hbase11xHelper.validateParameter(this.originConfig);
         }
 
@@ -48,7 +48,7 @@ public class Hbase11xWriter extends Writer {
 
         @Override
         public void init() {
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
             String mode = this.taskConfig.getString(Key.MODE);
             ModeType modeType = ModeType.getByTypeName(mode);
 

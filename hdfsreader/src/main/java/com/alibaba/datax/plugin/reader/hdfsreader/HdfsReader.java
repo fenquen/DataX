@@ -46,7 +46,7 @@ public class HdfsReader extends Reader {
         public void init() {
 
             LOG.info("init() begin...");
-            this.readerOriginConfig = super.getPluginJobConf();
+            this.readerOriginConfig = super.getPluginJobReaderWriterParamConf();
             this.validate();
             dfsUtil = new DFSUtil(this.readerOriginConfig);
             LOG.info("init() ok and end...");
@@ -237,7 +237,7 @@ public class HdfsReader extends Reader {
         @Override
         public void init() {
 
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
             this.sourceFiles = this.taskConfig.getList(Constant.SOURCE_FILES, String.class);
             this.specifiedFileType = this.taskConfig.getNecessaryValue(Key.FILETYPE, HdfsReaderErrorCode.REQUIRED_VALUE);
             this.encoding = this.taskConfig.getString(com.alibaba.datax.plugin.unstructuredstorage.reader.Key.ENCODING, "UTF-8");

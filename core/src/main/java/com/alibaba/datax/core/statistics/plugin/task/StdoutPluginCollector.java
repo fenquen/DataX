@@ -20,8 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by jingxing on 14-9-9.
  */
 public class StdoutPluginCollector extends AbstractTaskPluginCollector {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(StdoutPluginCollector.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StdoutPluginCollector.class);
 
     private static final int DEFAULT_MAX_DIRTYNUM = 128;
 

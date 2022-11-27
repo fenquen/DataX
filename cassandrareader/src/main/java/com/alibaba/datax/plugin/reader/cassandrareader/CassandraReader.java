@@ -26,8 +26,8 @@ public class CassandraReader extends Reader {
     private Cluster cluster = null;
 
     @Override public void init() {
-      this.jobConfig = super.getPluginJobConf();
-      this.jobConfig = super.getPluginJobConf();
+      this.jobConfig = super.getPluginJobReaderWriterParamConf();
+      this.jobConfig = super.getPluginJobReaderWriterParamConf();
       String username = jobConfig.getString(Key.USERNAME);
       String password = jobConfig.getString(Key.PASSWORD);
       String hosts = jobConfig.getString(Key.HOST);
@@ -69,7 +69,7 @@ public class CassandraReader extends Reader {
     private List<String> columnMeta = null;
 
     @Override public void init() {
-      this.taskConfig = super.getPluginJobConf();
+      this.taskConfig = super.getPluginJobReaderWriterParamConf();
       String username = taskConfig.getString(Key.USERNAME);
       String password = taskConfig.getString(Key.PASSWORD);
       String hosts = taskConfig.getString(Key.HOST);

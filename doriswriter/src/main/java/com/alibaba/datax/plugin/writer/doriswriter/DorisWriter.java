@@ -45,8 +45,8 @@ public class DorisWriter extends Writer {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
-            options = new Keys (super.getPluginJobConf());
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
+            options = new Keys (super.getPluginJobReaderWriterParamConf());
             options.doPretreatment();
         }
 
@@ -107,7 +107,7 @@ public class DorisWriter extends Writer {
 
         @Override
         public void init() {
-            options = new Keys (super.getPluginJobConf());
+            options = new Keys (super.getPluginJobReaderWriterParamConf());
             if (options.isWildcardColumn()) {
                 Connection conn = DBUtil.getConnection(DataBaseType.MySql, options.getJdbcUrl(), options.getUsername(), options.getPassword());
                 List<String> columns = DorisUtil.getDorisTableColumns(conn, options.getDatabase(), options.getTable());

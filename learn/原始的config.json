@@ -1,0 +1,139 @@
+{
+  "common": {
+    "column": {
+      "dateFormat": "yyyy-MM-dd",
+      "datetimeFormat": "yyyy-MM-dd HH:mm:ss",
+      "encoding": "utf-8",
+      "extraFormats": [
+        "yyyyMMdd"
+      ],
+      "timeFormat": "HH:mm:ss",
+      "timeZone": "GMT+8"
+    }
+  },
+  "core": {
+    "container": {
+      "job": {
+        "id": 70,
+        "mode": "local",
+        "reportInterval": 10000
+      },
+      "taskGroup": {
+        "channel": 5
+      },
+      "trace": {
+        "enable": "false"
+      }
+    },
+    "dataXServer": {
+      "address": "http://localhost:7001/api",
+      "reportDataxLog": false,
+      "reportPerfLog": false,
+      "timeout": 10000
+    },
+    "statistics": {
+      "collector": {
+        "plugin": {
+          "maxDirtyNumber": 10,
+          "taskClass": "com.alibaba.datax.core.statistics.plugin.task.StdoutPluginCollector"
+        }
+      }
+    },
+    "transport": {
+      "channel": {
+        "byteCapacity": 67108864,
+        "capacity": 512,
+        "class": "com.alibaba.datax.core.transport.channel.memory.MemoryChannel",
+        "flowControlInterval": 20,
+        "speed": {
+          "byte": 1048576,
+          "record": -1
+        }
+      },
+      "exchanger": {
+        "bufferSize": 32,
+        "class": "com.alibaba.datax.core.plugin.BufferedRecordExchanger"
+      }
+    }
+  },
+  "entry": {
+    "jvm": "-Xms1G -Xmx1G"
+  },
+  "job": {
+    "content": [
+      {
+        "reader": {
+          "name": "rdbmsreader",
+          "parameter": {
+            "column": "ID,ORDER_NO,STORE_ID,USER_ID,ORDER_STATE,GOOD_MONEY,DELIVER_TYPE,DELIVER_MONEY",
+            "columnList": [
+              "ID",
+              "ORDER_NO",
+              "STORE_ID",
+              "USER_ID",
+              "ORDER_STATE",
+              "GOOD_MONEY",
+              "DELIVER_TYPE",
+              "DELIVER_MONEY"
+            ],
+            "fetchSize": 1024,
+            "isTableMode": true,
+            "jdbcUrl": "jdbc:db2://10.88.36.79:50000/testdb:currentSchema=T1;",
+            "password": "123456",
+            "querySql": "select ID,ORDER_NO,STORE_ID,USER_ID,ORDER_STATE,GOOD_MONEY,DELIVER_TYPE,DELIVER_MONEY from ORDER_TABLE ",
+            "table": "ORDER_TABLE",
+            "tableNumber": 1,
+            "username": "DB2INST1"
+          }
+        },
+        "taskId": 0,
+        "writer": {
+          "name": "txtfilewriter",
+          "parameter": {
+            "dateFormat": "yyyy-MM-dd",
+            "encoding": "UTF-8",
+            "fieldDelimiter": ",",
+            "fileFormat": "text",
+            "fileName": "db2_txt__60f959ba_1385_4537_8598_9127737799f3",
+            "path": "./",
+            "writeMode": "truncate"
+          }
+        }
+      }
+    ],
+    "setting": {
+      "errorLimit": {
+        "record": 0
+      },
+      "speed": {
+        "byte": 1048576
+      }
+    }
+  },
+  "plugin": {
+    "reader": {
+      "rdbmsreader": {
+        "class": "com.alibaba.datax.plugin.reader.rdbmsreader.RdbmsReader",
+        "description": "useScene: prod. mechanism: Jdbc connection using the database, execute select sql, retrieve data from the ResultSet. warn: The more you know about the database, the less problems you encounter.",
+        "developer": "alibaba",
+        "drivers": [
+          "dm.jdbc.driver.DmDriver",
+          "com.sybase.jdbc3.jdbc.SybDriver",
+          "com.edb.Driver",
+          "com.ibm.db2.jcc.DB2Driver"
+        ],
+        "name": "rdbmsreader",
+        "path": "/home/a/github/DataX/target/datax/datax/plugin/reader/rdbmsreader"
+      }
+    },
+    "writer": {
+      "txtfilewriter": {
+        "class": "com.alibaba.datax.plugin.writer.txtfilewriter.TxtFileWriter",
+        "description": "useScene: test. mechanism: use datax framework to transport data to txt file. warn: The more you know about the data, the less problems you encounter.",
+        "developer": "alibaba",
+        "name": "txtfilewriter",
+        "path": "/home/a/github/DataX/target/datax/datax/plugin/writer/txtfilewriter"
+      }
+    }
+  }
+}

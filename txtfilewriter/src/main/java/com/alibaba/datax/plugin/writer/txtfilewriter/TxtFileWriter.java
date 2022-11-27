@@ -36,7 +36,7 @@ public class TxtFileWriter extends Writer {
 
         @Override
         public void init() {
-            this.writerSliceConfig = this.getPluginJobConf();
+            this.writerSliceConfig = this.getPluginJobReaderWriterParamConf();
             this.validateParameter();
             String dateFormatOld = this.writerSliceConfig
                     .getString(com.alibaba.datax.plugin.unstructuredstorage.writer.Key.FORMAT);
@@ -270,7 +270,7 @@ public class TxtFileWriter extends Writer {
 
         @Override
         public void init() {
-            this.writerSliceConfig = this.getPluginJobConf();
+            this.writerSliceConfig = this.getPluginJobReaderWriterParamConf();
             this.path = this.writerSliceConfig.getString(Key.PATH);
             this.fileName = this.writerSliceConfig
                     .getString(com.alibaba.datax.plugin.unstructuredstorage.writer.Key.FILE_NAME);

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by jingxing on 14-9-9.
+ * Created by jingxing on 14-9-9. 里边的method都没有用到
  */
 public interface JobPluginCollector extends PluginCollector {
 

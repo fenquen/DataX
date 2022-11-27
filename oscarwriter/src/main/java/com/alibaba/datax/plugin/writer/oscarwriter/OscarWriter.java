@@ -23,7 +23,7 @@ public class OscarWriter extends Writer {
 
         @Override
 		public void init() {
-			this.originalConfig = super.getPluginJobConf();
+			this.originalConfig = super.getPluginJobReaderWriterParamConf();
 
 			this.commonRdbmsWriterJob = new CommonRdbmsWriter.Job(
 					DATABASE_TYPE);
@@ -59,7 +59,7 @@ public class OscarWriter extends Writer {
 
 		@Override
 		public void init() {
-			this.writerSliceConfig = super.getPluginJobConf();
+			this.writerSliceConfig = super.getPluginJobReaderWriterParamConf();
 			this.commonRdbmsWriterTask = new CommonRdbmsWriter.Task(DATABASE_TYPE);
 			this.commonRdbmsWriterTask.init(this.writerSliceConfig);
 		}

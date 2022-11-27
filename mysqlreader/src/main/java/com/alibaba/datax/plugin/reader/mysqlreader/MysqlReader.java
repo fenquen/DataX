@@ -24,7 +24,7 @@ public class MysqlReader extends Reader {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
 
             Integer userConfigedFetchSize = this.originalConfig.getInt(Constant.FETCH_SIZE);
             if (userConfigedFetchSize != null) {
@@ -40,7 +40,7 @@ public class MysqlReader extends Reader {
         @Override
         public void preCheck(){
             init();
-            this.commonRdbmsReaderJob.preCheck(this.originalConfig,DATABASE_TYPE);
+            commonRdbmsReaderJob.preCheck(this.originalConfig,DATABASE_TYPE);
 
         }
 
@@ -68,7 +68,7 @@ public class MysqlReader extends Reader {
 
         @Override
         public void init() {
-            this.readerSliceConfig = super.getPluginJobConf();
+            this.readerSliceConfig = super.getPluginJobReaderWriterParamConf();
             this.commonRdbmsReaderTask = new CommonRdbmsReader.Task(DATABASE_TYPE,super.getTaskGroupId(), super.getTaskId());
             this.commonRdbmsReaderTask.init(this.readerSliceConfig);
 

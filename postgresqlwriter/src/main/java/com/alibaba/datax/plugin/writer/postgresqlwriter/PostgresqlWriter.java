@@ -20,7 +20,7 @@ public class PostgresqlWriter extends Writer {
 
 		@Override
 		public void init() {
-			this.originalConfig = super.getPluginJobConf();
+			this.originalConfig = super.getPluginJobReaderWriterParamConf();
 
 			// warn：not like mysql, PostgreSQL only support insert mode, don't use
 			String writeMode = this.originalConfig.getString(Key.WRITE_MODE);
@@ -61,7 +61,7 @@ public class PostgresqlWriter extends Writer {
 
 		@Override
 		public void init() {
-			this.writerSliceConfig = super.getPluginJobConf();
+			this.writerSliceConfig = super.getPluginJobReaderWriterParamConf();
 			this.commonRdbmsWriterSlave = new CommonRdbmsWriter.Task(DATABASE_TYPE){
 				@Override
 				public String calcValueHolder(String columnType){
@@ -84,7 +84,7 @@ public class PostgresqlWriter extends Writer {
 		}
 
 		public void startWrite(RecordReceiver recordReceiver) {
-			this.commonRdbmsWriterSlave.startWrite(recordReceiver, this.writerSliceConfig, super.getTaskPluginCollector());
+			commonRdbmsWriterSlave.startWrite(recordReceiver, this.writerSliceConfig, super.getTaskPluginCollector());
 		}
 
 		@Override

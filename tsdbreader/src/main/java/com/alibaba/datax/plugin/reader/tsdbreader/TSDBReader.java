@@ -38,7 +38,7 @@ public class TSDBReader extends Reader {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
 
             String type = originalConfig.getString(Key.SINK_DB_TYPE, Key.TYPE_DEFAULT_VALUE);
             if (StringUtils.isBlank(type)) {
@@ -304,7 +304,7 @@ public class TSDBReader extends Reader {
 
         @Override
         public void init() {
-            Configuration readerSliceConfig = super.getPluginJobConf();
+            Configuration readerSliceConfig = super.getPluginJobReaderWriterParamConf();
 
             LOG.info("getPluginJobConf: {}", JSON.toJSONString(readerSliceConfig));
 

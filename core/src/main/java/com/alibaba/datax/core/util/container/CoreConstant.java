@@ -59,6 +59,9 @@ public class CoreConstant {
 
     public static final String DATAX_CORE_TRANSPORT_CHANNEL_CAPACITY_BYTE = "core.transport.channel.byteCapacity";
 
+    /**
+     * 单个Channel流量最大值
+     */
     public static final String DATAX_CORE_TRANSPORT_CHANNEL_SPEED_BYTE = "core.transport.channel.speed.byte";
 
     public static final String DATAX_CORE_TRANSPORT_CHANNEL_SPEED_RECORD = "core.transport.channel.speed.record";
@@ -96,6 +99,9 @@ public class CoreConstant {
 
     public static final String DATAX_JOB_SETTING_KEYVERSION = "job.setting.keyVersion";
 
+    /**
+     * 全部的channel的流量速度上限
+     */
     public static final String DATAX_JOB_SETTING_SPEED_BYTE = "job.setting.speed.byte";
 
     public static final String DATAX_JOB_SETTING_SPEED_RECORD = "job.setting.speed.record";

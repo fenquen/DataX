@@ -57,7 +57,7 @@ public class GdbWriter extends Writer {
         @Override
         public void init() {
             LOG.info("GDB datax plugin writer job init begin ...");
-            this.jobConfig = getPluginJobConf();
+            this.jobConfig = getPluginJobReaderWriterParamConf();
             GdbWriterConfig.of(this.jobConfig);
             LOG.info("GDB datax plugin writer job init end.");
 
@@ -142,7 +142,7 @@ public class GdbWriter extends Writer {
              * 注意：此方法每个 Task 都会执行一次。
              * 最佳实践：此处通过对 taskConfig 配置的读取，进而初始化一些资源为 startWrite()做准备。
              */
-            this.taskConfig = super.getPluginJobConf();
+            this.taskConfig = super.getPluginJobReaderWriterParamConf();
 			this.batchRecords = this.taskConfig.getInt(Key.MAX_RECORDS_IN_BATCH, GdbWriterConfig.DEFAULT_RECORD_NUM_IN_BATCH);
 			this.submitService = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingDeque<>(),
                 new DefaultThreadFactory("submit-dsl"));

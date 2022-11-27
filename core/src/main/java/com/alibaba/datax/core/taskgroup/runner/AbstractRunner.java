@@ -13,7 +13,7 @@ public abstract class AbstractRunner {
 
     private Configuration jobConf;
 
-    private Communication runnerCommunication;
+    private Communication communication;
 
     private int taskGroupId;
 
@@ -30,7 +30,7 @@ public abstract class AbstractRunner {
     }
 
     public State getRunnerState() {
-        return this.runnerCommunication.getState();
+        return this.communication.getState();
     }
 
     public AbstractTaskPlugin getPlugin() {
@@ -47,7 +47,7 @@ public abstract class AbstractRunner {
 
     public void setJobConf(Configuration jobConf) {
         this.jobConf = jobConf;
-        this.plugin.setPluginJobConf(jobConf);
+        this.plugin.setPluginJobReaderWriterParamConf(jobConf);
     }
 
     public void setTaskPluginCollector(TaskPluginCollector pluginCollector) {
@@ -55,11 +55,11 @@ public abstract class AbstractRunner {
     }
 
     private void mark(State state) {
-        this.runnerCommunication.setState(state);
+        communication.setState(state);
+
         if (state == State.SUCCEEDED) {
             // 对 stage + 1
-            this.runnerCommunication.setLongCounter(CommunicationTool.STAGE,
-                    this.runnerCommunication.getLongCounter(CommunicationTool.STAGE) + 1);
+            communication.setLongCounter(CommunicationTool.STAGE, communication.getLongCounter(CommunicationTool.STAGE) + 1);
         }
     }
 
@@ -73,8 +73,8 @@ public abstract class AbstractRunner {
 
     public void markFail(final Throwable throwable) {
         mark(State.FAILED);
-        this.runnerCommunication.setTimestamp(System.currentTimeMillis());
-        this.runnerCommunication.setThrowable(throwable);
+        this.communication.setTimestamp(System.currentTimeMillis());
+        this.communication.setThrowable(throwable);
     }
 
     /**
@@ -101,14 +101,13 @@ public abstract class AbstractRunner {
         this.plugin.setTaskId(taskId);
     }
 
-    public void setRunnerCommunication(final Communication runnerCommunication) {
-        Validate.notNull(runnerCommunication,
-                "插件的Communication不能为空");
-        this.runnerCommunication = runnerCommunication;
+    public void setCommunication(final Communication communication) {
+        Validate.notNull(communication, "插件的Communication不能为空");
+        this.communication = communication;
     }
 
-    public Communication getRunnerCommunication() {
-        return runnerCommunication;
+    public Communication getCommunication() {
+        return communication;
     }
 
     public abstract void shutdown();

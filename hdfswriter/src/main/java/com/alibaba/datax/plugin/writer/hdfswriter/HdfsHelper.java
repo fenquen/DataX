@@ -51,7 +51,7 @@ public  class HdfsHelper {
     public void getFileSystem(String defaultFS, Configuration taskConfig){
         hadoopConf = new org.apache.hadoop.conf.Configuration();
 
-        Configuration hadoopSiteParams = taskConfig.getConfiguration(Key.HADOOP_CONFIG);
+        Configuration hadoopSiteParams = taskConfig.getConfig(Key.HADOOP_CONFIG);
         JSONObject hadoopSiteParamsAsJsonObject = JSON.parseObject(taskConfig.getString(Key.HADOOP_CONFIG));
         if (null != hadoopSiteParams) {
             Set<String> paramKeys = hadoopSiteParams.getKeys();

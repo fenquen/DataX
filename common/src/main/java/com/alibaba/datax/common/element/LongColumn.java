@@ -115,7 +115,7 @@ public class LongColumn extends Column {
 		if (null == this.getRawData()) {
 			return null;
 		}
-		return ((BigInteger) this.getRawData()).toString();
+		return this.getRawData().toString();
 	}
 
 	@Override

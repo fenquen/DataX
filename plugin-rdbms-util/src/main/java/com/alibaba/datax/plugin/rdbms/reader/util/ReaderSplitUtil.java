@@ -16,36 +16,35 @@ import java.util.List;
 public final class ReaderSplitUtil {
     private static final Logger LOG = LoggerFactory.getLogger(ReaderSplitUtil.class);
 
-    public static List<Configuration> doSplit(Configuration readerConfig, int adviceNumber) {
-        boolean isTableMode = readerConfig.getBool(Constant.IS_TABLE_MODE);
+    public static List<Configuration> doSplit(Configuration pluginJobReaderWriterParamConf, int channelNumber) {
+        boolean isTableMode = pluginJobReaderWriterParamConf.getBool(Constant.IS_TABLE_MODE);
+
         int eachTableSplittedNumber = -1;
         if (isTableMode) {
-            // adviceNumber这里是channel数量大小, 即datax并发task数量
-            // eachTableShouldSplittedNumber是单表应该切分的份数, 向上取整可能和adviceNumber没有比例关系了已经
             eachTableSplittedNumber = calculateEachTableShouldSplittedNumber(
-                    adviceNumber,
-                    readerConfig.getInt(Constant.TABLE_NUMBER_MARK));
+                    channelNumber,
+                    pluginJobReaderWriterParamConf.getInt(Constant.TABLE_NUMBER_MARK));
         }
 
-        String column = readerConfig.getString(Key.COLUMN);
-        String where = readerConfig.getString(Key.WHERE, null);
+        String column = pluginJobReaderWriterParamConf.getString(Key.COLUMN);
+        String where = pluginJobReaderWriterParamConf.getString(Key.WHERE, null);
 
-        List<Object> connectionObjectList = readerConfig.getList(Constant.CONN_MARK, Object.class);
+        List<Object> connectionObjectList = pluginJobReaderWriterParamConf.getList(Constant.CONN_MARK, Object.class);
 
         List<Configuration> splittedConfigs = new ArrayList<>();
 
         for (Object connectionObject : connectionObjectList) {
-            Configuration readerConfigCopy = readerConfig.clone();
+            Configuration pluginJobReaderWriterParamConfCopy = pluginJobReaderWriterParamConf.clone();
 
             Configuration connectionConfig = Configuration.from(connectionObject.toString());
-            String jdbcUrl = connectionConfig.getString(Key.JDBC_URL);
 
-            readerConfigCopy.set(Key.JDBC_URL, jdbcUrl);
+            String jdbcUrl = connectionConfig.getString(Key.JDBC_URL);
+            pluginJobReaderWriterParamConfCopy.set(Key.JDBC_URL, jdbcUrl);
 
             // 抽取 jdbcUrl 中的 ip/port 进行资源使用的打标，以提供给 core 做有意义的 shuffle 操作
-            readerConfigCopy.set(CommonConstant.LOAD_BALANCE_RESOURCE_MARK, DataBaseType.parseIpFromJdbcUrl(jdbcUrl));
+            pluginJobReaderWriterParamConfCopy.set(CommonConstant.LOAD_BALANCE_RESOURCE_MARK, DataBaseType.parseIpFromJdbcUrl(jdbcUrl));
 
-            readerConfigCopy.remove(Constant.CONN_MARK);
+            pluginJobReaderWriterParamConfCopy.remove(Constant.CONN_MARK);
 
             // 说明是配置的 table 方式
             if (isTableMode) {
@@ -54,7 +53,7 @@ public final class ReaderSplitUtil {
 
                 Validate.isTrue(null != tableNameList && !tableNameList.isEmpty(), "您读取数据库表配置错误.");
 
-                String splitPk = readerConfig.getString(Key.SPLIT_PK, null);
+                String splitPk = pluginJobReaderWriterParamConf.getString(Key.SPLIT_PK, null);
 
                 // 最终切分份数不一定等于 eachTableShouldSplittedNumber
                 boolean needSplitTable = eachTableSplittedNumber > 1 && StringUtils.isNotBlank(splitPk);
@@ -69,13 +68,13 @@ public final class ReaderSplitUtil {
 
                         //为避免导入hive小文件 默认基数为5，可以通过 splitFactor 配置基数
                         // 最终task数为(channel/tableNum)向上取整*splitFactor
-                        Integer splitFactor = readerConfig.getInt(Key.SPLIT_FACTOR, Constant.SPLIT_FACTOR);
+                        Integer splitFactor = pluginJobReaderWriterParamConf.getInt(Key.SPLIT_FACTOR, Constant.SPLIT_FACTOR);
                         eachTableSplittedNumber = eachTableSplittedNumber * splitFactor;
                     }
 
                     // 尝试对每个表，切分为eachTableSplittedNumber份
                     for (String table : tableNameList) {
-                        Configuration readerConfigCopyCopy = readerConfigCopy.clone();
+                        Configuration readerConfigCopyCopy = pluginJobReaderWriterParamConfCopy.clone();
                         readerConfigCopyCopy.set(Key.TABLE, table);
 
                         List<Configuration> splittedSlices = SingleTableSplitUtil.splitSingleTable(readerConfigCopyCopy, eachTableSplittedNumber);
@@ -84,7 +83,7 @@ public final class ReaderSplitUtil {
                     }
                 } else {
                     for (String table : tableNameList) {
-                        Configuration tempSlice = readerConfigCopy.clone();
+                        Configuration tempSlice = pluginJobReaderWriterParamConfCopy.clone();
                         tempSlice.set(Key.TABLE, table);
                         String queryColumn = HintUtil.buildQueryColumn(jdbcUrl, table, column);
                         tempSlice.set(Key.QUERY_SQL, SingleTableSplitUtil.buildQuerySql(queryColumn, table, where));
@@ -97,7 +96,7 @@ public final class ReaderSplitUtil {
 
                 // TODO 是否check 配置为多条语句？？
                 for (String querySql : sqls) {
-                    Configuration tempSlice = readerConfigCopy.clone();
+                    Configuration tempSlice = pluginJobReaderWriterParamConfCopy.clone();
                     tempSlice.set(Key.QUERY_SQL, querySql);
                     splittedConfigs.add(tempSlice);
                 }
@@ -141,11 +140,8 @@ public final class ReaderSplitUtil {
                 queryConfig.set(connPath, connConf);
             } else {
                 // 说明是配置的 querySql 方式
-                List<String> sqls = connConf.getList(Key.QUERY_SQL,
-                        String.class);
-                for (String querySql : sqls) {
-                    querys.add(querySql);
-                }
+                List<String> sqls = connConf.getList(Key.QUERY_SQL, String.class);
+                querys.addAll(sqls);
                 connConf.set(Key.QUERY_SQL, querys);
                 queryConfig.set(connPath, connConf);
             }

@@ -48,7 +48,7 @@ public class TxtFileReader extends Reader {
 
 		@Override
 		public void init() {
-			this.originConfig = this.getPluginJobConf();
+			this.originConfig = this.getPluginJobReaderWriterParamConf();
 			this.pattern = new HashMap<String, Pattern>();
 			this.isRegexPath = new HashMap<String, Boolean>();
 			this.validateParameter();
@@ -372,7 +372,7 @@ public class TxtFileReader extends Reader {
 
 		@Override
 		public void init() {
-			this.readerSliceConfig = this.getPluginJobConf();
+			this.readerSliceConfig = this.getPluginJobReaderWriterParamConf();
 			this.sourceFiles = this.readerSliceConfig.getList(
 					Constant.SOURCE_FILES, String.class);
 		}

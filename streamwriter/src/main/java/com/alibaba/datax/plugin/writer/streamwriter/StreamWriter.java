@@ -26,7 +26,7 @@ public class StreamWriter extends Writer {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
 
             String path = this.originalConfig.getString(Key.PATH, null);
             String fileName = this.originalConfig.getString(Key.FILE_NAME, null);
@@ -121,7 +121,7 @@ public class StreamWriter extends Writer {
 
         @Override
         public void init() {
-            this.writerSliceConfig = getPluginJobConf();
+            this.writerSliceConfig = getPluginJobReaderWriterParamConf();
 
             this.fieldDelimiter = this.writerSliceConfig.getString(
                     Key.FIELD_DELIMITER, "\t");

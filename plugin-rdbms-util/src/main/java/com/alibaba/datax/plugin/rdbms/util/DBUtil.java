@@ -317,13 +317,8 @@ public final class DBUtil {
                                            final String jdbcUrl, final String username, final String password, final String socketTimeout) {
 
         try {
-            return RetryUtil.executeWithRetry(new Callable<Connection>() {
-                @Override
-                public Connection call() throws Exception {
-                    return DBUtil.connect(dataBaseType, jdbcUrl, username,
-                            password, socketTimeout);
-                }
-            }, 9, 1000L, true);
+            return RetryUtil.executeWithRetry(() -> DBUtil.connect(dataBaseType, jdbcUrl, username,
+                    password, socketTimeout), 9, 1000L, true);
         } catch (Exception e) {
             throw DataXException.build(
                     DBUtilErrorCode.CONN_DB_ERROR,
@@ -776,24 +771,27 @@ public final class DBUtil {
         }
     }
 
+    /**
+     * load plugin配置中的drivers对应class
+     */
     public static void loadDriverClass(String pluginType, String pluginName) {
         try {
             String pluginJsonPath = StringUtils.join(
-                    new String[]{System.getProperty("datax.home"), "plugin",
+                    new String[]{
+                            System.getProperty("datax.home"), "plugin",
                             pluginType,
                             String.format("%s%s", pluginName, pluginType),
                             "plugin.json"}, File.separator);
-            Configuration configuration = Configuration.from(new File(
-                    pluginJsonPath));
-            List<String> drivers = configuration.getList("drivers",
-                    String.class);
-            for (String driver : drivers) {
-                Class.forName(driver);
+
+            Configuration pluginConf = Configuration.from(new File(pluginJsonPath));
+
+            List<String> driverClassNameList = pluginConf.getList("drivers", String.class);
+            for (String driverClassName : driverClassNameList) {
+                Class.forName(driverClassName);
             }
         } catch (ClassNotFoundException e) {
             throw DataXException.build(DBUtilErrorCode.CONF_ERROR,
-                    "数据库驱动加载错误, 请确认libs目录有驱动jar包且plugin.json中drivers配置驱动类正确!",
-                    e);
+                    "数据库驱动加载错误,请确认libs目录有驱动jar包且plugin.json中drivers配置驱动类正确", e);
         }
     }
 }

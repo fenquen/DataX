@@ -8,12 +8,11 @@ public class StandaloneTGContainerCommunicator extends AbstractTGContainerCommun
 
     public StandaloneTGContainerCommunicator(Configuration configuration) {
         super(configuration);
-        super.setReporter(new ProcessInnerReporter());
+        abstractReporter = new ProcessInnerReporter();
     }
 
     @Override
     public void report(Communication communication) {
-        super.getReporter().reportTGCommunication(super.taskGroupId, communication);
+        abstractReporter.reportTGCommunication(taskGroupId, communication);
     }
-
 }

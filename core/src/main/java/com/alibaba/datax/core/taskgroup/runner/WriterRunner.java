@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public class WriterRunner extends AbstractRunner implements Runnable {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(WriterRunner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WriterRunner.class);
 
     private RecordReceiver recordReceiver;
 
@@ -33,7 +32,7 @@ public class WriterRunner extends AbstractRunner implements Runnable {
     public void run() {
         Validate.isTrue(this.recordReceiver != null);
 
-        Writer.Task taskWriter = (Writer.Task) this.getPlugin();
+        Writer.Task taskWriter = (Writer.Task) getPlugin();
         //统计waitReadTime，并且在finally end
         PerfRecord channelWaitRead = new PerfRecord(getTaskGroupId(), getTaskId(), PerfRecord.PHASE.WAIT_READ_TIME);
         try {
@@ -55,8 +54,8 @@ public class WriterRunner extends AbstractRunner implements Runnable {
             dataPerfRecord.start();
             taskWriter.startWrite(recordReceiver);
 
-            dataPerfRecord.addCount(CommunicationTool.getTotalReadRecords(super.getRunnerCommunication()));
-            dataPerfRecord.addSize(CommunicationTool.getTotalReadBytes(super.getRunnerCommunication()));
+            dataPerfRecord.addCount(CommunicationTool.getTotalReadRecords(super.getCommunication()));
+            dataPerfRecord.addSize(CommunicationTool.getTotalReadBytes(super.getCommunication()));
             dataPerfRecord.end();
 
             LOG.debug("task writer starts to do post ...");
@@ -65,26 +64,26 @@ public class WriterRunner extends AbstractRunner implements Runnable {
             taskWriter.post();
             postPerfRecord.end();
 
-            super.markSuccess();
+            markSuccess();
         } catch (Throwable e) {
             LOG.error("Writer Runner Received Exceptions:", e);
-            super.markFail(e);
+            markFail(e);
         } finally {
             LOG.debug("task writer starts to do destroy ...");
             PerfRecord desPerfRecord = new PerfRecord(getTaskGroupId(), getTaskId(), PerfRecord.PHASE.WRITE_TASK_DESTROY);
             desPerfRecord.start();
             super.destroy();
             desPerfRecord.end();
-            channelWaitRead.end(super.getRunnerCommunication().getLongCounter(CommunicationTool.WAIT_READER_TIME));
+            channelWaitRead.end(super.getCommunication().getLongCounter(CommunicationTool.WAIT_READER_TIME));
         }
     }
-    
-    public boolean supportFailOver(){
-    	Writer.Task taskWriter = (Writer.Task) this.getPlugin();
-    	return taskWriter.supportFailOver();
+
+    public boolean supportFailOver() {
+        Writer.Task taskWriter = (Writer.Task) getPlugin();
+        return taskWriter.supportFailOver();
     }
 
-    public void shutdown(){
+    public void shutdown() {
         recordReceiver.shutdown();
     }
 }

@@ -9,7 +9,6 @@ import com.alibaba.datax.core.util.ErrorRecordChecker;
 import com.alibaba.datax.core.util.FrameworkErrorCode;
 import com.alibaba.datax.core.util.container.CoreConstant;
 import com.alibaba.datax.dataxservice.face.domain.enums.State;
-import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +19,7 @@ public abstract class AbstractScheduler {
 
     private ErrorRecordChecker errorLimit;
 
-    private AbstractContainerCommunicator containerCommunicator;
+    private AbstractContainerCommunicator abstractContainerCommunicator;
 
     private Long jobId;
 
@@ -28,25 +27,24 @@ public abstract class AbstractScheduler {
         return jobId;
     }
 
-    public AbstractScheduler(AbstractContainerCommunicator containerCommunicator) {
-        this.containerCommunicator = containerCommunicator;
+    public AbstractScheduler(AbstractContainerCommunicator abstractContainerCommunicator) {
+        this.abstractContainerCommunicator = abstractContainerCommunicator;
     }
 
     public void schedule(List<Configuration> taskGroupConfigList) {
-        Validate.notNull(taskGroupConfigList, "scheduler配置不能为空");
-
-        int jobReportIntervalInMillSec = taskGroupConfigList.get(0).getInt(CoreConstant.DATAX_CORE_CONTAINER_JOB_REPORTINTERVAL, 30000);
-        int jobSleepIntervalInMillSec = taskGroupConfigList.get(0).getInt(CoreConstant.DATAX_CORE_CONTAINER_JOB_SLEEPINTERVAL, 10000);
+        int jobReportIntervalMs = taskGroupConfigList.get(0).getInt(CoreConstant.DATAX_CORE_CONTAINER_JOB_REPORTINTERVAL, 30000);
+        int jobSleepIntervalMs = taskGroupConfigList.get(0).getInt(CoreConstant.DATAX_CORE_CONTAINER_JOB_SLEEPINTERVAL, 10000);
 
         jobId = taskGroupConfigList.get(0).getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID);
 
         errorLimit = new ErrorRecordChecker(taskGroupConfigList.get(0));
 
         // 给 taskGroupContainer 的 Communication 注册
-        containerCommunicator.registerCommunication(taskGroupConfigList);
+        abstractContainerCommunicator.registerCommunication(taskGroupConfigList);
 
         int totalTasks = calculateTaskCount(taskGroupConfigList);
 
+        // 是不是分布式这里有体现
         startAllTaskGroup(taskGroupConfigList);
 
         Communication lastJobContainerCommunication = new Communication();
@@ -66,7 +64,7 @@ public abstract class AbstractScheduler {
                  * above steps, some ones should report info to DS
                  *
                  */
-                Communication nowJobContainerCommunication = containerCommunicator.collect();
+                Communication nowJobContainerCommunication = abstractContainerCommunicator.collect();
                 nowJobContainerCommunication.setTimestamp(System.currentTimeMillis());
 
                 LOG.debug(nowJobContainerCommunication.toString());
@@ -74,11 +72,11 @@ public abstract class AbstractScheduler {
                 // 汇报周期
                 long now = System.currentTimeMillis();
 
-                if (now - lastReportTimeStamp > jobReportIntervalInMillSec) {
+                if (now - lastReportTimeStamp > jobReportIntervalMs) {
                     Communication reportCommunication =
                             CommunicationTool.getReportCommunication(nowJobContainerCommunication, lastJobContainerCommunication, totalTasks);
 
-                    containerCommunicator.report(reportCommunication);
+                    abstractContainerCommunicator.report(reportCommunication);
 
                     lastReportTimeStamp = now;
                     lastJobContainerCommunication = nowJobContainerCommunication;
@@ -92,12 +90,12 @@ public abstract class AbstractScheduler {
                 }
 
                 if (isJobKilling(this.getJobId())) {
-                    dealKillingStat(this.containerCommunicator, totalTasks);
+                    dealKillingStat(this.abstractContainerCommunicator, totalTasks);
                 } else if (nowJobContainerCommunication.getState() == State.FAILED) {
-                    dealFailedStat(this.containerCommunicator, nowJobContainerCommunication.getThrowable());
+                    dealFailedStat(this.abstractContainerCommunicator, nowJobContainerCommunication.getThrowable());
                 }
 
-                Thread.sleep(jobSleepIntervalInMillSec);
+                Thread.sleep(jobSleepIntervalMs);
             }
         } catch (InterruptedException e) {
             LOG.error("捕获到InterruptedException异常!", e);
@@ -106,6 +104,9 @@ public abstract class AbstractScheduler {
 
     }
 
+    /**
+     * 是不是分布式调度这里有体现
+     */
     protected abstract void startAllTaskGroup(List<Configuration> configurations);
 
     protected abstract void dealFailedStat(AbstractContainerCommunicator frameworkCollector, Throwable throwable);

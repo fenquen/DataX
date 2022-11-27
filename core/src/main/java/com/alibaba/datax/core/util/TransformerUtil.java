@@ -98,7 +98,7 @@ public class TransformerUtil {
             i++;
             LOG.info(String.format(" %s of transformer init success. name=%s, isNative=%s parameter = %s"
                     , i, transformerInfo.getTransformer().getTransformerName()
-                    , transformerInfo.isNative(), configuration.getConfiguration("parameter")));
+                    , transformerInfo.isNative(), configuration.getConfig("parameter")));
         }
 
         return result;

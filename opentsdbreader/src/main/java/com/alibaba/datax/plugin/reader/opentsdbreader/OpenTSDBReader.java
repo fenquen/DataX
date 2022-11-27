@@ -53,7 +53,7 @@ public class OpenTSDBReader extends Reader {
 
         @Override
         public void init() {
-            this.originalConfig = super.getPluginJobConf();
+            this.originalConfig = super.getPluginJobReaderWriterParamConf();
 
             String address = originalConfig.getString(Key.ENDPOINT);
             if (StringUtils.isBlank(address)) {
@@ -183,7 +183,7 @@ public class OpenTSDBReader extends Reader {
 
         @Override
         public void init() {
-            Configuration readerSliceConfig = super.getPluginJobConf();
+            Configuration readerSliceConfig = super.getPluginJobReaderWriterParamConf();
 
             LOG.info("getPluginJobConf: {}", JSON.toJSONString(readerSliceConfig));
 
