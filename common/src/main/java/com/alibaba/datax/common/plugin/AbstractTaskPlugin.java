@@ -14,8 +14,7 @@ public abstract class AbstractTaskPlugin extends AbstractPlugin {
         return taskPluginCollector;
     }
 
-    public void setTaskPluginCollector(
-            TaskPluginCollector taskPluginCollector) {
+    public void setTaskPluginCollector(TaskPluginCollector taskPluginCollector) {
         this.taskPluginCollector = taskPluginCollector;
     }
 

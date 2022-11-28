@@ -102,7 +102,7 @@ public class Communication extends BaseObject implements Cloneable {
 
     public synchronized void setLongCounter(String key, long value) {
         Validate.isTrue(StringUtils.isNotBlank(key), "设置counter的key不能为空");
-        this.key_number.put(key, value);
+        key_number.put(key, value);
     }
 
     public synchronized Double getDoubleCounter(final String key) {
@@ -115,7 +115,7 @@ public class Communication extends BaseObject implements Cloneable {
         this.key_number.put(key, value);
     }
 
-    public synchronized void increaseCounter(final String key, final long deltaValue) {
+    public synchronized void increaseCounter(String key, final long deltaValue) {
         Validate.isTrue(StringUtils.isNotBlank(key), "增加counter的key不能为空");
 
         long value = this.getLongCounter(key);
@@ -157,15 +157,12 @@ public class Communication extends BaseObject implements Cloneable {
         return communication;
     }
 
-    public synchronized Communication mergeFrom(final Communication otherComm) {
+    public synchronized Communication mergeFrom(Communication otherComm) {
         if (otherComm == null) {
             return this;
         }
 
-        /**
-         * counter的合并，将otherComm的值累加到this中，不存在的则创建
-         * 同为long
-         */
+        // counter的合并，将otherComm的值累加到this中，不存在的则创建同为long
         for (Entry<String, Number> entry : otherComm.getKey_number().entrySet()) {
             String key = entry.getKey();
             Number otherValue = entry.getValue();
@@ -190,27 +187,15 @@ public class Communication extends BaseObject implements Cloneable {
         // 合并state
         mergeStateFrom(otherComm);
 
-        /**
-         * 合并throwable，当this的throwable为空时，
-         * 才将otherComm的throwable合并进来
-         */
-        this.throwable = this.throwable == null ? otherComm.getThrowable() : this.throwable;
+        // 合并throwable，当this.throwable为空时将otherComm的throwable合并进来
 
-        /**
-         * timestamp是整个一次合并的时间戳，单独两两communication不作合并
-         */
+        throwable = throwable == null ? otherComm.getThrowable() : throwable;
 
-        /**
-         * message的合并采取求并的方式，即全部累计在一起
-         */
+
+        // message的合并采取求并的方式即全部累计在一起
         for (Entry<String, List<String>> entry : otherComm.getId_messageList().entrySet()) {
             String key = entry.getKey();
-            List<String> valueList = this.id_messageList.get(key);
-            if (valueList == null) {
-                valueList = new ArrayList<String>();
-                this.id_messageList.put(key, valueList);
-            }
-
+            List<String> valueList = id_messageList.computeIfAbsent(key, key1 -> new ArrayList<>());
             valueList.addAll(entry.getValue());
         }
 
@@ -222,13 +207,15 @@ public class Communication extends BaseObject implements Cloneable {
      * 这里不会出现 Killing 状态，killing 状态只在 Job 自身状态上才有.
      */
     public synchronized State mergeStateFrom(final Communication otherComm) {
-        State retState = this.getState();
+        State retState = state;
         if (otherComm == null) {
             return retState;
         }
 
-        if (state == State.FAILED || otherComm.getState() == State.FAILED ||
-                state == State.KILLED || otherComm.getState() == State.KILLED) {
+        if (state == State.FAILED ||
+                otherComm.getState() == State.FAILED ||
+                state == State.KILLED ||
+                otherComm.getState() == State.KILLED) {
             retState = State.FAILED;
         } else if (state.isRunning() || otherComm.state.isRunning()) {
             retState = State.RUNNING;

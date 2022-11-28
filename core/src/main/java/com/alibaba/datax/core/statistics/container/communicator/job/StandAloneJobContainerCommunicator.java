@@ -15,11 +15,15 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ */
 public class StandAloneJobContainerCommunicator extends AbstractContainerCommunicator {
     private static final Logger LOG = LoggerFactory.getLogger(StandAloneJobContainerCommunicator.class);
 
     public StandAloneJobContainerCommunicator(Configuration configuration) {
         super(configuration);
+
         abstractCollector = new ProcessInnerCollector(configuration.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID));
         abstractReporter = new ProcessInnerReporter();
     }
@@ -31,7 +35,7 @@ public class StandAloneJobContainerCommunicator extends AbstractContainerCommuni
 
     @Override
     public Communication collect() {
-        return abstractCollector.collectFromTaskGroup();
+        return abstractCollector.collectTaskGroup();
     }
 
     @Override
@@ -44,7 +48,7 @@ public class StandAloneJobContainerCommunicator extends AbstractContainerCommuni
      */
     @Override
     public void report(Communication communication) {
-        getAbstractReporter().reportJobCommunication(super.getJobId(), communication);
+        abstractReporter.reportJobCommunication(jobId, communication);
 
         LOG.info(CommunicationTool.Stringify.getSnapshot(communication));
         reportVmInfo();

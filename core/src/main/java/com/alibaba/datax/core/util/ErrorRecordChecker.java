@@ -69,7 +69,7 @@ public final class ErrorRecordChecker {
         LOG.debug(String.format(
                 "Error-limit set to %f, error percent check.", percentageLimit));
 
-        long total = CommunicationTool.getTotalReadRecords(communication);
+        long total = CommunicationTool.getTotalReadRecordCount(communication);
         long error = CommunicationTool.getTotalErrorRecords(communication);
 
         if (total > 0 && ((double) error / (double) total) > percentageLimit) {

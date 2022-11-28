@@ -46,9 +46,7 @@ public abstract class ProcessInnerScheduler extends AbstractScheduler {
         throw DataXException.build(FrameworkErrorCode.KILLED_EXIT_VALUE, "job killed status");
     }
 
-
     private TaskGroupContainerRunner newTaskGroupContainerRunner(Configuration taskGroupConfig) {
         return new TaskGroupContainerRunner(new TaskGroupContainer(taskGroupConfig));
     }
-
 }

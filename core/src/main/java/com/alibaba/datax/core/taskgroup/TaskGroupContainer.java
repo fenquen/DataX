@@ -52,12 +52,12 @@ public class TaskGroupContainer extends AbstractContainer {
     /**
      * 使用的channel类
      */
-    private String channelClazz;
+    private String channelClassName;
 
     /**
      * task收集器使用的类
      */
-    private String taskCollectorClass;
+    private String taskCollectorClassName;
 
     private TaskMonitor taskMonitor = TaskMonitor.getInstance();
 
@@ -68,8 +68,8 @@ public class TaskGroupContainer extends AbstractContainer {
 
         jobId = configuration.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID);
         taskGroupId = configuration.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_ID);
-        channelClazz = configuration.getString(CoreConstant.DATAX_CORE_TRANSPORT_CHANNEL_CLASS);
-        taskCollectorClass = configuration.getString(CoreConstant.DATAX_CORE_STATISTICS_COLLECTOR_PLUGIN_TASKCLASS);
+        channelClassName = configuration.getString(CoreConstant.DATAX_CORE_TRANSPORT_CHANNEL_CLASS);
+        taskCollectorClassName = configuration.getString(CoreConstant.DATAX_CORE_STATISTICS_COLLECTOR_PLUGIN_TASKCLASS);
     }
 
     @Override
@@ -116,6 +116,7 @@ public class TaskGroupContainer extends AbstractContainer {
                 boolean hasFailedOrKilledTask = false;
 
                 Map<Integer, Communication> taskId_communication = abstractContainerCommunicator.getCommunicationMap();
+                a:
                 for (Map.Entry<Integer, Communication> entry : taskId_communication.entrySet()) {
                     Integer taskId = entry.getKey();
                     Communication taskCommunication = entry.getValue();
@@ -129,45 +130,43 @@ public class TaskGroupContainer extends AbstractContainer {
                         continue;
                     }
 
-                    // 上面从runTasks里移除了，因此对应在monitor里移除
                     taskMonitor.removeTask(taskId);
 
-                    // 失败
-                    if (taskCommunication.getState() == State.FAILED) {
+                    switch (taskCommunication.getState()) {
+                        case FAILED:
+                            taskId_failedTaskExecutor.put(taskId, taskExecutor);
 
-                        taskId_failedTaskExecutor.put(taskId, taskExecutor);
+                            // task是否支持failover && 重试次数未超过最大限制
+                            if (taskExecutor.supportFailOver() && taskExecutor.getAttemptCount() < taskMaxRetryTimes) {
+                                taskExecutor.shutdown(); //关闭老的executor
+                                abstractContainerCommunicator.resetCommunication(taskId); //将task的状态重置
 
-                        // task是否支持failover && 重试次数未超过最大限制
-                        if (taskExecutor.supportFailOver() && taskExecutor.getAttemptCount() < taskMaxRetryTimes) {
-                            taskExecutor.shutdown(); //关闭老的executor
-                            abstractContainerCommunicator.resetCommunication(taskId); //将task的状态重置
-
-                            // 重新加入任务列表
-                            contentElementConfList7.add(taskId_ContentElementConfig.get(taskId));
-                        } else {
+                                // 重新加入任务列表
+                                contentElementConfList7.add(taskId_ContentElementConfig.get(taskId));
+                            } else {
+                                hasFailedOrKilledTask = true;
+                                break a;
+                            }
+                        case KILLED:
                             hasFailedOrKilledTask = true;
-                            break;
-                        }
-                    } else if (taskCommunication.getState() == State.KILLED) {
-                        hasFailedOrKilledTask = true;
-                        break;
-                    } else if (taskCommunication.getState() == State.SUCCEEDED) {
-                        Long taskStartTime = taskId_startTime.get(taskId);
-                        if (taskStartTime != null) {
-                            long usedTime = System.currentTimeMillis() - taskStartTime;
+                            break a;
+                        case SUCCEEDED:
+                            Long taskStartTime = taskId_startTime.get(taskId);
+                            if (taskStartTime != null) {
+                                long usedTime = System.currentTimeMillis() - taskStartTime;
 
-                            LOG.info("taskGroup[{}] taskId[{}] is successed, used[{}]ms", taskGroupId, taskId, usedTime);
-                            PerfRecord.addPerfRecord(taskGroupId, taskId, PerfRecord.PHASE.TASK_TOTAL, taskStartTime, usedTime * 1000L * 1000L);
+                                LOG.info("taskGroup[{}] taskId[{}] is successed, used[{}]ms", taskGroupId, taskId, usedTime);
+                                PerfRecord.addPerfRecord(taskGroupId, taskId, PerfRecord.PHASE.TASK_TOTAL, taskStartTime, usedTime * 1000L * 1000L);
 
-                            taskId_startTime.remove(taskId);
-                            taskId_ContentElementConfig.remove(taskId);
-                        }
+                                taskId_startTime.remove(taskId);
+                                taskId_ContentElementConfig.remove(taskId);
+                            }
                     }
                 }
 
                 // 2.发现该taskGroup下taskExecutor的总状态失败则汇报错误
                 if (hasFailedOrKilledTask) {
-                    lastTaskGroupContainerCommunication = reportTaskGroupCommunication(lastTaskGroupContainerCommunication, contentElementConfigList.size());
+                    lastTaskGroupContainerCommunication = reportTaskGroupComm(lastTaskGroupContainerCommunication, contentElementConfigList.size());
                     throw DataXException.build(FrameworkErrorCode.PLUGIN_RUNTIME_ERROR, lastTaskGroupContainerCommunication.getThrowable());
                 }
 
@@ -193,10 +192,9 @@ public class TaskGroupContainer extends AbstractContainer {
                         if (!failedTaskExecutor.isShutdown()) { //上次失败的task仍未结束
                             if (now - failedTime > taskMaxWaitMs) {
                                 markCommunicationFailed(taskId);
-                                reportTaskGroupCommunication(lastTaskGroupContainerCommunication, contentElementConfigList.size());
+                                reportTaskGroupComm(lastTaskGroupContainerCommunication, contentElementConfigList.size());
                                 throw DataXException.build(CommonErrorCode.WAIT_TIME_EXCEED, "task failover等待超时");
                             }
-
 
                             failedTaskExecutor.shutdown(); //再次尝试关闭
                             continue;
@@ -218,8 +216,7 @@ public class TaskGroupContainer extends AbstractContainer {
                     taskMonitor.registerTask(taskId, abstractContainerCommunicator.getCommunication(taskId));
 
                     taskId_failedTaskExecutor.remove(taskId);
-                    LOG.info("taskGroup[{}] taskId[{}] attemptCount[{}] is started",
-                            taskGroupId, taskId, attemptCount);
+                    LOG.info("taskGroup[{}] taskId[{}] attemptCount[{}] is started", taskGroupId, taskId, attemptCount);
                 }
 
                 // 4.任务列表为空，executor已结束, 搜集状态为success--->成功
@@ -229,7 +226,7 @@ public class TaskGroupContainer extends AbstractContainer {
 
                     // 成功的情况下，也需要汇报一次。否则在任务结束非常快的情况下，采集的信息将会不准确
                     lastTaskGroupContainerCommunication =
-                            reportTaskGroupCommunication(lastTaskGroupContainerCommunication, contentElementConfigList.size());
+                            reportTaskGroupComm(lastTaskGroupContainerCommunication, contentElementConfigList.size());
 
                     LOG.info("taskGroup[{}] completed it's tasks.", taskGroupId);
                     break;
@@ -238,7 +235,7 @@ public class TaskGroupContainer extends AbstractContainer {
                 // 5.如果当前时间已经超出汇报时间的interval，那么我们需要马上汇报
                 long now = System.currentTimeMillis();
                 if (now - lastReportTimeStamp > reportIntervalInMillSec) {
-                    lastTaskGroupContainerCommunication = reportTaskGroupCommunication(lastTaskGroupContainerCommunication, contentElementConfigList.size());
+                    lastTaskGroupContainerCommunication = reportTaskGroupComm(lastTaskGroupContainerCommunication, contentElementConfigList.size());
 
                     lastReportTimeStamp = now;
 
@@ -253,15 +250,15 @@ public class TaskGroupContainer extends AbstractContainer {
             }
 
             //6.最后还要汇报一次
-            reportTaskGroupCommunication(lastTaskGroupContainerCommunication, contentElementConfigList.size());
+            reportTaskGroupComm(lastTaskGroupContainerCommunication, contentElementConfigList.size());
         } catch (Throwable e) {
-            Communication nowTaskGroupContainerCommunication = this.abstractContainerCommunicator.collect();
+            Communication nowTaskGroupContainerCommunication = abstractContainerCommunicator.collect();
 
             if (nowTaskGroupContainerCommunication.getThrowable() == null) {
                 nowTaskGroupContainerCommunication.setThrowable(e);
             }
             nowTaskGroupContainerCommunication.setState(State.FAILED);
-            this.abstractContainerCommunicator.report(nowTaskGroupContainerCommunication);
+            abstractContainerCommunicator.report(nowTaskGroupContainerCommunication);
 
             throw DataXException.build(
                     FrameworkErrorCode.RUNTIME_ERROR, e);
@@ -313,10 +310,11 @@ public class TaskGroupContainer extends AbstractContainer {
         return true;
     }
 
-    private Communication reportTaskGroupCommunication(Communication lastTaskGroupContainerCommunication, int taskCount) {
-        Communication nowTaskGroupContainerCommunication = abstractContainerCommunicator.collect();
-        nowTaskGroupContainerCommunication.setTimestamp(System.currentTimeMillis());
-        Communication reportCommunication = CommunicationTool.getReportCommunication(nowTaskGroupContainerCommunication, lastTaskGroupContainerCommunication, taskCount);
+    private Communication reportTaskGroupComm(Communication mergedAllTgCommOld, int taskCount) {
+        Communication mergedAllTaskCommNew = abstractContainerCommunicator.collect();
+        mergedAllTaskCommNew.setTimestamp(System.currentTimeMillis());
+        Communication reportCommunication = CommunicationTool.getReportComm(mergedAllTaskCommNew, mergedAllTgCommOld, taskCount);
+        // 更新到了 taskGroupId_communication
         abstractContainerCommunicator.report(reportCommunication);
         return reportCommunication;
     }
@@ -359,8 +357,8 @@ public class TaskGroupContainer extends AbstractContainer {
             // 获取该taskExecutor的配置
             this.contentElementConfig = contentElementConfig;
 
-            Validate.isTrue(null != this.contentElementConfig.getConfig(CoreConstant.JOB_READER)
-                            && null != this.contentElementConfig.getConfig(CoreConstant.JOB_WRITER),
+            Validate.isTrue(null != contentElementConfig.getConfig(CoreConstant.JOB_READER)
+                            && null != contentElementConfig.getConfig(CoreConstant.JOB_WRITER),
                     "[reader|writer]的插件参数不能为空!");
 
             // taskId
@@ -372,7 +370,7 @@ public class TaskGroupContainer extends AbstractContainer {
             taskCommunication = abstractContainerCommunicator.getCommunication(taskId);
             Validate.notNull(taskCommunication, String.format("taskId[%d]的Communication没有注册过", taskId));
 
-            channel = ClassUtil.instantiate(channelClazz, Channel.class, configuration);
+            channel = ClassUtil.instantiate(channelClassName, Channel.class, configuration);
             channel.setCommunication(taskCommunication);
 
             // 获取transformer的参数
@@ -423,7 +421,7 @@ public class TaskGroupContainer extends AbstractContainer {
                     abstractRunner.setJobConf(contentElementConfig.getConfig(CoreConstant.JOB_READER_PARAMETER));
 
                     taskPluginCollector = ClassUtil.instantiate(
-                            taskCollectorClass,
+                            taskCollectorClassName,
                             AbstractTaskPluginCollector.class,
                             configuration,
                             taskCommunication,
@@ -445,7 +443,7 @@ public class TaskGroupContainer extends AbstractContainer {
                     abstractRunner.setJobConf(contentElementConfig.getConfig(CoreConstant.JOB_WRITER_PARAMETER));
 
                     taskPluginCollector = ClassUtil.instantiate(
-                            taskCollectorClass,
+                            taskCollectorClassName,
                             AbstractTaskPluginCollector.class,
                             configuration,
                             taskCommunication,

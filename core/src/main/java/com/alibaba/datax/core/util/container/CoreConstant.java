@@ -23,7 +23,7 @@ public class CoreConstant {
     public static final String DATAX_CORE_CONTAINER_TRACE_ENABLE = "core.container.trace.enable";
 
     /**
-     * 对应 命令行的mode/ExecuteMode
+     * 对应 命令行的mode/executemode
      */
     public static final String DATAX_CORE_CONTAINER_JOB_MODE = "core.container.job.mode";
 

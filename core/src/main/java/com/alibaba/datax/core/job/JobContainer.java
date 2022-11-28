@@ -82,7 +82,6 @@ public class JobContainer extends AbstractContainer {
 
     public JobContainer(Configuration configuration) {
         super(configuration);
-
         errorLimit = new ErrorRecordChecker(configuration);
     }
 
@@ -141,14 +140,9 @@ public class JobContainer extends AbstractContainer {
             }
 
 
-            if (super.getAbstractContainerCommunicator() == null) {
+            if (abstractContainerCommunicator== null) {
                 // 由于 containerCollector 是在 scheduler() 中初始化的，所以当在 scheduler() 之前出现异常时，需要在此处对 containerCollector 进行初始化
-
-                AbstractContainerCommunicator tempContainerCollector;
-                // standalone
-                tempContainerCollector = new StandAloneJobContainerCommunicator(configuration);
-
-                super.setAbstractContainerCommunicator(tempContainerCollector);
+                abstractContainerCommunicator = new StandAloneJobContainerCommunicator(configuration);
             }
 
             Communication communication = getAbstractContainerCommunicator().collect();
@@ -160,8 +154,8 @@ public class JobContainer extends AbstractContainer {
             Communication tempComm = new Communication();
             tempComm.setTimestamp(startTransferTimeStamp);
 
-            Communication reportCommunication = CommunicationTool.getReportCommunication(communication, tempComm, splitCount);
-            super.getAbstractContainerCommunicator().report(reportCommunication);
+            Communication reportCommunication = CommunicationTool.getReportComm(communication, tempComm, splitCount);
+            abstractContainerCommunicator.report(reportCommunication);
 
             throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR, e);
         } finally {
@@ -478,12 +472,11 @@ public class JobContainer extends AbstractContainer {
         LOG.info("Scheduler starts [{}] taskGroups.", taskGroupConfigList.size());
 
         ExecuteMode executeMode = null;
-        AbstractScheduler abstractScheduler;
         try {
             executeMode = ExecuteMode.STANDALONE;
-            abstractScheduler = initStandaloneScheduler(configuration);
+            AbstractScheduler abstractScheduler = initStandaloneScheduler(configuration);
 
-            //设置 executeMode
+            // 设置 executeMode
             for (Configuration taskGroupConfig : taskGroupConfigList) {
                 taskGroupConfig.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_MODE, executeMode.getValue());
             }
@@ -550,7 +543,7 @@ public class JobContainer extends AbstractContainer {
         Communication tempComm = new Communication();
         tempComm.setTimestamp(startTransferTimeStamp);
 
-        Communication reportCommunication = CommunicationTool.getReportCommunication(communication, tempComm, splitCount);
+        Communication reportCommunication = CommunicationTool.getReportComm(communication, tempComm, splitCount);
 
         // 字节速率
         long byteSpeedPerSecond = communication.getLongCounter(CommunicationTool.READ_SUCCEED_BYTES) / transferCosts;
@@ -559,7 +552,7 @@ public class JobContainer extends AbstractContainer {
         reportCommunication.setLongCounter(CommunicationTool.BYTE_SPEED, byteSpeedPerSecond);
         reportCommunication.setLongCounter(CommunicationTool.RECORD_SPEED, recordSpeedPerSecond);
 
-        super.getAbstractContainerCommunicator().report(reportCommunication);
+        getAbstractContainerCommunicator().report(reportCommunication);
 
 
         LOG.info(String.format(
@@ -571,7 +564,7 @@ public class JobContainer extends AbstractContainer {
                 "任务总计耗时", totalCosts + "s",
                 "任务平均流量", StrUtil.stringify(byteSpeedPerSecond) + "/s",
                 "记录写入速度", recordSpeedPerSecond + "rec/s",
-                "读出记录总数", CommunicationTool.getTotalReadRecords(communication),
+                "读出记录总数", CommunicationTool.getTotalReadRecordCount(communication),
                 "读写失败总数", CommunicationTool.getTotalErrorRecords(communication)
         ));
 

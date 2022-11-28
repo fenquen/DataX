@@ -57,8 +57,8 @@ public class ReaderRunner extends AbstractRunner implements Runnable {
             taskReader.startRead(recordSender);
             recordSender.terminate();
 
-            dataPerfRecord.addCount(CommunicationTool.getTotalReadRecords(super.getCommunication()));
-            dataPerfRecord.addSize(CommunicationTool.getTotalReadBytes(super.getCommunication()));
+            dataPerfRecord.addCount(CommunicationTool.getTotalReadRecordCount(super.getCommunication()));
+            dataPerfRecord.addSize(CommunicationTool.getTotalReadByteCount(super.getCommunication()));
             dataPerfRecord.end();
 
             LOG.debug("task reader starts to do post ...");

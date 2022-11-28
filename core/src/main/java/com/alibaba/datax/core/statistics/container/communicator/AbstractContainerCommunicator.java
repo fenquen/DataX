@@ -21,7 +21,7 @@ public abstract class AbstractContainerCommunicator {
 
     protected AbstractReporter abstractReporter;
 
-    private Long jobId;
+    protected Long jobId;
 
     private VMInfo vmInfo = VMInfo.getVmInfo();
 
@@ -49,8 +49,7 @@ public abstract class AbstractContainerCommunicator {
     public abstract Map<Integer, Communication> getCommunicationMap();
 
     public void resetCommunication(Integer id) {
-        Map<Integer, Communication> map = getCommunicationMap();
-        map.put(id, new Communication());
+       getCommunicationMap().put(id, new Communication());
     }
 
     public void reportVmInfo() {

@@ -9,10 +9,4 @@ public class StandAloneScheduler extends ProcessInnerScheduler{
     public StandAloneScheduler(AbstractContainerCommunicator containerCommunicator) {
         super(containerCommunicator);
     }
-
-    @Override
-    protected boolean isJobKilling(Long jobId) {
-        return false;
-    }
-
 }

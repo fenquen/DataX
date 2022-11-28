@@ -74,7 +74,7 @@ public class TaskMonitor {
 
         private TaskCommunication(Integer taskId, Communication communication) {
             this.taskId = taskId;
-            lastAllReadRecords = CommunicationTool.getTotalReadRecords(communication);
+            lastAllReadRecords = CommunicationTool.getTotalReadRecordCount(communication);
             ttl = System.currentTimeMillis();
             lastUpdateComunicationTS = ttl;
         }
@@ -83,8 +83,8 @@ public class TaskMonitor {
             ttl = System.currentTimeMillis();
 
             // 采集的数量增长，则变更当前记录, 优先判断这个条件，因为目的是不卡住，而不是expired
-            if (CommunicationTool.getTotalReadRecords(communication) > lastAllReadRecords) {
-                lastAllReadRecords = CommunicationTool.getTotalReadRecords(communication);
+            if (CommunicationTool.getTotalReadRecordCount(communication) > lastAllReadRecords) {
+                lastAllReadRecords = CommunicationTool.getTotalReadRecordCount(communication);
                 lastUpdateComunicationTS = ttl;
             } else if (isExpired(lastUpdateComunicationTS)) {
                 communication.setState(State.FAILED);

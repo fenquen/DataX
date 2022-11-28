@@ -9,8 +9,7 @@ public class ProcessInnerCollector extends AbstractCollector {
     }
 
     @Override
-    public Communication collectFromTaskGroup() {
+    public Communication collectTaskGroup() {
         return LocalTGCommunicationManager.getJobCommunication();
     }
-
 }

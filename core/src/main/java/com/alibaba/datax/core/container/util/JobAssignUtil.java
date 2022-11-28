@@ -126,7 +126,6 @@ public final class JobAssignUtil {
         }
 
         int mapValueMaxLength = -1;
-
         List<String> resMarkList = new ArrayList<>();
         for (Map.Entry<String, List<Integer>> entry : resMark_taskIdList.entrySet()) {
             resMarkList.add(entry.getKey());
@@ -163,8 +162,8 @@ public final class JobAssignUtil {
         return result;
     }
 
-    private static void adjustChannelNumPerTaskGroup(List<Configuration> taskGroupConfigList, int channelNumber) {
-        int taskGroupNumber = taskGroupConfigList.size();
+    private static void adjustChannelNumPerTaskGroup(List<Configuration> taskGroupConfList, int channelNumber) {
+        int taskGroupNumber = taskGroupConfList.size();
         int avgChannelsPerTaskGroup = channelNumber / taskGroupNumber;
         int remainderChannelCount = channelNumber % taskGroupNumber;
         // 表示有 remainderChannelCount 个 taskGroup,其对应 Channel 个数应该为：avgChannelsPerTaskGroup + 1；
@@ -172,11 +171,11 @@ public final class JobAssignUtil {
 
         int i = 0;
         for (; i < remainderChannelCount; i++) {
-            taskGroupConfigList.get(i).set(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL, avgChannelsPerTaskGroup + 1);
+            taskGroupConfList.get(i).set(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL, avgChannelsPerTaskGroup + 1);
         }
 
         for (int j = 0; j < taskGroupNumber - remainderChannelCount; j++) {
-            taskGroupConfigList.get(i + j).set(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL, avgChannelsPerTaskGroup);
+            taskGroupConfList.get(i + j).set(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL, avgChannelsPerTaskGroup);
         }
     }
 }

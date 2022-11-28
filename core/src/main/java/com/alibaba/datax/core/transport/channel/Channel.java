@@ -169,7 +169,7 @@ public abstract class Channel {
 
         long byteLimitSleepTime = 0;
         if (isChannelByteSpeedLimit) {
-            long currentByteSpeed = (CommunicationTool.getTotalReadBytes(currentCommunication) - CommunicationTool.getTotalReadBytes(lastCommunication)) * 1000 / interval;
+            long currentByteSpeed = (CommunicationTool.getTotalReadByteCount(currentCommunication) - CommunicationTool.getTotalReadByteCount(lastCommunication)) * 1000 / interval;
             if (currentByteSpeed > byteSpeed) {
                 // 计算根据byteLimit得到的休眠时间
                 byteLimitSleepTime = currentByteSpeed * interval / byteSpeed - interval;
@@ -178,7 +178,7 @@ public abstract class Channel {
 
         long recordLimitSleepTime = 0;
         if (isChannelRecordSpeedLimit) {
-            long currentRecordSpeed = (CommunicationTool.getTotalReadRecords(currentCommunication) - CommunicationTool.getTotalReadRecords(lastCommunication)) * 1000 / interval;
+            long currentRecordSpeed = (CommunicationTool.getTotalReadRecordCount(currentCommunication) - CommunicationTool.getTotalReadRecordCount(lastCommunication)) * 1000 / interval;
             if (currentRecordSpeed > recordSpeed) {
                 // 计算根据recordLimit得到的休眠时间
                 recordLimitSleepTime = currentRecordSpeed * interval / recordSpeed - interval;

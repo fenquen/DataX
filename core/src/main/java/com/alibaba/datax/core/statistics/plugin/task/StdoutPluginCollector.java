@@ -24,21 +24,30 @@ public class StdoutPluginCollector extends AbstractTaskPluginCollector {
 
     private static final int DEFAULT_MAX_DIRTYNUM = 128;
 
-    private AtomicInteger maxLogNum = new AtomicInteger(0);
+    private AtomicInteger maxLogNum;
 
     private AtomicInteger currentLogNum = new AtomicInteger(0);
 
-    public StdoutPluginCollector(Configuration configuration, Communication communication,
-                                 PluginType type) {
+    public StdoutPluginCollector(Configuration configuration, Communication communication, PluginType type) {
         super(configuration, communication, type);
-        maxLogNum = new AtomicInteger(
-                configuration.getInt(
-                        CoreConstant.DATAX_CORE_STATISTICS_COLLECTOR_PLUGIN_MAXDIRTYNUM,
-                        DEFAULT_MAX_DIRTYNUM));
+        maxLogNum = new AtomicInteger(configuration.getInt(CoreConstant.DATAX_CORE_STATISTICS_COLLECTOR_PLUGIN_MAXDIRTYNUM, DEFAULT_MAX_DIRTYNUM));
     }
 
-    private String formatDirty(final Record dirty, final Throwable t,
-                               final String msg) {
+
+    @Override
+    public void collectDirtyRecord(Record dirtyRecord, Throwable t, String errorMessage) {
+        int logNum = currentLogNum.getAndIncrement();
+        if (logNum == 0 && t != null) {
+            LOG.error("", t);
+        }
+        if (maxLogNum.intValue() < 0 || currentLogNum.intValue() < maxLogNum.intValue()) {
+            LOG.error("脏数据: \n {}", formatDirty(dirtyRecord, t, errorMessage));
+        }
+
+        super.collectDirtyRecord(dirtyRecord, t, errorMessage);
+    }
+
+    private String formatDirty(final Record dirty, final Throwable t, final String msg) {
         Map<String, Object> msgGroup = new HashMap<String, Object>();
 
         msgGroup.put("type", super.getPluginType().toString());
@@ -54,20 +63,5 @@ public class StdoutPluginCollector extends AbstractTaskPluginCollector {
         }
 
         return JSON.toJSONString(msgGroup);
-    }
-
-    @Override
-    public void collectDirtyRecord(Record dirtyRecord, Throwable t,
-                                   String errorMessage) {
-        int logNum = currentLogNum.getAndIncrement();
-        if(logNum==0 && t!=null){
-            LOG.error("", t);
-        }
-        if (maxLogNum.intValue() < 0 || currentLogNum.intValue() < maxLogNum.intValue()) {
-            LOG.error("脏数据: \n"
-                    + this.formatDirty(dirtyRecord, t, errorMessage));
-        }
-
-        super.collectDirtyRecord(dirtyRecord, t, errorMessage);
     }
 }

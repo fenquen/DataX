@@ -54,8 +54,8 @@ public class WriterRunner extends AbstractRunner implements Runnable {
             dataPerfRecord.start();
             taskWriter.startWrite(recordReceiver);
 
-            dataPerfRecord.addCount(CommunicationTool.getTotalReadRecords(super.getCommunication()));
-            dataPerfRecord.addSize(CommunicationTool.getTotalReadBytes(super.getCommunication()));
+            dataPerfRecord.addCount(CommunicationTool.getTotalReadRecordCount(super.getCommunication()));
+            dataPerfRecord.addSize(CommunicationTool.getTotalReadByteCount(super.getCommunication()));
             dataPerfRecord.end();
 
             LOG.debug("task writer starts to do post ...");

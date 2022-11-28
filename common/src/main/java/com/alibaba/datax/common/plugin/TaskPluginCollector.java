@@ -17,9 +17,7 @@ public abstract class TaskPluginCollector implements PluginCollector {
      * @param t            异常信息
      * @param errorMessage 错误的提示信息
      */
-    public abstract void collectDirtyRecord(Record dirtyRecord,
-                                            Throwable t,
-                                            String errorMessage);
+    public abstract void collectDirtyRecord(Record dirtyRecord, Throwable t, String errorMessage);
 
     /**
      * 收集脏数据

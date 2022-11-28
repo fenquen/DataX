@@ -77,8 +77,7 @@ public class MemoryChannel extends Channel {
             memoryByteCount.addAndGet(bytes);
             notEmpty.signalAll();
         } catch (InterruptedException e) {
-            throw DataXException.build(
-                    FrameworkErrorCode.RUNTIME_ERROR, e);
+            throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR, e);
         } finally {
             lock.unlock();
         }

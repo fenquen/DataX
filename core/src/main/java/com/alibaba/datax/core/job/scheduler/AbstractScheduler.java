@@ -47,52 +47,38 @@ public abstract class AbstractScheduler {
         // 是不是分布式这里有体现
         startAllTaskGroup(taskGroupConfigList);
 
-        Communication lastJobContainerCommunication = new Communication();
+        Communication mergedAllTgCommLast = new Communication();
 
         long lastReportTimeStamp = System.currentTimeMillis();
         try {
             while (true) {
-                /**
-                 * step 1: collect job stat
-                 * step 2: getReport info, then report it
-                 * step 3: errorLimit do check
-                 * step 4: dealSucceedStat();
-                 * step 5: dealKillingStat();
-                 * step 6: dealFailedStat();
-                 * step 7: refresh last job stat, and then sleep for next while
-                 *
-                 * above steps, some ones should report info to DS
-                 *
-                 */
-                Communication nowJobContainerCommunication = abstractContainerCommunicator.collect();
-                nowJobContainerCommunication.setTimestamp(System.currentTimeMillis());
-
-                LOG.debug(nowJobContainerCommunication.toString());
+                Communication mergedAllTgComm = abstractContainerCommunicator.collect(); // collect的是 task group的
+                mergedAllTgComm.setTimestamp(System.currentTimeMillis());
 
                 // 汇报周期
                 long now = System.currentTimeMillis();
 
                 if (now - lastReportTimeStamp > jobReportIntervalMs) {
                     Communication reportCommunication =
-                            CommunicationTool.getReportCommunication(nowJobContainerCommunication, lastJobContainerCommunication, totalTasks);
+                            CommunicationTool.getReportComm(mergedAllTgComm, mergedAllTgCommLast, totalTasks);
 
                     abstractContainerCommunicator.report(reportCommunication);
 
                     lastReportTimeStamp = now;
-                    lastJobContainerCommunication = nowJobContainerCommunication;
+                    mergedAllTgCommLast = mergedAllTgComm;
                 }
 
-                errorLimit.checkRecordLimit(nowJobContainerCommunication);
+                errorLimit.checkRecordLimit(mergedAllTgComm);
 
-                if (nowJobContainerCommunication.getState() == State.SUCCEEDED) {
-                    LOG.info("Scheduler accomplished all tasks.");
+                if (mergedAllTgComm.getState() == State.SUCCEEDED) {
+                    LOG.info("accomplished all task group.");
                     break;
                 }
 
-                if (isJobKilling(this.getJobId())) {
-                    dealKillingStat(this.abstractContainerCommunicator, totalTasks);
-                } else if (nowJobContainerCommunication.getState() == State.FAILED) {
-                    dealFailedStat(this.abstractContainerCommunicator, nowJobContainerCommunication.getThrowable());
+                if (isJobKilling(jobId)) {
+                    dealKillingStat(abstractContainerCommunicator, totalTasks);
+                } else if (mergedAllTgComm.getState() == State.FAILED) {
+                    dealFailedStat(abstractContainerCommunicator, mergedAllTgComm.getThrowable());
                 }
 
                 Thread.sleep(jobSleepIntervalMs);
@@ -101,7 +87,6 @@ public abstract class AbstractScheduler {
             LOG.error("捕获到InterruptedException异常!", e);
             throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR, e);
         }
-
     }
 
     /**
@@ -113,9 +98,9 @@ public abstract class AbstractScheduler {
 
     protected abstract void dealKillingStat(AbstractContainerCommunicator frameworkCollector, int totalTasks);
 
-    private int calculateTaskCount(List<Configuration> configurations) {
+    private int calculateTaskCount(List<Configuration> taskGroupConfList) {
         int totalTasks = 0;
-        for (Configuration taskGroupConfiguration : configurations) {
+        for (Configuration taskGroupConfiguration : taskGroupConfList) {
             totalTasks += taskGroupConfiguration.getListConfiguration(CoreConstant.DATAX_JOB_CONTENT).size();
         }
         return totalTasks;
@@ -126,5 +111,7 @@ public abstract class AbstractScheduler {
 //        return jobInfo.getData() == State.KILLING.value();
 //    }
 
-    protected abstract boolean isJobKilling(Long jobId);
+    protected boolean isJobKilling(Long jobId){
+        return false;
+    }
 }

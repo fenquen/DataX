@@ -13,6 +13,7 @@ import java.util.Map;
  * 这里主要是业务层面的处理
  */
 public final class CommunicationTool {
+    // SUCCEEDED 时候用到
     public static final String STAGE = "stage";
     public static final String BYTE_SPEED = "byteSpeed";
     public static final String RECORD_SPEED = "recordSpeed";
@@ -49,43 +50,44 @@ public final class CommunicationTool {
     public static final String TRANSFORMER_FILTER_RECORDS = "totalTransformerFilterRecords";
     public static final String TRANSFORMER_NAME_PREFIX = "usedTimeByTransformer_";
 
-    public static Communication getReportCommunication(Communication now, Communication old, int totalStage) {
-        Validate.isTrue(now != null && old != null,
-                "为汇报准备的新旧metric不能为null");
+    /**
+     * @param oldComm 只是用来算速度的时候用到
+     */
+    public static Communication getReportComm(Communication newComm, Communication oldComm, int totalStage) {
+        Validate.isTrue(newComm != null && oldComm != null, "为汇报准备的新旧metric不能为null");
 
-        long totalReadRecords = getTotalReadRecords(now);
-        long totalReadBytes = getTotalReadBytes(now);
-        now.setLongCounter(TOTAL_READ_RECORDS, totalReadRecords);
-        now.setLongCounter(TOTAL_READ_BYTES, totalReadBytes);
-        now.setLongCounter(TOTAL_ERROR_RECORDS, getTotalErrorRecords(now));
-        now.setLongCounter(TOTAL_ERROR_BYTES, getTotalErrorBytes(now));
-        now.setLongCounter(WRITE_SUCCEED_RECORDS, getWriteSucceedRecords(now));
-        now.setLongCounter(WRITE_SUCCEED_BYTES, getWriteSucceedBytes(now));
+        long totalReadRecordCount = getTotalReadRecordCount(newComm);
+        long totalReadByteCount = getTotalReadByteCount(newComm);
 
-        long timeInterval = now.getTimestamp() - old.getTimestamp();
+        newComm.setLongCounter(TOTAL_READ_RECORDS, totalReadRecordCount);
+        newComm.setLongCounter(TOTAL_READ_BYTES, totalReadByteCount);
+        newComm.setLongCounter(TOTAL_ERROR_RECORDS, getTotalErrorRecords(newComm));
+        newComm.setLongCounter(TOTAL_ERROR_BYTES, getTotalErrorBytes(newComm));
+        newComm.setLongCounter(WRITE_SUCCEED_RECORDS, getWriteSucceedRecords(newComm));
+        newComm.setLongCounter(WRITE_SUCCEED_BYTES, getWriteSucceedBytes(newComm));
+
+        long timeInterval = newComm.getTimestamp() - oldComm.getTimestamp();
         long sec = timeInterval <= 1000 ? 1 : timeInterval / 1000;
-        long bytesSpeed = (totalReadBytes
-                - getTotalReadBytes(old)) / sec;
-        long recordsSpeed = (totalReadRecords
-                - getTotalReadRecords(old)) / sec;
+        long byteSpeed = (totalReadByteCount - getTotalReadByteCount(oldComm)) / sec;
+        long recordSpeed = (totalReadRecordCount - getTotalReadRecordCount(oldComm)) / sec;
 
-        now.setLongCounter(BYTE_SPEED, bytesSpeed < 0 ? 0 : bytesSpeed);
-        now.setLongCounter(RECORD_SPEED, recordsSpeed < 0 ? 0 : recordsSpeed);
-        now.setDoubleCounter(PERCENTAGE, now.getLongCounter(STAGE) / (double) totalStage);
+        newComm.setLongCounter(BYTE_SPEED, byteSpeed < 0 ? 0 : byteSpeed);
+        newComm.setLongCounter(RECORD_SPEED, recordSpeed < 0 ? 0 : recordSpeed);
+        newComm.setDoubleCounter(PERCENTAGE, newComm.getLongCounter(STAGE) / (double) totalStage);
 
-        if (old.getThrowable() != null) {
-            now.setThrowable(old.getThrowable());
+        if (oldComm.getThrowable() != null) {
+            newComm.setThrowable(oldComm.getThrowable());
         }
 
-        return now;
+        return newComm;
     }
 
-    public static long getTotalReadRecords(final Communication communication) {
+    public static long getTotalReadRecordCount(final Communication communication) {
         return communication.getLongCounter(READ_SUCCEED_RECORDS) +
                 communication.getLongCounter(READ_FAILED_RECORDS);
     }
 
-    public static long getTotalReadBytes(final Communication communication) {
+    public static long getTotalReadByteCount(final Communication communication) {
         return communication.getLongCounter(READ_SUCCEED_BYTES) +
                 communication.getLongCounter(READ_FAILED_BYTES);
     }

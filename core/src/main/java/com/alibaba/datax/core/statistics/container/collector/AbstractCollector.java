@@ -20,18 +20,20 @@ public abstract class AbstractCollector {
     public void registerTGCommunication(List<Configuration> taskGroupConfigList) {
         for (Configuration config : taskGroupConfigList) {
             int taskGroupId = config.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_ID);
-            LocalTGCommunicationManager.registerTaskGroupCommunication(taskGroupId, new Communication());
+            LocalTGCommunicationManager.register(taskGroupId, new Communication());
         }
     }
 
     public void registerTaskCommunication(List<Configuration> contentElementList) {
         for (Configuration contentElement : contentElementList) {
-            int taskId = contentElement.getInt(CoreConstant.TASK_ID);
-            taskId_communication.put(taskId, new Communication());
+            taskId_communication.put(contentElement.getInt(CoreConstant.TASK_ID), new Communication());
         }
     }
 
-    public Communication collectFromTask() {
+    /**
+     * 收集合并了全部的task的communication便是task group的
+     */
+    public Communication collectTask() {
         Communication communication = new Communication();
         communication.setState(State.SUCCEEDED);
 
@@ -42,10 +44,14 @@ public abstract class AbstractCollector {
         return communication;
     }
 
-    public abstract Communication collectFromTaskGroup();
+    /**
+     * 管理的是task group这个level上的communication 会有不同的实现
+     * 有分布式和不是分布是的实现
+     */
+    public abstract Communication collectTaskGroup();
 
     public Communication getTGCommunication(Integer taskGroupId) {
-        return LocalTGCommunicationManager.getTaskGroupCommunication(taskGroupId);
+        return LocalTGCommunicationManager.get(taskGroupId);
     }
 
     public Communication getTaskCommunication(Integer taskId) {

@@ -9,10 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class LocalTGCommunicationManager {
     public static final Map<Integer, Communication> taskGroupId_communication = new ConcurrentHashMap<>();
 
-    public static void registerTaskGroupCommunication(int taskGroupId, Communication communication) {
-        taskGroupId_communication.put(taskGroupId, communication);
-    }
-
+    /**
+     * 融合了全部的task group 级别的communication 作为总的communication
+     */
     public static Communication getJobCommunication() {
         Communication communication = new Communication();
         communication.setState(State.SUCCEEDED);
@@ -24,16 +23,18 @@ public final class LocalTGCommunicationManager {
         return communication;
     }
 
+    public static void register(int taskGroupId, Communication communication) {
+        taskGroupId_communication.put(taskGroupId, communication);
+    }
 
-    public static Communication getTaskGroupCommunication(int taskGroupId) {
+    public static Communication get(int taskGroupId) {
         Validate.isTrue(taskGroupId >= 0, "taskGroupId不能小于0");
-
         return taskGroupId_communication.get(taskGroupId);
     }
 
-    public static void updateTaskGroupCommunication(int taskGroupId, Communication communication) {
+    public static void update(int taskGroupId, Communication communication) {
         Validate.isTrue(taskGroupId_communication.containsKey(taskGroupId),
-                String.format("没有注册taskGroupId[%d]的Communication无法更新该taskGroup的信息", taskGroupId));
+                String.format("taskGroupId[%d]的Communication是不在的", taskGroupId));
 
         taskGroupId_communication.put(taskGroupId, communication);
     }
