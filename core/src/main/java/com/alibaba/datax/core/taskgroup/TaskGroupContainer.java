@@ -12,7 +12,7 @@ import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.core.AbstractContainer;
 import com.alibaba.datax.core.statistics.communication.Communication;
 import com.alibaba.datax.core.statistics.communication.CommunicationTool;
-import com.alibaba.datax.core.statistics.container.communicator.taskgroup.StandaloneTGContainerCommunicator;
+import com.alibaba.datax.core.statistics.communicator.LocalTGContainerCommunicator;
 import com.alibaba.datax.core.statistics.plugin.task.AbstractTaskPluginCollector;
 import com.alibaba.datax.core.taskgroup.runner.AbstractRunner;
 import com.alibaba.datax.core.taskgroup.runner.ReaderRunner;
@@ -23,10 +23,11 @@ import com.alibaba.datax.core.transport.exchanger.BufferedRecordTransformerExcha
 import com.alibaba.datax.core.transport.transformer.TransformerExecution;
 import com.alibaba.datax.core.util.ClassUtil;
 import com.alibaba.datax.core.util.FrameworkErrorCode;
+import com.alibaba.datax.core.util.Global;
 import com.alibaba.datax.core.util.TransformerUtil;
 import com.alibaba.datax.core.util.container.CoreConstant;
 import com.alibaba.datax.core.util.container.LoadUtil;
-import com.alibaba.datax.dataxservice.face.domain.enums.State;
+import com.alibaba.datax.core.State;
 import com.alibaba.fastjson.JSON;
 import lombok.Getter;
 import org.apache.commons.lang3.Validate;
@@ -64,7 +65,12 @@ public class TaskGroupContainer extends AbstractContainer {
     public TaskGroupContainer(Configuration taskGroupConfig) {
         super(taskGroupConfig);
 
-        abstractContainerCommunicator = new StandaloneTGContainerCommunicator(configuration);
+        switch (Global.mode){
+            case taskGroup:
+            default:
+        }
+
+        abstractContainerCommunicator = new LocalTGContainerCommunicator(configuration);
 
         jobId = configuration.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID);
         taskGroupId = configuration.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_ID);

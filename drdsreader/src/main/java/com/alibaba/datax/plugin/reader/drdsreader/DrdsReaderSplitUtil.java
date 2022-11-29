@@ -20,9 +20,8 @@ public class DrdsReaderSplitUtil {
     private static final Logger LOG = LoggerFactory
             .getLogger(DrdsReaderSplitUtil.class);
 
-    public static List<Configuration> doSplit(Configuration originalSliceConfig,
-                                              int adviceNumber) {
-        boolean isTableMode = originalSliceConfig.getBool(Constant.IS_TABLE_MODE).booleanValue();
+    public static List<Configuration> doSplit(Configuration originalSliceConfig, int adviceNumber) {
+        boolean isTableMode = originalSliceConfig.getBool(Constant.IS_TABLE_MODE);
         int tableNumber = originalSliceConfig.getInt(Constant.TABLE_NUMBER_MARK);
 
         if (isTableMode && tableNumber == 1) {
@@ -30,7 +29,7 @@ public class DrdsReaderSplitUtil {
             String table = originalSliceConfig.getString(String.format("%s[0].%s[0]", Constant.CONN_MARK, Key.TABLE)).trim();
             originalSliceConfig.set(Key.TABLE, table);
 
-            //注意：这里的 jdbcUrl 不是从数组中获取的，因为之前的  master init 方法已经进行过预处理
+            // 注意：这里的 jdbcUrl 不是数组中，因为之前的 master init 方法已经进行过预处理
             String jdbcUrl = originalSliceConfig.getString(String.format("%s[0].%s", Constant.CONN_MARK, Key.JDBC_URL)).trim();
 
             originalSliceConfig.set(Key.JDBC_URL, DataBaseType.DRDS.appendJDBCSuffixForReader(jdbcUrl));

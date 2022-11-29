@@ -8,9 +8,6 @@ import java.io.File;
  * Created by jingxing on 14-8-25.
  */
 public class CoreConstant {
-    // --------------------------- 全局使用的变量(最好按照逻辑顺序，调整下成员变量顺序)
-    // --------------------------------
-
     public static final String DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL = "core.container.taskGroup.channel";
 
     public static final String DATAX_CORE_CONTAINER_MODEL = "core.container.model";

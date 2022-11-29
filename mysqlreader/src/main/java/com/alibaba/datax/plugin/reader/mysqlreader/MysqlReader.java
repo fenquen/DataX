@@ -40,13 +40,13 @@ public class MysqlReader extends Reader {
         @Override
         public void preCheck(){
             init();
-            commonRdbmsReaderJob.preCheck(this.originalConfig,DATABASE_TYPE);
+            commonRdbmsReaderJob.preCheck(originalConfig,DATABASE_TYPE);
 
         }
 
         @Override
         public List<Configuration> split(int adviceNumber) {
-            return this.commonRdbmsReaderJob.split(this.originalConfig, adviceNumber);
+            return this.commonRdbmsReaderJob.split(originalConfig, adviceNumber);
         }
 
         @Override
@@ -78,7 +78,7 @@ public class MysqlReader extends Reader {
         public void startRead(RecordSender recordSender) {
             int fetchSize = this.readerSliceConfig.getInt(Constant.FETCH_SIZE);
 
-            this.commonRdbmsReaderTask.startRead(this.readerSliceConfig, recordSender,
+            commonRdbmsReaderTask.startRead(readerSliceConfig, recordSender,
                     super.getTaskPluginCollector(), fetchSize);
         }
 

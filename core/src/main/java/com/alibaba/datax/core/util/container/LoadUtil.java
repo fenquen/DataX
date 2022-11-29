@@ -92,8 +92,7 @@ public class LoadUtil {
     /**
      * 加载taskPlugin，reader、writer都可能加载
      */
-    public static AbstractTaskPlugin loadTaskPlugin(PluginType pluginType,
-                                                    String pluginName) {
+    public static AbstractTaskPlugin loadTaskPlugin(PluginType pluginType, String pluginName) {
         Class<? extends AbstractPlugin> clazz = LoadUtil.loadPluginClass(pluginType, pluginName, ContainerType.Task);
 
         try {

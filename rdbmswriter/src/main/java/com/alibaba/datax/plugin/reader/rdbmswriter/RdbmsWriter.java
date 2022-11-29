@@ -99,13 +99,16 @@ public class RdbmsWriter extends Writer {
     }
 
     public static void main(String[] args) throws Exception {
-        Class.forName("com.ibm.db2.jcc.DB2Driver");
-        Connection connection = DriverManager.getConnection("jdbc:db2://10.88.36.79:50000/testdb:currentSchema=T1;", "DB2INST1", "123456");
+        // Class.forName("com.ibm.db2.jcc.DB2Driver");
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        // DriverManager.getConnection("jdbc:db2://10.88.36.79:50000/testdb:currentSchema=T1;", "DB2INST1", "123456");
+
+        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/test", "root", "xuelang@1");
 
         PreparedStatement preparedStatement = connection.prepareStatement("insert into order_table values (?,?,?,?,?,?,?,?)");
 
-        for (int d = 0; d < 270; d++) {
-            System.out.println(d);
+       // for (int d = 0; d < 270; d++) {
+            System.out.println(1);
             for (int a = 0; a < 10000; a++) {
                 preparedStatement.setLong(1, new Random().nextInt(10000));
                 preparedStatement.setString(2, "a");
@@ -119,7 +122,7 @@ public class RdbmsWriter extends Writer {
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
-        }
+       // }
 
     }
 

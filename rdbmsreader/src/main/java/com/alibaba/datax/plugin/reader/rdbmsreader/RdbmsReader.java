@@ -25,7 +25,7 @@ public class RdbmsReader extends Reader {
 
         @Override
         public void init() {
-            pluginJobReaderWriterParamConfCopy = super.getPluginJobReaderWriterParamConf();
+            pluginJobReaderWriterParamConfCopy = getPluginJobReaderWriterParamConf();
 
             int fetchSize = pluginJobReaderWriterParamConfCopy.getInt(
                     com.alibaba.datax.plugin.rdbms.reader.Constant.FETCH_SIZE, Constant.DEFAULT_FETCH_SIZE);

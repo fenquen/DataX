@@ -53,47 +53,39 @@ public final class OriginalConfPretreatmentUtil {
         originalConfig.set(Constant.IS_TABLE_MODE, isTableMode);
 
         dealJdbcAndTable(originalConfig);
-
         dealColumnConf(originalConfig);
     }
 
-    private static void dealJdbcAndTable(Configuration originalConfig) {
-        String username = originalConfig.getString(Key.USERNAME);
-        String password = originalConfig.getString(Key.PASSWORD);
-        boolean checkSlave = originalConfig.getBool(Key.CHECK_SLAVE, false);
-        boolean isTableMode = originalConfig.getBool(Constant.IS_TABLE_MODE);
-        boolean isPreCheck = originalConfig.getBool(Key.DRYRUN, false);
+    private static void dealJdbcAndTable(Configuration paramConf) {
+        String username = paramConf.getString(Key.USERNAME);
+        String password = paramConf.getString(Key.PASSWORD);
+        boolean checkSlave = paramConf.getBool(Key.CHECK_SLAVE, false);
+        boolean isTableMode = paramConf.getBool(Constant.IS_TABLE_MODE);
+        boolean isPreCheck = paramConf.getBool(Key.DRYRUN, false);
 
-        List<Object> conns = originalConfig.getList(Constant.CONN_MARK,
-                Object.class);
-        List<String> preSql = originalConfig.getList(Key.PRE_SQL, String.class);
+        List<Object> conns = paramConf.getList(Constant.CONN_MARK, Object.class);
+        List<String> preSql = paramConf.getList(Key.PRE_SQL, String.class);
 
         int tableNum = 0;
 
         for (int i = 0, len = conns.size(); i < len; i++) {
-            Configuration connConf = Configuration
-                    .from(conns.get(i).toString());
+            Configuration connConf = Configuration.from(conns.get(i).toString());
 
-            connConf.getNecessaryValue(Key.JDBC_URL,
-                    DBUtilErrorCode.REQUIRED_VALUE);
+            connConf.getNecessaryValue(Key.JDBC_URL, DBUtilErrorCode.REQUIRED_VALUE);
 
-            List<String> jdbcUrls = connConf
-                    .getList(Key.JDBC_URL, String.class);
+            List<String> jdbcUrls = connConf.getList(Key.JDBC_URL, String.class);
 
             String jdbcUrl;
             if (isPreCheck) {
-                jdbcUrl = DBUtil.chooseJdbcUrlWithoutRetry(DATABASE_TYPE, jdbcUrls,
-                        username, password, preSql, checkSlave);
+                jdbcUrl = DBUtil.chooseJdbcUrlWithoutRetry(DATABASE_TYPE, jdbcUrls, username, password, preSql, checkSlave);
             } else {
-                jdbcUrl = DBUtil.chooseJdbcUrl(DATABASE_TYPE, jdbcUrls,
-                        username, password, preSql, checkSlave);
+                jdbcUrl = DBUtil.chooseJdbcUrl(DATABASE_TYPE, jdbcUrls, username, password, preSql, checkSlave);
             }
 
             jdbcUrl = DATABASE_TYPE.appendJDBCSuffixForReader(jdbcUrl);
 
             // 回写到connection[i].jdbcUrl
-            originalConfig.set(String.format("%s[%d].%s", Constant.CONN_MARK,
-                    i, Key.JDBC_URL), jdbcUrl);
+            paramConf.set(String.format("%s[%d].%s", Constant.CONN_MARK, i, Key.JDBC_URL), jdbcUrl);
 
             LOG.info("Available jdbcUrl:{}.", jdbcUrl);
 
@@ -112,14 +104,14 @@ public final class OriginalConfPretreatmentUtil {
 
                 tableNum += expandedTableNameList.size();
 
-                originalConfig.set(String.format("%s[%d].%s",
+                paramConf.set(String.format("%s[%d].%s",
                         Constant.CONN_MARK, i, Key.TABLE), expandedTableNameList);
             } else {
                 // 说明是配置的 querySql 方式，不做处理.
             }
         }
 
-        originalConfig.set(Constant.TABLE_NUMBER_MARK, tableNum);
+        paramConf.set(Constant.TABLE_NUMBER_MARK, tableNum);
     }
 
     private static void dealColumnConf(Configuration originalConfig) {
@@ -218,22 +210,19 @@ public final class OriginalConfPretreatmentUtil {
 
     }
 
-    private static boolean recognizeTableOrQuerySqlMode(
-            Configuration originalConfig) {
-        List<Object> conns = originalConfig.getList(Constant.CONN_MARK,
-                Object.class);
+    private static boolean recognizeTableOrQuerySqlMode(Configuration originalConfig) {
+        List<Object> conns = originalConfig.getList(Constant.CONN_MARK, Object.class);
 
-        List<Boolean> tableModeFlags = new ArrayList<Boolean>();
-        List<Boolean> querySqlModeFlags = new ArrayList<Boolean>();
+        List<Boolean> tableModeFlags = new ArrayList<>();
+        List<Boolean> querySqlModeFlags = new ArrayList<>();
 
-        String table = null;
-        String querySql = null;
+        String table;
+        String querySql;
 
-        boolean isTableMode = false;
-        boolean isQuerySqlMode = false;
-        for (int i = 0, len = conns.size(); i < len; i++) {
-            Configuration connConf = Configuration
-                    .from(conns.get(i).toString());
+        boolean isTableMode;
+        boolean isQuerySqlMode;
+        for (Object conn : conns) {
+            Configuration connConf = Configuration.from(conn.toString());
             table = connConf.getString(Key.TABLE, null);
             querySql = connConf.getString(Key.QUERY_SQL, null);
 
@@ -243,11 +232,13 @@ public final class OriginalConfPretreatmentUtil {
             isQuerySqlMode = StringUtils.isNotBlank(querySql);
             querySqlModeFlags.add(isQuerySqlMode);
 
-            if (false == isTableMode && false == isQuerySqlMode) {
+            if (!isTableMode && !isQuerySqlMode) {
                 // table 和 querySql 二者均未配制
-                throw DataXException.build(
-                        DBUtilErrorCode.TABLE_QUERYSQL_MISSING, "您的配置有误. 因为table和querySql应该配置并且只能配置一个. 请检查您的配置并作出修改.");
-            } else if (true == isTableMode && true == isQuerySqlMode) {
+                throw DataXException.build(DBUtilErrorCode.TABLE_QUERYSQL_MISSING,
+                        "您的配置有误. 因为table和querySql应该配置并且只能配置一个. 请检查您的配置并作出修改.");
+            }
+
+            if (isTableMode && isQuerySqlMode) {
                 // table 和 querySql 二者均配置
                 throw DataXException.build(DBUtilErrorCode.TABLE_QUERYSQL_MIXED,
                         "您的配置凌乱了. 因为datax不能同时既配置table又配置querySql.请检查您的配置并作出修改.");
@@ -255,8 +246,7 @@ public final class OriginalConfPretreatmentUtil {
         }
 
         // 混合配制 table 和 querySql
-        if (!ListUtil.checkIfValueSame(tableModeFlags)
-                || !ListUtil.checkIfValueSame(tableModeFlags)) {
+        if (!ListUtil.checkIfValueSame(tableModeFlags) || !ListUtil.checkIfValueSame(tableModeFlags)) {
             throw DataXException.build(DBUtilErrorCode.TABLE_QUERYSQL_MIXED,
                     "您配置凌乱了. 不能同时既配置table又配置querySql. 请检查您的配置并作出修改.");
         }

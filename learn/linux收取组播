@@ -1,0 +1,18 @@
+https://www.cnblogs.com/xiaouisme/p/12658554.html
+https://www.cnblogs.com/little-monica/p/11713743.html
+
+不要过滤掉组播信息
+    sysctl -w net.ipv4.conf.all.rp_filter=0
+    echo "0">/proc/sys/net/ipv4/conf/all/rp_filter
+
+    sysctl -w net.ipv4.conf.网卡名字.rp_filter=0
+    echo "0">/proc/sys/net/ipv4/conf/网卡名字/rp_filter
+
+ip_forwarding
+    echo 0 > /proc/sys/net/ipv4/ip_forward
+
+mc_forwarding
+    不能直接修改mc_forwarding文件因为即使对root也是只读的
+    sysctl -w net.ipv4.conf.all.mc_forwarding=1
+
+加入组播的datagram socket的bind的地址要是0.0.0.0 port是组播的port

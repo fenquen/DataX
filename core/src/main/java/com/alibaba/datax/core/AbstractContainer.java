@@ -1,7 +1,7 @@
 package com.alibaba.datax.core;
 
 import com.alibaba.datax.common.util.Configuration;
-import com.alibaba.datax.core.statistics.container.communicator.AbstractContainerCommunicator;
+import com.alibaba.datax.core.statistics.communicator.AbstractContainerCommunicator;
 import lombok.Data;
 
 /**

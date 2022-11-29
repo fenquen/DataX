@@ -5,7 +5,6 @@ import org.apache.commons.lang.Validate;
 
 /**
  * Created by jingxing on 14-9-16.
- *
  * 对配置文件做整体检查
  */
 public class ConfigurationValidate {

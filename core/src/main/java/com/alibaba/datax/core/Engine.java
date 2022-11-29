@@ -9,10 +9,7 @@ import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.common.util.MessageSource;
 import com.alibaba.datax.core.job.JobContainer;
 import com.alibaba.datax.core.taskgroup.TaskGroupContainer;
-import com.alibaba.datax.core.util.ConfigParser;
-import com.alibaba.datax.core.util.ConfigurationValidate;
-import com.alibaba.datax.core.util.ExceptionTracker;
-import com.alibaba.datax.core.util.FrameworkErrorCode;
+import com.alibaba.datax.core.util.*;
 import com.alibaba.datax.core.util.container.CoreConstant;
 import com.alibaba.datax.core.util.container.LoadUtil;
 import org.apache.commons.cli.BasicParser;
@@ -22,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -34,11 +30,8 @@ import java.util.regex.Pattern;
 public class Engine {
     private static final Logger LOG = LoggerFactory.getLogger(Engine.class);
 
-    // 对应 命令行的mode/ExecuteMode
-    private static String RUNTIME_MODE;
-
     /* check job model (job/task) first */
-    public void start(Configuration totalConfig) {
+    private void start(Configuration totalConfig) {
 
         // 绑定column转换信息
         ColumnCast.bind(totalConfig);
@@ -46,21 +39,19 @@ public class Engine {
         // 初始化PluginLoader，可以获取各种插件配置
         LoadUtil.bind(totalConfig);
 
-        boolean isJob = !("taskGroup".equalsIgnoreCase(totalConfig.getString(CoreConstant.DATAX_CORE_CONTAINER_MODEL)));
+        // boolean isJob = !("taskGroup".equalsIgnoreCase(totalConfig.getString(CoreConstant.DATAX_CORE_CONTAINER_MODEL)));
+        boolean isJob = !ExecuteMode.taskGroup.equals(Global.mode);
+        totalConfig.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_MODE, Global.mode.name());
 
-        //JobContainer会在schedule后再行进行设置和调整值
+        // jobContainer会在schedule后再行进行设置和调整值
         int channelNumber = 0;
 
         AbstractContainer abstractContainer;
-        long instanceId;
         int taskGroupId = -1;
         if (isJob) {
-            totalConfig.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_MODE, RUNTIME_MODE);
             abstractContainer = new JobContainer(totalConfig);
-            instanceId = totalConfig.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID, 0);
-        } else { // 应该是分布式版本中的其他节点收到的任务的片段
+        } else { // 应该是分布式版本中的其他节点收到的任务的片段(taskGroup)
             abstractContainer = new TaskGroupContainer(totalConfig);
-            instanceId = totalConfig.getLong(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID);
             taskGroupId = totalConfig.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_ID);
             channelNumber = totalConfig.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL);
         }
@@ -69,10 +60,10 @@ public class Engine {
         boolean traceEnable = totalConfig.getBool(CoreConstant.DATAX_CORE_CONTAINER_TRACE_ENABLE, true);
         boolean perfReportEnable = totalConfig.getBool(CoreConstant.DATAX_CORE_REPORT_DATAX_PERFLOG, true);
 
-        //standalone模式的 datax shell任务不进行汇报
-        if (instanceId == -1) {
+        // standalone模式的 datax shell任务不进行汇报
+        /*if (instanceId == -1) {
             perfReportEnable = false;
-        }
+        }*/
 
         int priority = 0;
         try {
@@ -82,8 +73,9 @@ public class Engine {
         }
 
         Configuration jobInfoConfig = totalConfig.getConfig(CoreConstant.DATAX_JOB_JOBINFO);
-        //初始化PerfTrace
-        PerfTrace perfTrace = PerfTrace.getInstance(isJob, instanceId, taskGroupId, priority, traceEnable);
+
+        // 初始化PerfTrace
+        PerfTrace perfTrace = PerfTrace.getInstance(isJob, Global.jobId, taskGroupId, priority, traceEnable);
         perfTrace.setJobInfo(jobInfoConfig, perfReportEnable, channelNumber);
 
         abstractContainer.start();
@@ -103,7 +95,7 @@ public class Engine {
         return jobConfWithSetting.beautify();
     }
 
-    public static Configuration filterSensitiveConfiguration(Configuration configuration) {
+    public static void filterSensitiveConfiguration(Configuration configuration) {
         Set<String> keys = configuration.getKeys();
         for (final String key : keys) {
             boolean isSensitive = StringUtils.endsWithIgnoreCase(key, "password")
@@ -112,29 +104,34 @@ public class Engine {
                 configuration.set(key, configuration.getString(key).replaceAll(".", "*"));
             }
         }
-        return configuration;
     }
 
     public static void entry(final String[] args) throws Throwable {
         Options options = new Options();
-        options.addOption("job", true, "Job config.");
-        options.addOption("jobid", true, "Job unique id.");
-        options.addOption("mode", true, "Job runtime mode.");
-        BasicParser basicParser = new BasicParser();
+        options.addOption("job", true, "config");
+        options.addOption("jobid", true, "unique id");
+        options.addOption("mode", true, "runtime mode");
 
-        CommandLine commandLine = basicParser.parse(options, args);
-        String jobPath = commandLine.getOptionValue("job");
+        CommandLine commandLine = new BasicParser().parse(options, args);
+
         // 如果用户没有明确指定jobid, 则 datax.py 会指定 jobid 默认值为-1
-        String jobIdString = commandLine.getOptionValue("jobid");
-        RUNTIME_MODE = commandLine.getOptionValue("mode");
+        Global.jobId = Long.parseLong(commandLine.getOptionValue("jobid"));
+        if (Global.jobId == -1) {
+            throw DataXException.build(FrameworkErrorCode.CONFIG_ERROR, "必须提供有效的jobId");
+        }
 
+        Global.mode = ExecuteMode.valueOf(commandLine.getOptionValue("mode"));
+
+        String jobPath = commandLine.getOptionValue("job");
         Configuration configuration = ConfigParser.parse(jobPath);
 
-        // 绑定i18n信息
+        configuration.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID, Global.jobId);
+
+        // i18n
         MessageSource.init(configuration);
         MessageSource.reloadResourceBundle(Configuration.class);
 
-        long jobId;
+       /* long jobId;
         if (!"-1".equalsIgnoreCase(jobIdString)) {
             jobId = Long.parseLong(jobIdString);
         } else {
@@ -142,19 +139,9 @@ public class Engine {
             String dscJobUrlPatternString = "/instance/(\\d{1,})/config.xml";
             String dsJobUrlPatternString = "/inner/job/(\\d{1,})/config";
             String dsTaskGroupUrlPatternString = "/inner/job/(\\d{1,})/taskGroup/";
-            List<String> patternStringList = Arrays.asList(dscJobUrlPatternString,
-                    dsJobUrlPatternString, dsTaskGroupUrlPatternString);
+            List<String> patternStringList = Arrays.asList(dscJobUrlPatternString, dsJobUrlPatternString, dsTaskGroupUrlPatternString);
             jobId = parseJobIdFromUrl(patternStringList, jobPath);
-        }
-
-        // 对应 ExecuteMode
-        boolean isStandAloneMode = "standalone".equalsIgnoreCase(RUNTIME_MODE);
-        if (!isStandAloneMode && jobId == -1) {
-            // 如果不是 standalone 模式，那么 jobId 一定不能为-1
-            throw DataXException.build(FrameworkErrorCode.CONFIG_ERROR, "非standalone模式必须提供有效的jobId");
-        }
-
-        configuration.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID, jobId);
+        }*/
 
         // 打印vmInfo
         VMInfo vmInfo = VMInfo.getVmInfo();
@@ -162,7 +149,7 @@ public class Engine {
             LOG.info(vmInfo.toString());
         }
 
-       // LOG.info("\n" + Engine.filterJobConfiguration(configuration) + "\n");
+        // LOG.info("\n" + Engine.filterJobConfiguration(configuration) + "\n");
         LOG.info(configuration.beautify());
 
         ConfigurationValidate.doValidate(configuration);
@@ -203,7 +190,7 @@ public class Engine {
             Engine.entry(args);
         } catch (Throwable e) {
             exitCode = 1;
-            LOG.error("\n\n,该任务最可能的错误原因是:\n" + ExceptionTracker.trace(e));
+            LOG.error("该任务最可能的错误原因是:", e);
 
             if (e instanceof DataXException) {
                 DataXException tempException = (DataXException) e;
@@ -219,5 +206,4 @@ public class Engine {
 
         System.exit(exitCode);
     }
-
 }

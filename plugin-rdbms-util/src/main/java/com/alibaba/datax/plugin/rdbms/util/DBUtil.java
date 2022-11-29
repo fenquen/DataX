@@ -48,65 +48,55 @@ public final class DBUtil {
         }
 
         try {
-            return RetryUtil.executeWithRetry(new Callable<String>() {
+            return RetryUtil.executeWithRetry(() -> {
+                boolean connOK;
+                for (String url : jdbcUrls) {
+                    if (StringUtils.isNotBlank(url)) {
+                        url = url.trim();
+                        if (null != preSql && !preSql.isEmpty()) {
+                            connOK = testConnWithoutRetry(dataBaseType, url, username, password, preSql);
+                        } else {
+                            connOK = testConnWithoutRetry(dataBaseType, url, username, password, checkSlave);
+                        }
 
-                @Override
-                public String call() throws Exception {
-                    boolean connOK = false;
-                    for (String url : jdbcUrls) {
-                        if (StringUtils.isNotBlank(url)) {
-                            url = url.trim();
-                            if (null != preSql && !preSql.isEmpty()) {
-                                connOK = testConnWithoutRetry(dataBaseType,
-                                        url, username, password, preSql);
-                            } else {
-                                connOK = testConnWithoutRetry(dataBaseType,
-                                        url, username, password, checkSlave);
-                            }
-                            if (connOK) {
-                                return url;
-                            }
+                        if (connOK) {
+                            return url;
                         }
                     }
-                    throw new Exception("DataX无法连接对应的数据库，可能原因是：1) 配置的ip/port/database/jdbc错误，无法连接。2) 配置的username/password错误，鉴权失败。请和DBA确认该数据库的连接信息是否正确。");
-//                    throw new Exception(DBUtilErrorCode.JDBC_NULL.toString());
                 }
+
+                throw new Exception("DataX无法连接对应的数据库，可能原因是：1) 配置的ip/port/database/jdbc错误，无法连接。2) 配置的username/password错误，鉴权失败。。");
             }, 7, 1000L, true);
             //warn: 7 means 2 minutes
         } catch (Exception e) {
-            throw DataXException.build(
-                    DBUtilErrorCode.CONN_DB_ERROR,
-                    String.format("数据库连接失败. 因为根据您配置的连接信息,无法从:%s 中找到可连接的jdbcUrl. 请检查您的配置并作出修改.",
-                            StringUtils.join(jdbcUrls, ",")), e);
+            throw DataXException.build(DBUtilErrorCode.CONN_DB_ERROR,
+                    String.format("数据库连接失败.:%s 找不到可连接的jdbcUrl", StringUtils.join(jdbcUrls, ",")), e);
         }
     }
 
-    public static String chooseJdbcUrlWithoutRetry(final DataBaseType dataBaseType,
-                                                   final List<String> jdbcUrls, final String username,
-                                                   final String password, final List<String> preSql,
-                                                   final boolean checkSlave) throws DataXException {
+    public static String chooseJdbcUrlWithoutRetry(DataBaseType dataBaseType,
+                                                   List<String> jdbcUrls,
+                                                   String username,
+                                                   String password,
+                                                   List<String> preSql,
+                                                   boolean checkSlave) throws DataXException {
 
         if (null == jdbcUrls || jdbcUrls.isEmpty()) {
-            throw DataXException.build(
-                    DBUtilErrorCode.CONF_ERROR,
-                    String.format("您的jdbcUrl的配置信息有错, 因为jdbcUrl[%s]不能为空. 请检查您的配置并作出修改.",
-                            StringUtils.join(jdbcUrls, ",")));
+            throw DataXException.build(DBUtilErrorCode.CONF_ERROR,
+                    String.format("您的jdbcUrl的配置信息有错, 因为jdbcUrl[%s]不能为空.", StringUtils.join(jdbcUrls, ",")));
         }
 
-        boolean connOK = false;
+        boolean connOK;
         for (String url : jdbcUrls) {
             if (StringUtils.isNotBlank(url)) {
                 url = url.trim();
                 if (null != preSql && !preSql.isEmpty()) {
-                    connOK = testConnWithoutRetry(dataBaseType,
-                            url, username, password, preSql);
+                    connOK = testConnWithoutRetry(dataBaseType, url, username, password, preSql);
                 } else {
                     try {
-                        connOK = testConnWithoutRetry(dataBaseType,
-                                url, username, password, checkSlave);
+                        connOK = testConnWithoutRetry(dataBaseType, url, username, password, checkSlave);
                     } catch (Exception e) {
-                        throw DataXException.build(
-                                DBUtilErrorCode.CONN_DB_ERROR,
+                        throw DataXException.build(DBUtilErrorCode.CONN_DB_ERROR,
                                 String.format("数据库连接失败. 因为根据您配置的连接信息,无法从:%s 中找到可连接的jdbcUrl. 请检查您的配置并作出修改.",
                                         StringUtils.join(jdbcUrls, ",")), e);
                     }
@@ -116,10 +106,9 @@ public final class DBUtil {
                 }
             }
         }
-        throw DataXException.build(
-                DBUtilErrorCode.CONN_DB_ERROR,
-                String.format("数据库连接失败. 因为根据您配置的连接信息,无法从:%s 中找到可连接的jdbcUrl. 请检查您的配置并作出修改.",
-                        StringUtils.join(jdbcUrls, ",")));
+
+        throw DataXException.build(DBUtilErrorCode.CONN_DB_ERROR,
+                String.format("数据库连接失败. 因为根据您配置的连接信息,无法从:%s 中找到可连接的jdbcUrl", StringUtils.join(jdbcUrls, ",")));
     }
 
     /**

@@ -40,8 +40,7 @@ public class DrdsReader extends Reader {
 
 		@Override
 		public List<Configuration> split(int adviceNumber) {
-			return DrdsReaderSplitUtil.doSplit(this.originalConfig,
-					adviceNumber);
+			return DrdsReaderSplitUtil.doSplit(this.originalConfig, adviceNumber);
 		}
 
 		@Override

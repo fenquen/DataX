@@ -683,14 +683,14 @@ public class Configuration {
 
     @Override
     public String toString() {
-        return this.toJSON();
+        return toJSON();
     }
 
     /**
      * 将Configuration作为JSON输出
      */
     public String toJSON() {
-        return Configuration.toJSONString(this.getInternal());
+        return Configuration.toJSONString(getInternal());
     }
 
     /**

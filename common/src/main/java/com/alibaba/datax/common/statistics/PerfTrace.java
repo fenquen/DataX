@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class PerfTrace {
 
     private static Logger LOG = LoggerFactory.getLogger(PerfTrace.class);
-    private static PerfTrace instance;
+    private static volatile PerfTrace instance;
     private static final Object lock = new Object();
     private String perfTraceId;
     private volatile boolean enable;
@@ -46,16 +46,7 @@ public class PerfTrace {
     private final Set<PerfRecord> needReportPool4NotEnd = new HashSet<PerfRecord>();
     private final List<PerfRecord> totalEndReport = new ArrayList<PerfRecord>();
 
-    /**
-     * 单实例
-     *
-     * @param isJob
-     * @param jobId
-     * @param taskGroupId
-     * @return
-     */
     public static PerfTrace getInstance(boolean isJob, long jobId, int taskGroupId, int priority, boolean enable) {
-
         if (instance == null) {
             synchronized (lock) {
                 if (instance == null) {
@@ -63,23 +54,22 @@ public class PerfTrace {
                 }
             }
         }
+
         return instance;
     }
 
     /**
      * 因为一个JVM只有一个，因此在getInstance(isJob,jobId,taskGroupId)调用完成实例化后，方便后续调用，直接返回该实例
-     *
-     * @return
      */
     public static PerfTrace getInstance() {
         if (instance == null) {
-            LOG.error("PerfTrace instance not be init! must have some error! ");
             synchronized (lock) {
                 if (instance == null) {
                     instance = new PerfTrace(false, -1111, -1111, 0, false);
                 }
             }
         }
+
         return instance;
     }
 

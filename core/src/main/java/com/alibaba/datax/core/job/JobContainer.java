@@ -14,19 +14,19 @@ import com.alibaba.datax.core.AbstractContainer;
 import com.alibaba.datax.core.Engine;
 import com.alibaba.datax.core.container.util.HookInvoker;
 import com.alibaba.datax.core.container.util.JobAssignUtil;
-import com.alibaba.datax.core.job.scheduler.AbstractScheduler;
-import com.alibaba.datax.core.job.scheduler.processinner.StandAloneScheduler;
+import com.alibaba.datax.core.job.scheduler.AbstractTaskGroupScheduler;
+import com.alibaba.datax.core.job.scheduler.LocalTaskGroupScheduler;
 import com.alibaba.datax.core.statistics.communication.Communication;
 import com.alibaba.datax.core.statistics.communication.CommunicationTool;
-import com.alibaba.datax.core.statistics.container.communicator.AbstractContainerCommunicator;
-import com.alibaba.datax.core.statistics.container.communicator.job.StandAloneJobContainerCommunicator;
+import com.alibaba.datax.core.statistics.communicator.AbstractContainerCommunicator;
+import com.alibaba.datax.core.statistics.communicator.LocalJobContainerCommunicator;
 import com.alibaba.datax.core.statistics.plugin.DefaultJobPluginCollector;
 import com.alibaba.datax.core.util.ErrorRecordChecker;
 import com.alibaba.datax.core.util.FrameworkErrorCode;
+import com.alibaba.datax.core.util.Global;
 import com.alibaba.datax.core.util.container.ClassLoaderSwapper;
 import com.alibaba.datax.core.util.container.CoreConstant;
 import com.alibaba.datax.core.util.container.LoadUtil;
-import com.alibaba.datax.dataxservice.face.domain.enums.ExecuteMode;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -140,9 +140,9 @@ public class JobContainer extends AbstractContainer {
             }
 
 
-            if (abstractContainerCommunicator== null) {
+            if (abstractContainerCommunicator == null) {
                 // 由于 containerCollector 是在 scheduler() 中初始化的，所以当在 scheduler() 之前出现异常时，需要在此处对 containerCollector 进行初始化
-                abstractContainerCommunicator = new StandAloneJobContainerCommunicator(configuration);
+                abstractContainerCommunicator = new LocalJobContainerCommunicator(configuration);
             }
 
             Communication communication = getAbstractContainerCommunicator().collect();
@@ -471,30 +471,38 @@ public class JobContainer extends AbstractContainer {
 
         LOG.info("Scheduler starts [{}] taskGroups.", taskGroupConfigList.size());
 
-        ExecuteMode executeMode = null;
         try {
-            executeMode = ExecuteMode.STANDALONE;
-            AbstractScheduler abstractScheduler = initStandaloneScheduler(configuration);
+            AbstractTaskGroupScheduler abstractScheduler;
+            switch (Global.mode) {
+                case taskGroup: // 执行了其中的某些若干的taskGroup 其实也不会在这里涉及
+                case local:
+                case standalone:
+                    abstractScheduler = initStandaloneScheduler(configuration);
+                    break;
+                case distribute:
+                default:
+                    throw new UnsupportedOperationException();
+            }
 
             // 设置 executeMode
             for (Configuration taskGroupConfig : taskGroupConfigList) {
-                taskGroupConfig.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_MODE, executeMode.getValue());
+                taskGroupConfig.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_MODE, Global.mode.name());
             }
 
-            if (executeMode == ExecuteMode.LOCAL || executeMode == ExecuteMode.DISTRIBUTE) {
+            /*if (executeMode == ExecuteMode.local || executeMode == ExecuteMode.distribute) {
                 if (jobId <= 0) {
                     throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
                             "在[ local | distribute ]模式下必须设置jobId，并且其值 > 0 .");
                 }
-            }
+            }*/
 
-            LOG.info("Running by {} Mode.", executeMode);
+            LOG.info("Running by {} Mode.", Global.mode);
 
             startTransferTimeStamp = System.currentTimeMillis();
             abstractScheduler.schedule(taskGroupConfigList);
             endTransferTimeStamp = System.currentTimeMillis();
         } catch (Exception e) {
-            LOG.error("运行scheduler 模式[{}]出错.", executeMode);
+            LOG.error("运行scheduler 模式[{}]出错.", Global.mode);
             endTransferTimeStamp = System.currentTimeMillis();
             throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR, e);
         }
@@ -503,11 +511,11 @@ public class JobContainer extends AbstractContainer {
         checkLimit();
     }
 
-    private AbstractScheduler initStandaloneScheduler(Configuration configuration) {
-        AbstractContainerCommunicator containerCommunicator = new StandAloneJobContainerCommunicator(configuration);
+    private AbstractTaskGroupScheduler initStandaloneScheduler(Configuration configuration) {
+        AbstractContainerCommunicator containerCommunicator = new LocalJobContainerCommunicator(configuration);
         this.abstractContainerCommunicator = containerCommunicator;
 
-        return new StandAloneScheduler(containerCommunicator);
+        return new LocalTaskGroupScheduler(containerCommunicator);
     }
 
     private void post() {
