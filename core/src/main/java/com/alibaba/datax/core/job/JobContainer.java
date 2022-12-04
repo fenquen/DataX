@@ -391,9 +391,8 @@ public class JobContainer extends AbstractContainer {
     }
 
     private void adjustChannelNumber() {
-        int needChannelNumberByByte = Integer.MAX_VALUE;
-
         // 有没有限制总的byte速度
+        int needChannelNumberByByte = Integer.MAX_VALUE;
         boolean isByteLimit = (configuration.getInt(CoreConstant.DATAX_JOB_SETTING_SPEED_BYTE, 0) > 0);
         if (isByteLimit) {
             long globalLimitedByteSpeed = configuration.getInt(CoreConstant.DATAX_JOB_SETTING_SPEED_BYTE, 10 * 1024 * 1024);
@@ -410,8 +409,8 @@ public class JobContainer extends AbstractContainer {
             LOG.info("Job set Max-Byte-Speed to " + globalLimitedByteSpeed + " bytes.");
         }
 
-        int needChannelNumberByRecord = Integer.MAX_VALUE;
         // 有没有限制总的record速度
+        int needChannelNumberByRecord = Integer.MAX_VALUE;
         boolean isRecordLimit = (configuration.getInt(CoreConstant.DATAX_JOB_SETTING_SPEED_RECORD, 0)) > 0;
         if (isRecordLimit) {
             // 总的

@@ -85,7 +85,7 @@ public class TaskGroupContainer extends AbstractContainer {
             int sleepIntervalInMillSec = configuration.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_SLEEPINTERVAL, 100);
 
             // 状态汇报时间间隔应该稍长,不要大量汇报
-            long reportIntervalInMillSec = configuration.getLong(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_REPORTINTERVAL, 10000);
+            long reportIntervalMs = configuration.getLong(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_REPORTINTERVAL, 10000);
 
             // 获取channel数目
             int channelNumber = configuration.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL);
@@ -239,14 +239,14 @@ public class TaskGroupContainer extends AbstractContainer {
 
                 // 5.如果当前时间已经超出汇报时间的interval，那么我们需要马上汇报
                 long now = System.currentTimeMillis();
-                if (now - lastReportTimeStamp > reportIntervalInMillSec) {
+                if (now - lastReportTimeStamp > reportIntervalMs) {
                     lastRoundTaskGroupComm = reportTaskGroupComm(lastRoundTaskGroupComm, contentElementConfList.size());
 
                     lastReportTimeStamp = now;
 
-                    //taskMonitor对于正在运行的task，每reportIntervalInMillSec进行检查
+                    // taskMonitor对于正在运行的task，每reportIntervalInMillSec进行检查
                     for (TaskExecutor taskExecutor : runningTaskExecutorList) {
-                        taskMonitor.report(taskExecutor.getTaskId(), abstractContainerCommunicator.getCommunication(taskExecutor.getTaskId()));
+                        taskMonitor.report(taskExecutor.taskId, abstractContainerCommunicator.getCommunication(taskExecutor.taskId));
                     }
 
                 }
@@ -333,7 +333,7 @@ public class TaskGroupContainer extends AbstractContainer {
      * TaskExecutor是一个完整task的执行器
      * 其中包括1：1的reader和writer
      */
-    class TaskExecutor {
+    private class TaskExecutor {
         private Configuration contentElementConfig;
 
         private int taskId;
@@ -464,8 +464,8 @@ public class TaskGroupContainer extends AbstractContainer {
             }
 
             abstractRunner.setTaskGroupId(taskGroupId);
-            abstractRunner.setTaskId(this.taskId);
-            abstractRunner.setCommunication(this.taskCommunication);
+            abstractRunner.setTaskId(taskId);
+            abstractRunner.setCommunication(taskCommunication);
 
             return abstractRunner;
         }

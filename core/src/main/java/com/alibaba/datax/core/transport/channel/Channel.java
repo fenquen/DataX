@@ -98,7 +98,7 @@ public abstract class Channel {
         return this.configuration;
     }
 
-    public void setCommunication(final Communication communication) {
+    public void setCommunication(Communication communication) {
         this.currentCommunication = communication;
         this.lastCommunication.reset();
     }
