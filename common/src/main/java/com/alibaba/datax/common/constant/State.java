@@ -1,6 +1,6 @@
-package com.alibaba.datax.core;
+package com.alibaba.datax.common.constant;
 
-public enum State  {
+public enum State {
 
     SUBMITTING(10),
     WAITING(20),

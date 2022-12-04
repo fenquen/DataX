@@ -1,5 +1,7 @@
 package com.fenquen.datax.distribute.dispatcher;
 
+import com.alibaba.datax.common.distribute.DispatcherInfo;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

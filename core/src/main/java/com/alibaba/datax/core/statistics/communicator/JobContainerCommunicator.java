@@ -1,12 +1,10 @@
 package com.alibaba.datax.core.statistics.communicator;
 
+
 import com.alibaba.datax.common.util.Configuration;
-import com.alibaba.datax.core.statistics.collector.LocalCollector;
 import com.alibaba.datax.core.statistics.communication.Communication;
 import com.alibaba.datax.core.statistics.communication.CommunicationTool;
 import com.alibaba.datax.core.statistics.communication.LocalTGCommunicationManager;
-import com.alibaba.datax.core.statistics.reporter.LocalReporter;
-import com.alibaba.datax.core.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,31 +12,23 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * 管理的是taskGroup
  */
-public class LocalJobContainerCommunicator extends AbstractContainerCommunicator {
-    private static final Logger LOG = LoggerFactory.getLogger(LocalJobContainerCommunicator.class);
+public class JobContainerCommunicator extends AbstractContainerCommunicator {
+    private static final Logger LOG = LoggerFactory.getLogger(JobContainerCommunicator.class);
 
-    public LocalJobContainerCommunicator(Configuration configuration) {
+    public JobContainerCommunicator(Configuration configuration) {
         super(configuration);
-
-        abstractCollector = new LocalCollector();
-        abstractReporter = new LocalReporter();
     }
 
     @Override
-    public void registerCommunication(List<Configuration> taskGroupConfigList) {
-        abstractCollector.registerTGCommunication(taskGroupConfigList);
+    public void addCommunication(List<Configuration> taskGroupConfigList) {
+        collector.addTGCommunication(taskGroupConfigList);
     }
 
     @Override
     public Communication collect() {
-        return abstractCollector.collectTaskGroup();
-    }
-
-    @Override
-    public State collectState() {
-        return collect().getState();
+        return collector.collectTaskGroup();
     }
 
     /**
@@ -46,7 +36,7 @@ public class LocalJobContainerCommunicator extends AbstractContainerCommunicator
      */
     @Override
     public void report(Communication communication) {
-        abstractReporter.reportJobCommunication(jobId, communication);
+        reporter.reportJobCommunication(jobId, communication);
 
         LOG.info(CommunicationTool.Stringify.getSnapshot(communication));
         reportVmInfo();
@@ -54,7 +44,7 @@ public class LocalJobContainerCommunicator extends AbstractContainerCommunicator
 
     @Override
     public Communication getCommunication(Integer taskGroupId) {
-        return abstractCollector.getTGCommunication(taskGroupId);
+        return collector.getTGCommunication(taskGroupId);
     }
 
     @Override

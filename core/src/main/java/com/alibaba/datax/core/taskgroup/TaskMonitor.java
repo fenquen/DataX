@@ -4,7 +4,7 @@ import com.alibaba.datax.common.exception.CommonErrorCode;
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.core.statistics.communication.Communication;
 import com.alibaba.datax.core.statistics.communication.CommunicationTool;
-import com.alibaba.datax.core.State;
+import com.alibaba.datax.common.constant.State;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +47,7 @@ public class TaskMonitor {
         if (communication.isFinished()) {
             return;
         }
+
         if (!taskId_taskCommunication.containsKey(taskid)) {
             LOG.warn("unexpected: taskid({}) missed.", taskid);
             taskId_taskCommunication.putIfAbsent(taskid, new TaskCommunication(taskid, communication));
@@ -58,7 +59,6 @@ public class TaskMonitor {
     public TaskCommunication getTaskCommunication(Integer taskid) {
         return taskId_taskCommunication.get(taskid);
     }
-
 
     @Getter
     public static class TaskCommunication {

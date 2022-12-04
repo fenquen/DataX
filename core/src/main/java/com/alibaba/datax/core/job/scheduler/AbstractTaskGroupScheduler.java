@@ -1,25 +1,37 @@
 package com.alibaba.datax.core.job.scheduler;
 
+
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.core.statistics.communication.Communication;
 import com.alibaba.datax.core.statistics.communication.CommunicationTool;
 import com.alibaba.datax.core.statistics.communicator.AbstractContainerCommunicator;
+import com.alibaba.datax.core.statistics.communicator.JobContainerCommunicator;
+import com.alibaba.datax.core.taskgroup.TaskGroupContainer;
+import com.alibaba.datax.core.taskgroup.runner.TaskGroupContainerRunner;
 import com.alibaba.datax.core.util.ErrorRecordChecker;
 import com.alibaba.datax.core.util.FrameworkErrorCode;
 import com.alibaba.datax.core.util.container.CoreConstant;
-import com.alibaba.datax.core.State;
+import com.alibaba.datax.common.constant.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+/**
+ * 都是在源头端的
+ */
 public abstract class AbstractTaskGroupScheduler {
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTaskGroupScheduler.class);
+
+    protected ExecutorService executorService;
 
     private ErrorRecordChecker errorLimit;
 
-    private AbstractContainerCommunicator abstractContainerCommunicator;
+    private JobContainerCommunicator jobContainerCommunicator;
 
     private Long jobId;
 
@@ -27,8 +39,8 @@ public abstract class AbstractTaskGroupScheduler {
         return jobId;
     }
 
-    public AbstractTaskGroupScheduler(AbstractContainerCommunicator abstractContainerCommunicator) {
-        this.abstractContainerCommunicator = abstractContainerCommunicator;
+    public AbstractTaskGroupScheduler(JobContainerCommunicator jobContainerCommunicator) {
+        this.jobContainerCommunicator = jobContainerCommunicator;
     }
 
     public void schedule(List<Configuration> taskGroupConfigList) {
@@ -39,20 +51,21 @@ public abstract class AbstractTaskGroupScheduler {
 
         errorLimit = new ErrorRecordChecker(taskGroupConfigList.get(0));
 
-        // 给 taskGroupContainer 的 Communication 注册
-        abstractContainerCommunicator.registerCommunication(taskGroupConfigList);
+        jobContainerCommunicator.addCommunication(taskGroupConfigList);
 
         int totalTasks = calculateTaskCount(taskGroupConfigList);
 
         // 是不是分布式这里有体现
         startAllTaskGroup(taskGroupConfigList);
 
-        Communication mergedAllTgCommLast = new Communication();
+        Communication mergedAllTgCommLastRound = new Communication();
 
         long lastReportTimeStamp = System.currentTimeMillis();
+
         try {
             while (true) {
-                Communication mergedAllTgComm = abstractContainerCommunicator.collect(); // collect的是 task group的
+                // 是distribute要点 如何收集在远端调用的task group的状态
+                Communication mergedAllTgComm = jobContainerCommunicator.collect(); // collect的是 task group的
                 mergedAllTgComm.setTimestamp(System.currentTimeMillis());
 
                 // 汇报周期
@@ -60,12 +73,12 @@ public abstract class AbstractTaskGroupScheduler {
 
                 if (now - lastReportTimeStamp > jobReportIntervalMs) {
                     Communication reportCommunication =
-                            CommunicationTool.getReportComm(mergedAllTgComm, mergedAllTgCommLast, totalTasks);
+                            CommunicationTool.getReportComm(mergedAllTgComm, mergedAllTgCommLastRound, totalTasks);
 
-                    abstractContainerCommunicator.report(reportCommunication);
+                    jobContainerCommunicator.report(reportCommunication);
 
                     lastReportTimeStamp = now;
-                    mergedAllTgCommLast = mergedAllTgComm;
+                    mergedAllTgCommLastRound = mergedAllTgComm;
                 }
 
                 errorLimit.checkRecordLimit(mergedAllTgComm);
@@ -76,9 +89,9 @@ public abstract class AbstractTaskGroupScheduler {
                 }
 
                 if (isJobKilling(jobId)) {
-                    dealKillingStat(abstractContainerCommunicator, totalTasks);
+                    dealKillingStat(jobContainerCommunicator, totalTasks);
                 } else if (mergedAllTgComm.getState() == State.FAILED) {
-                    dealFailedStat(abstractContainerCommunicator, mergedAllTgComm.getThrowable());
+                    dealFailedStat(jobContainerCommunicator, mergedAllTgComm.getThrowable());
                 }
 
                 Thread.sleep(jobSleepIntervalMs);
@@ -92,11 +105,11 @@ public abstract class AbstractTaskGroupScheduler {
     /**
      * 是不是分布式调度这里有体现
      */
-    protected abstract void startAllTaskGroup(List<Configuration> configurations);
+    protected abstract void startAllTaskGroup(List<Configuration> taskGroupConfList);
 
-    protected abstract void dealFailedStat(AbstractContainerCommunicator frameworkCollector, Throwable throwable);
+    protected abstract void dealFailedStat(AbstractContainerCommunicator abstractContainerCommunicator, Throwable throwable);
 
-    protected abstract void dealKillingStat(AbstractContainerCommunicator frameworkCollector, int totalTasks);
+    protected abstract void dealKillingStat(AbstractContainerCommunicator abstractContainerCommunicator, int totalTasks);
 
     private int calculateTaskCount(List<Configuration> taskGroupConfList) {
         int totalTasks = 0;
@@ -106,12 +119,23 @@ public abstract class AbstractTaskGroupScheduler {
         return totalTasks;
     }
 
+    protected void scheduleLocally(List<Configuration> taskGroupConfList) {
+        executorService = Executors.newFixedThreadPool(taskGroupConfList.size());
+
+        for (Configuration taskGroupConfig : taskGroupConfList) {
+            TaskGroupContainerRunner taskGroupContainerRunner = new TaskGroupContainerRunner(new TaskGroupContainer(taskGroupConfig));
+            executorService.execute(taskGroupContainerRunner);
+        }
+
+        executorService.shutdown();
+    }
+
 //    private boolean isJobKilling(Long jobId) {
 //        Result<Integer> jobInfo = DataxServiceUtil.getJobInfo(jobId);
 //        return jobInfo.getData() == State.KILLING.value();
 //    }
 
-    protected boolean isJobKilling(Long jobId){
+    protected boolean isJobKilling(Long jobId) {
         return false;
     }
 }

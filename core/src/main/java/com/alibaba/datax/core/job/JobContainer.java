@@ -10,16 +10,16 @@ import com.alibaba.datax.common.statistics.PerfTrace;
 import com.alibaba.datax.common.statistics.VMInfo;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.common.util.StrUtil;
-import com.alibaba.datax.core.AbstractContainer;
+import com.alibaba.datax.core.container.AbstractContainer;
 import com.alibaba.datax.core.Engine;
 import com.alibaba.datax.core.container.util.HookInvoker;
 import com.alibaba.datax.core.container.util.JobAssignUtil;
 import com.alibaba.datax.core.job.scheduler.AbstractTaskGroupScheduler;
+import com.alibaba.datax.core.job.scheduler.DistributeTaskGroupScheduler;
 import com.alibaba.datax.core.job.scheduler.LocalTaskGroupScheduler;
 import com.alibaba.datax.core.statistics.communication.Communication;
 import com.alibaba.datax.core.statistics.communication.CommunicationTool;
-import com.alibaba.datax.core.statistics.communicator.AbstractContainerCommunicator;
-import com.alibaba.datax.core.statistics.communicator.LocalJobContainerCommunicator;
+import com.alibaba.datax.core.statistics.communicator.JobContainerCommunicator;
 import com.alibaba.datax.core.statistics.plugin.DefaultJobPluginCollector;
 import com.alibaba.datax.core.util.ErrorRecordChecker;
 import com.alibaba.datax.core.util.FrameworkErrorCode;
@@ -74,6 +74,9 @@ public class JobContainer extends AbstractContainer {
 
     private long endTransferTimeStamp;
 
+    /**
+     * 总的需要的channel数量
+     */
     private int needChannelNumber;
 
     private int splitCount = 1;
@@ -139,13 +142,11 @@ public class JobContainer extends AbstractContainer {
                 System.gc();
             }
 
-
             if (abstractContainerCommunicator == null) {
-                // 由于 containerCollector 是在 scheduler() 中初始化的，所以当在 scheduler() 之前出现异常时，需要在此处对 containerCollector 进行初始化
-                abstractContainerCommunicator = new LocalJobContainerCommunicator(configuration);
+                abstractContainerCommunicator = new JobContainerCommunicator(configuration);
             }
 
-            Communication communication = getAbstractContainerCommunicator().collect();
+            Communication communication = abstractContainerCommunicator.collect();
             // 汇报前的状态，不需要手动进行设置
             // communication.setState(State.FAILED);
             communication.setThrowable(e);
@@ -202,8 +203,7 @@ public class JobContainer extends AbstractContainer {
 
         Thread.currentThread().setName("job-" + jobId);
 
-        JobPluginCollector jobPluginCollector = new DefaultJobPluginCollector(
-                getAbstractContainerCommunicator());
+        JobPluginCollector jobPluginCollector = new DefaultJobPluginCollector(abstractContainerCommunicator);
         jobReader = preCheckReaderInit(jobPluginCollector);
         jobWriter = preCheckWriterInit(jobPluginCollector);
     }
@@ -291,7 +291,8 @@ public class JobContainer extends AbstractContainer {
 
         Thread.currentThread().setName("job-" + jobId);
 
-        JobPluginCollector jobPluginCollector = new DefaultJobPluginCollector(getAbstractContainerCommunicator());
+        // abstractContainerCommunicator这个时候是null 然而是这个的pluginCollector的函数都没有用到
+        JobPluginCollector jobPluginCollector = new DefaultJobPluginCollector(abstractContainerCommunicator);
 
         // 必须先Reader ，后Writer
         jobReader = initJobReader(jobPluginCollector);
@@ -324,8 +325,7 @@ public class JobContainer extends AbstractContainer {
 
         AbstractJobPlugin handler = LoadUtil.loadJobPlugin(handlerPluginType, handlerPluginName);
 
-        JobPluginCollector jobPluginCollector = new DefaultJobPluginCollector(getAbstractContainerCommunicator());
-        handler.jobPluginCollector = jobPluginCollector;
+        handler.jobPluginCollector = new DefaultJobPluginCollector(abstractContainerCommunicator);
 
         //todo configuration的安全性，将来必须保证
         handler.preHandler(configuration);
@@ -355,8 +355,7 @@ public class JobContainer extends AbstractContainer {
 
         AbstractJobPlugin handler = LoadUtil.loadJobPlugin(handlerPluginType, handlerPluginName);
 
-        JobPluginCollector jobPluginCollector = new DefaultJobPluginCollector(getAbstractContainerCommunicator());
-        handler.jobPluginCollector = jobPluginCollector;
+        handler.jobPluginCollector = new DefaultJobPluginCollector(abstractContainerCommunicator);
 
         handler.postHandler(configuration);
         classLoaderSwapper.restoreCurrentThreadClassLoader();
@@ -457,7 +456,7 @@ public class JobContainer extends AbstractContainer {
         // 这里的全局speed和每个channel的速度设置为B/s
         int channelsPerTaskGroup = configuration.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL, 5);
 
-        // 这个时候的configuration是原始的尚未切的,1个contentElement对应task
+        // 这个时候的configuration是原始的尚未切的,然而content的element是已经split后的成果了
         int contentElementConfNumber = configuration.getList(CoreConstant.DATAX_JOB_CONTENT).size();
 
         needChannelNumber = Math.min(needChannelNumber, contentElementConfNumber);
@@ -472,14 +471,18 @@ public class JobContainer extends AbstractContainer {
         LOG.info("Scheduler starts [{}] taskGroups.", taskGroupConfigList.size());
 
         try {
-            AbstractTaskGroupScheduler abstractScheduler;
+            abstractContainerCommunicator = new JobContainerCommunicator(configuration);
+
+            AbstractTaskGroupScheduler abstractTaskGroupScheduler;
             switch (Global.mode) {
                 case taskGroup: // 执行了其中的某些若干的taskGroup 其实也不会在这里涉及
                 case local:
                 case standalone:
-                    abstractScheduler = initStandaloneScheduler(configuration);
+                    abstractTaskGroupScheduler = new LocalTaskGroupScheduler((JobContainerCommunicator) abstractContainerCommunicator);
                     break;
                 case distribute:
+                    abstractTaskGroupScheduler = new DistributeTaskGroupScheduler((JobContainerCommunicator) abstractContainerCommunicator);
+                    break;
                 default:
                     throw new UnsupportedOperationException();
             }
@@ -499,7 +502,7 @@ public class JobContainer extends AbstractContainer {
             LOG.info("Running by {} Mode.", Global.mode);
 
             startTransferTimeStamp = System.currentTimeMillis();
-            abstractScheduler.schedule(taskGroupConfigList);
+            abstractTaskGroupScheduler.schedule(taskGroupConfigList);
             endTransferTimeStamp = System.currentTimeMillis();
         } catch (Exception e) {
             LOG.error("运行scheduler 模式[{}]出错.", Global.mode);
@@ -509,13 +512,6 @@ public class JobContainer extends AbstractContainer {
 
         // 检查任务执行情况
         checkLimit();
-    }
-
-    private AbstractTaskGroupScheduler initStandaloneScheduler(Configuration configuration) {
-        AbstractContainerCommunicator containerCommunicator = new LocalJobContainerCommunicator(configuration);
-        this.abstractContainerCommunicator = containerCommunicator;
-
-        return new LocalTaskGroupScheduler(containerCommunicator);
     }
 
     private void post() {
@@ -541,11 +537,11 @@ public class JobContainer extends AbstractContainer {
             transferCosts = 1L;
         }
 
-        if (super.getAbstractContainerCommunicator() == null) {
+        if (abstractContainerCommunicator == null) {
             return;
         }
 
-        Communication communication = super.getAbstractContainerCommunicator().collect();
+        Communication communication =abstractContainerCommunicator.collect();
         communication.setTimestamp(endTimeStamp);
 
         Communication tempComm = new Communication();
@@ -560,7 +556,7 @@ public class JobContainer extends AbstractContainer {
         reportCommunication.setLongCounter(CommunicationTool.BYTE_SPEED, byteSpeedPerSecond);
         reportCommunication.setLongCounter(CommunicationTool.RECORD_SPEED, recordSpeedPerSecond);
 
-        getAbstractContainerCommunicator().report(reportCommunication);
+        abstractContainerCommunicator.report(reportCommunication);
 
 
         LOG.info(String.format(
@@ -644,10 +640,8 @@ public class JobContainer extends AbstractContainer {
     }
 
     private void prepareJobReader() {
-        classLoaderSwapper.setCurrentThreadClassLoader(LoadUtil.getJarLoader(
-                PluginType.READER, readerPluginName));
-        LOG.info(String.format("DataX Reader.Job [%s] do prepare work .",
-                readerPluginName));
+        classLoaderSwapper.setCurrentThreadClassLoader(LoadUtil.getJarLoader(PluginType.READER, readerPluginName));
+        LOG.info(String.format("DataX Reader.Job [%s] do prepare work .", readerPluginName));
         jobReader.prepare();
         classLoaderSwapper.restoreCurrentThreadClassLoader();
     }
@@ -871,7 +865,7 @@ public class JobContainer extends AbstractContainer {
      * @param
      */
     private void checkLimit() {
-        Communication communication = super.getAbstractContainerCommunicator().collect();
+        Communication communication = abstractContainerCommunicator.collect();
         errorLimit.checkRecordLimit(communication);
         errorLimit.checkPercentageLimit(communication);
     }
@@ -880,7 +874,7 @@ public class JobContainer extends AbstractContainer {
      * 调用外部hook
      */
     private void invokeHooks() {
-        Communication comm = super.getAbstractContainerCommunicator().collect();
+        Communication comm = abstractContainerCommunicator.collect();
         HookInvoker invoker = new HookInvoker(CoreConstant.DATAX_HOME + "/hook", configuration, comm.getKey_number());
         invoker.invokeAll();
     }

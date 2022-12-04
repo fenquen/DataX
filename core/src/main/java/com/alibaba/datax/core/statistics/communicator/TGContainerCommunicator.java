@@ -3,17 +3,16 @@ package com.alibaba.datax.core.statistics.communicator;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.core.statistics.communication.Communication;
 import com.alibaba.datax.core.util.container.CoreConstant;
-import com.alibaba.datax.core.State;
+import com.alibaba.datax.common.constant.State;
 import org.apache.commons.lang.Validate;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * 该类是用于处理 taskGroupContainer 的 communication 的收集汇报的父类
- * 主要是 taskCommunicationMap 记录了 taskExecutor 的 communication 属性
+ * 管理的是各个的task
  */
-public abstract class AbstractTGContainerCommunicator extends AbstractContainerCommunicator {
+public class TGContainerCommunicator extends AbstractContainerCommunicator {
 
     protected long jobId;
 
@@ -25,36 +24,47 @@ public abstract class AbstractTGContainerCommunicator extends AbstractContainerC
      */
     protected int taskGroupId;
 
-    public AbstractTGContainerCommunicator(Configuration configuration) {
+    public TGContainerCommunicator(Configuration configuration) {
         super(configuration);
         jobId = configuration.getInt(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID);
         taskGroupId = configuration.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_ID);
     }
 
     @Override
-    public void registerCommunication(List<Configuration> contentElementConfList) {
-        abstractCollector.registerTaskCommunication(contentElementConfList);
+    public void addCommunication(List<Configuration> contentElementConfList) {
+        for (Configuration contentElement : contentElementConfList) {
+            collector.taskId_communication.put(contentElement.getInt(CoreConstant.TASK_ID), new Communication());
+        }
     }
 
+    /**
+     * 收集合并了全部的task的communication便是task group的
+     */
     @Override
     public final Communication collect() {
-        return abstractCollector.collectTask();
-    }
+        Communication communication = new Communication();
+        communication.setState(State.SUCCEEDED);
 
-    @Override
-    public final State collectState() {
-        return collect().getState();
+        for (Communication taskCommunication : collector.taskId_communication.values()) {
+            communication.mergeFrom(taskCommunication);
+        }
+
+        return communication;
     }
 
     @Override
     public final Communication getCommunication(Integer taskId) {
         Validate.isTrue(taskId >= 0, "注册的taskId不能小于0");
-        return abstractCollector.getTaskCommunication(taskId);
+        return collector.taskId_communication.get(taskId);
     }
 
     @Override
     public final Map<Integer, Communication> getCommunicationMap() {
-        return abstractCollector.taskId_communication;
+        return collector.taskId_communication;
     }
 
+    @Override
+    public void report(Communication communication) {
+        reporter.reportTGCommunication(taskGroupId, communication);
+    }
 }

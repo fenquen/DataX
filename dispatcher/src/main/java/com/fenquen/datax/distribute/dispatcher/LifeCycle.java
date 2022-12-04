@@ -1,5 +1,6 @@
 package com.fenquen.datax.distribute.dispatcher;
 
+import com.alibaba.datax.common.distribute.DispatcherInfo;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,8 @@ public class LifeCycle implements InitializingBean, DisposableBean {
     @Value("${multicast.port}")
     private int multicastPort;
 
-    @Value("${bind.address}")
-    private String bindAddress;
+    @Value("${multicast.interface.address}")
+    private String multicastInterfaceAddr;
 
     @Value("${dispatcher.message.exchange.interval.ms}")
     private int dispatcherMessageExchangeIntervalMs;
@@ -30,7 +31,7 @@ public class LifeCycle implements InitializingBean, DisposableBean {
     @Value("${server.address}")
     private String serverAddress;
     @Value("${server.port}")
-    private int serverPort;
+    private String serverPort;
 
     private Thread multicastSendThread;
     private Thread multicastReceiveThread;
@@ -40,6 +41,8 @@ public class LifeCycle implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         handleMulticast();
+
+
     }
 
     @Override
@@ -60,13 +63,13 @@ public class LifeCycle implements InitializingBean, DisposableBean {
             Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
             while (inetAddresses.hasMoreElements()) {
                 InetAddress inetAddress = inetAddresses.nextElement();
-                if (inetAddress.getHostAddress().equals(bindAddress)) {
+                if (inetAddress.getHostAddress().equals(multicastInterfaceAddr)) {
                     targetInterface = networkInterface;
                 }
             }
         }
         if (null == targetInterface) {
-            throw new DispatcherException("");
+            throw new DispatcherException(String.format("没有找到%s对应的interface", multicastInterfaceAddr));
         }
 
         InetSocketAddress multicast = new InetSocketAddress(multicastAddress, multicastPort);
@@ -76,6 +79,7 @@ public class LifeCycle implements InitializingBean, DisposableBean {
         multicastSendThread = new Thread(() -> {
             try {
                 DispatcherInfo dispatcherInfo = new DispatcherInfo(serverAddress, serverPort);
+                Global.HOST_PORT_DISPATCHER_INFO.put(dispatcherInfo.host + ":" + dispatcherInfo.port, dispatcherInfo);
                 byte[] byteArr = JSON.toJSONString(dispatcherInfo).getBytes("utf-8");
                 DatagramPacket datagramPacketSend = new DatagramPacket(byteArr, byteArr.length, multicast);
 
@@ -101,7 +105,7 @@ public class LifeCycle implements InitializingBean, DisposableBean {
                     multicastSocket.receive(datagramPacketReceive);
 
                     String json = new String(datagramPacketReceive.getData(), 0, datagramPacketReceive.getLength());
-                   // LOGGER.info(json);
+                    // LOGGER.info(json);
 
                     DispatcherInfo dispatcherInfo = JSON.parseObject(json, DispatcherInfo.class);
                     Global.HOST_PORT_DISPATCHER_INFO.put(dispatcherInfo.host + ":" + dispatcherInfo.port, dispatcherInfo);

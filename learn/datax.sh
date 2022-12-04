@@ -10,4 +10,4 @@
 -Dlogback.configurationFile=/home/a/github/DataX/target/datax/datax/conf/logback.xml \
 -classpath /home/a/github/DataX/target/datax/datax/lib/*:. \
 -Dlog.file.name=$2 \
-com.alibaba.datax.core.Engine -mode $3 -jobid $2 -job $1
+com.alibaba.datax.core.Engine -jobid $1 -job $2 -mode $3 -node_list $4

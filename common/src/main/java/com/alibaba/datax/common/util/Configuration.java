@@ -77,8 +77,7 @@ public class Configuration {
         try {
             return new Configuration(json);
         } catch (Exception e) {
-            throw DataXException.build(CommonErrorCode.CONFIG_ERROR,
-                    e);
+            throw DataXException.build(CommonErrorCode.CONFIG_ERROR, e);
         }
 
     }
@@ -697,7 +696,7 @@ public class Configuration {
      * 拷贝当前Configuration，注意，这里使用了深拷贝，避免冲突
      */
     public Configuration clone() {
-        Configuration config = Configuration.from(Configuration.toJSONString(this.getInternal()));
+        Configuration config = Configuration.from(Configuration.toJSONString(getInternal()));
         config.addSecretKeyPath(this.secretKeyPathSet);
         return config;
     }

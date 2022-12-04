@@ -95,34 +95,41 @@ public class RdbmsWriter extends Writer {
         public void destroy() {
             this.commonRdbmsWriterSlave.destroy(this.writerSliceConfig);
         }
-
     }
 
     public static void main(String[] args) throws Exception {
         // Class.forName("com.ibm.db2.jcc.DB2Driver");
         Class.forName("com.mysql.cj.jdbc.Driver");
+
         // DriverManager.getConnection("jdbc:db2://10.88.36.79:50000/testdb:currentSchema=T1;", "DB2INST1", "123456");
 
-        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/test", "root", "xuelang@1");
 
-        PreparedStatement preparedStatement = connection.prepareStatement("insert into order_table values (?,?,?,?,?,?,?,?)");
+        for (int d = 0; d < 70; d++) {
+            int d0 = d;
+            new Thread(() -> {
+                try {
+                    Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/test", "root", "xuelang@1");
 
-       // for (int d = 0; d < 270; d++) {
-            System.out.println(1);
-            for (int a = 0; a < 10000; a++) {
-                preparedStatement.setLong(1, new Random().nextInt(10000));
-                preparedStatement.setString(2, "a");
-                preparedStatement.setLong(3, new Random().nextInt(10000));
-                preparedStatement.setLong(4, new Random().nextInt(10000));
-                preparedStatement.setShort(5, (short) new Random().nextInt(10000));
-                preparedStatement.setBigDecimal(6, new BigDecimal(new Random().nextInt(10000)));
-                preparedStatement.setShort(7, (short) 70);
-                preparedStatement.setBigDecimal(8, new BigDecimal(new Random().nextInt(10000)));
+                    PreparedStatement preparedStatement = connection.prepareStatement("insert into order_table (ORDER_NO,STORE_ID,USER_ID,ORDER_STATE,GOOD_MONEY,DELIVER_TYPE,DELIVER_MONEY)values (?,?,?,?,?,?,?)");
 
-                preparedStatement.addBatch();
-            }
-            preparedStatement.executeBatch();
-       // }
+                    for (int a = 0; a < 10000; a++) {
+                        preparedStatement.setString(1, "a");
+                        preparedStatement.setLong(2, new Random().nextInt(10000));
+                        preparedStatement.setLong(3, new Random().nextInt(10000));
+                        preparedStatement.setShort(4, (short) new Random().nextInt(10000));
+                        preparedStatement.setBigDecimal(5, new BigDecimal(new Random().nextInt(10000)));
+                        preparedStatement.setShort(6, (short) 70);
+                        preparedStatement.setBigDecimal(7, new BigDecimal(new Random().nextInt(10000)));
+
+                        preparedStatement.addBatch();
+                    }
+                    preparedStatement.executeBatch();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                System.out.println(d0);
+            }).start();
+        }
 
     }
 

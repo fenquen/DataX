@@ -1,17 +1,22 @@
 package com.alibaba.datax.core;
 
+import com.alibaba.datax.common.distribute.DispatcherInfo;
 import com.alibaba.datax.common.element.ColumnCast;
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.spi.ErrorCode;
 import com.alibaba.datax.common.statistics.PerfTrace;
 import com.alibaba.datax.common.statistics.VMInfo;
 import com.alibaba.datax.common.util.Configuration;
+import com.alibaba.datax.common.constant.Constant;
+import com.alibaba.datax.common.util.ExecuteMode;
 import com.alibaba.datax.common.util.MessageSource;
+import com.alibaba.datax.core.container.AbstractContainer;
 import com.alibaba.datax.core.job.JobContainer;
 import com.alibaba.datax.core.taskgroup.TaskGroupContainer;
 import com.alibaba.datax.core.util.*;
 import com.alibaba.datax.core.util.container.CoreConstant;
 import com.alibaba.datax.core.util.container.LoadUtil;
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -106,24 +111,38 @@ public class Engine {
         }
     }
 
-    public static void entry(final String[] args) throws Throwable {
+    public static void entry(String[] args) throws Throwable {
         Options options = new Options();
-        options.addOption("job", true, "config");
-        options.addOption("jobid", true, "unique id");
-        options.addOption("mode", true, "runtime mode");
+        options.addOption(Constant.COMMAND_PARAM.job, true, Constant.EMPTY_STRING);
+        options.addOption(Constant.COMMAND_PARAM.jobid, true, Constant.EMPTY_STRING);
+        options.addOption(Constant.COMMAND_PARAM.mode, true, Constant.EMPTY_STRING);
+        // options.addOption(Constant.COMMAND_PARAM.nodeList, true, Constant.EMPTY_STRING);
 
         CommandLine commandLine = new BasicParser().parse(options, args);
 
         // 如果用户没有明确指定jobid, 则 datax.py 会指定 jobid 默认值为-1
-        Global.jobId = Long.parseLong(commandLine.getOptionValue("jobid"));
-        if (Global.jobId == -1) {
+        Global.jobId = Long.parseLong(commandLine.getOptionValue(Constant.COMMAND_PARAM.jobid));
+        if (Global.jobId == Constant.INVALID_ID) {
             throw DataXException.build(FrameworkErrorCode.CONFIG_ERROR, "必须提供有效的jobId");
         }
 
-        Global.mode = ExecuteMode.valueOf(commandLine.getOptionValue("mode"));
+        Global.mode = ExecuteMode.valueOf(commandLine.getOptionValue(Constant.COMMAND_PARAM.mode));
+        if (ExecuteMode.distribute.equals(Global.mode)) {
+            NettyServer.run();
+        }
 
-        String jobPath = commandLine.getOptionValue("job");
-        Configuration configuration = ConfigParser.parse(jobPath);
+        // distribute模式的时候 node_map_json要有
+        if (ExecuteMode.distribute.equals(Global.mode)) {
+            String nodeListJson = System.getenv(Constant.ENV_PARAM.nodeList);
+
+            if (StringUtils.isBlank(nodeListJson)) {
+                throw DataXException.build("distribute模式的时候需要提供node_list");
+            }
+
+            Global.nodeList = JSON.parseArray(nodeListJson, DispatcherInfo.class);
+        }
+
+        Configuration configuration = ConfigParser.parse(commandLine.getOptionValue(Constant.COMMAND_PARAM.job));
 
         configuration.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_ID, Global.jobId);
 

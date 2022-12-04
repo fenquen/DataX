@@ -1,4 +1,4 @@
-package com.alibaba.datax.core;
+package com.alibaba.datax.common.util;
 
 public enum ExecuteMode{
     standalone,

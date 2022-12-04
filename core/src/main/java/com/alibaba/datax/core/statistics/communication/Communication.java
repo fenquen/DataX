@@ -1,7 +1,7 @@
 package com.alibaba.datax.core.statistics.communication;
 
 import com.alibaba.datax.common.base.BaseObject;
-import com.alibaba.datax.core.State;
+import com.alibaba.datax.common.constant.State;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -17,6 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Data
 public class Communication extends BaseObject implements Cloneable {
+
+    public int taskGroupId;
+
     /**
      * 所有的数值key-value对
      */
@@ -139,9 +142,9 @@ public class Communication extends BaseObject implements Cloneable {
             }
         }
 
-        communication.setState(this.state, true);
-        communication.setThrowable(this.throwable, true);
-        communication.setTimestamp(this.timestamp);
+        communication.setState(state, true);
+        communication.setThrowable(throwable, true);
+        communication.setTimestamp(timestamp);
 
         // clone message
         if (this.id_messageList != null) {
