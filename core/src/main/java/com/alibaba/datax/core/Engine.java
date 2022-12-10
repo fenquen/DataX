@@ -59,6 +59,14 @@ public class Engine {
             abstractContainer = new TaskGroupContainer(totalConfig);
             taskGroupId = totalConfig.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_ID);
             channelNumber = totalConfig.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL);
+
+            // 该模式下totalConfig的plugin.reader.组件名字.path是已经在masterNode上生成的固定的abs路径了
+            // 需要以本节点的实际dataxHome的位置来更改
+            String readerName = totalConfig.getString(CoreConstant.DATAX_JOB_CONTENT_READER_NAME);
+            totalConfig.set("plugin.reader." + readerName + ".path", CoreConstant.DATAX_HOME + "/plugin/reader/" + readerName);
+
+            String writerName = totalConfig.getString(CoreConstant.DATAX_JOB_CONTENT_WRITER_NAME);
+            totalConfig.set("plugin.writer." + writerName + ".path", CoreConstant.DATAX_HOME + "/plugin/writer/" + writerName);
         }
 
         // 缺省打开perfTrace
@@ -139,6 +147,7 @@ public class Engine {
                 throw DataXException.build("distribute模式的时候需要提供node_list");
             }
 
+            LOG.info("--------------------------------nodeListJson:{}", nodeListJson);
             Global.nodeList = JSON.parseArray(nodeListJson, DispatcherInfo.class);
         }
 

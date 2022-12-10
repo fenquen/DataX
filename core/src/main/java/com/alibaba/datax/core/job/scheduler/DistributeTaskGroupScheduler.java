@@ -115,7 +115,7 @@ public class DistributeTaskGroupScheduler extends AbstractTaskGroupScheduler {
     private Map<DispatcherInfo, List<Configuration>> dispatchTaskGroupConfList2NodeList(List<Configuration> taskGroupConfList, List<DispatcherInfo> nodeList) {
         // 保留新鲜的和本node
         long now = System.currentTimeMillis();
-        nodeList = nodeList.stream().filter(node -> node.equals(Global.masterNode) || now - node.reportTime < 1700).collect(Collectors.toList());
+        nodeList = nodeList.stream().filter(node -> node.equals(Global.masterNode) || now - node.reportTime < 60000).collect(Collectors.toList());
 
         Map<DispatcherInfo, List<Configuration>> map = new HashMap<>();
 

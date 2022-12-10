@@ -42,7 +42,7 @@
         "writer": {
           "name": "txtfilewriter",
           "parameter": {
-            "path": "/home/a",
+            "path": "./",
             "fileName": "mysql_txt",
             "writeMode": "append",
             "dateFormat": "yyyy-MM-dd"
