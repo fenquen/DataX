@@ -5,9 +5,12 @@ import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.util.Configuration;
 import com.alibaba.datax.common.constant.Constant;
 import com.alibaba.datax.common.util.ExecuteMode;
+import com.alibaba.datax.core.statistics.communication.Communication;
+import com.alibaba.datax.core.statistics.communication.LocalTGCommunicationManager;
 import com.alibaba.datax.core.statistics.communicator.JobContainerCommunicator;
 import com.alibaba.datax.core.util.Global;
 import com.alibaba.datax.core.util.HttpUtil;
+import com.alibaba.datax.core.util.container.CoreConstant;
 import com.alibaba.fastjson.JSON;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -20,7 +23,7 @@ import java.util.stream.Collectors;
 public class DistributeTaskGroupScheduler extends AbstractTaskGroupScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(DistributeTaskGroupScheduler.class);
 
-    private Map<DispatcherInfo, List<Configuration>> real;
+    private Map<DispatcherInfo, List<Configuration>> realNode_taskGroupConfList;
 
     public DistributeTaskGroupScheduler(JobContainerCommunicator abstractContainerCommunicator) {
         super(abstractContainerCommunicator);
@@ -33,7 +36,7 @@ public class DistributeTaskGroupScheduler extends AbstractTaskGroupScheduler {
         Map<DispatcherInfo, List<Configuration>> node_taskGroupConfList = dispatchTaskGroupConfList2NodeList(taskGroupConfList, Global.nodeList);
         List<Configuration> localTaskGroupConfList = node_taskGroupConfList.get(Global.masterNode);
 
-        real = new HashMap<>(node_taskGroupConfList);
+        realNode_taskGroupConfList = new HashMap<>(node_taskGroupConfList);
 
         for (Map.Entry<DispatcherInfo, List<Configuration>> entry : node_taskGroupConfList.entrySet()) {
             DispatcherInfo node = entry.getKey();
@@ -66,7 +69,7 @@ public class DistributeTaskGroupScheduler extends AbstractTaskGroupScheduler {
             try {
                 HttpUtil.post(target, nameValuePairList);
             } catch (Exception e) {
-                real.remove(node);
+                realNode_taskGroupConfList.remove(node);
 
                 LOGGER.error(e.getMessage(), e);
                 dispatchSuccess = false;
@@ -88,14 +91,31 @@ public class DistributeTaskGroupScheduler extends AbstractTaskGroupScheduler {
     @Override
     public synchronized void cancelSchedule(List<Configuration> taskGroupConfigList) {
         // 说明startAllTaskGroup还没有调用过
-        if (real == null) {
+        if (realNode_taskGroupConfList == null) {
             return;
         }
 
-        for (Map.Entry<DispatcherInfo, List<Configuration>> entry : real.entrySet()) {
+        for (Map.Entry<DispatcherInfo, List<Configuration>> entry : realNode_taskGroupConfList.entrySet()) {
             DispatcherInfo node = entry.getKey();
 
             if (Global.masterNode.equals(node)) {
+                continue;
+            }
+
+            // 要是node对应的taskGroup已完成了那么不用发送命令
+            boolean send = false;
+
+            for (Configuration taskGroupConf : entry.getValue()) {
+                int taskGroupId = taskGroupConf.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_ID);
+                Communication taskGroupCommunication = LocalTGCommunicationManager.get(taskGroupId);
+                if (taskGroupCommunication.isFinished()) {
+                    continue;
+                }
+                send = true;
+                break;
+            }
+
+            if (!send) {
                 continue;
             }
 

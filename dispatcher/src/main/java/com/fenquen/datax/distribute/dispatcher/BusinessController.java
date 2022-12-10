@@ -3,6 +3,8 @@ package com.fenquen.datax.distribute.dispatcher;
 import com.alibaba.datax.common.constant.Constant;
 import com.alibaba.datax.common.util.ExecuteMode;
 import com.alibaba.fastjson.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +25,8 @@ import java.util.Map;
 
 @RestController
 public class BusinessController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BusinessController.class);
 
     @Value("${json.dir}")
     private String jsonDir;
@@ -93,6 +97,13 @@ public class BusinessController {
                 }
                 System.out.println(line);
             }
+
+            try {
+                process.waitFor();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            Global.JOB_ID_PROCESS.remove(jobIdStr);
         }).start();
 
 
@@ -105,14 +116,18 @@ public class BusinessController {
      * 需要区分本node对于这个jobid来说是总的还是小弟
      * 如果是小弟的话 那么直接杀死process 如果是总的话不能直接这么
      */
-    @RequestMapping("/stop")
-    public void stop(@RequestParam("jobid") String jobIdStr) throws Exception {
+    @RequestMapping(Constant.SPRING_HTTP.STOP_HTTP_PATH)
+    public void stop(@RequestParam(Constant.COMMAND_PARAM.jobid) String jobIdStr) throws Exception {
+        LOGGER.info("调用 http stop ,jobid:{}", jobIdStr);
+
         Process process = Global.JOB_ID_PROCESS.remove(jobIdStr);
         if (process == null) {
+            LOGGER.info("http stop,jobid:{}对应的process已不存在", jobIdStr);
             return;
         }
 
         int pid = getPid(process);
+        LOGGER.info("http stop,jobid:{}对应的pid是 {}", jobIdStr, pid);
 
         Runtime.getRuntime().exec("kill -15 " + pid);
     }
