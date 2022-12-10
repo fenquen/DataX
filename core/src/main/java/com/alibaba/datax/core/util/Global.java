@@ -16,10 +16,9 @@ public class Global {
     public static String masterNodePort = System.getenv(Constant.ENV_PARAM.masterNodePort);
 
     public static String masterNodeNettyHttpServerPort = System.getenv(Constant.ENV_PARAM.masterNodeNettyHttpServerPort);
-
     public static String masterNodeNettyHttpServerAddr = "http://" + masterNodeHost + ":" + masterNodeNettyHttpServerPort;
 
-    public static final DispatcherInfo localNode = new DispatcherInfo(masterNodeHost, masterNodePort);
+    public static final DispatcherInfo masterNode = new DispatcherInfo(masterNodeHost, masterNodePort);
 
     public static Thread nettyThread;
 }

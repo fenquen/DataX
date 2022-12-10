@@ -8,6 +8,9 @@ import java.io.File;
  * Created by jingxing on 14-8-25.
  */
 public class CoreConstant {
+    /**
+     * 默认读取的是项目中的core.json中配置的值 文件中配置的是5
+     */
     public static final String DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL = "core.container.taskGroup.channel";
 
     public static final String DATAX_CORE_CONTAINER_MODEL = "core.container.model";

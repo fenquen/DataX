@@ -8,9 +8,13 @@ public class DispatcherInfo {
 
     public String port;
 
+    public long reportTime;
+
     public DispatcherInfo(String host, String port) {
         this.host = host;
         this.port = port;
+
+        reportTime = System.currentTimeMillis();
     }
 
     public DispatcherInfo() {

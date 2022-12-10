@@ -1,17 +1,8 @@
 {
-  "core": {
-    "transport": {
-      "channel": {
-        "speed": {
-          "byte": 1048576
-        }
-      }
-    }
-  },
   "job": {
     "setting": {
       "speed": {
-        "byte": 1048576
+        "channel": 2
       },
       "errorLimit": {
         "record": 0
@@ -40,57 +31,20 @@
                   "order_table"
                 ],
                 "jdbcUrl": [
-                  "jdbc:mysql://localhost:3306/test"
+                  "jdbc:mysql://127.0.0.1:3306/test"
                 ]
               }
             ],
-            "fetchSize": 1024
+            "fetchSize": 1024,
+            "splitPk": "ID"
           }
         },
         "writer": {
           "name": "txtfilewriter",
           "parameter": {
-            "path": "./",
+            "path": "/home/a",
             "fileName": "mysql_txt",
-            "writeMode": "truncate",
-            "dateFormat": "yyyy-MM-dd"
-          }
-        }
-      }, {
-        "reader": {
-          "name": "rdbmsreader",
-          "parameter": {
-            "username": "root",
-            "password": "xuelang@1",
-            "column": [
-              "ID",
-              "ORDER_NO",
-              "STORE_ID",
-              "USER_ID",
-              "ORDER_STATE",
-              "GOOD_MONEY",
-              "DELIVER_TYPE",
-              "DELIVER_MONEY"
-            ],
-            "connection": [
-              {
-                "table": [
-                  "order_table"
-                ],
-                "jdbcUrl": [
-                  "jdbc:mysql://localhost:3306/test"
-                ]
-              }
-            ],
-            "fetchSize": 1024
-          }
-        },
-        "writer": {
-          "name": "txtfilewriter",
-          "parameter": {
-            "path": "./",
-            "fileName": "mysql_txt",
-            "writeMode": "truncate",
+            "writeMode": "append",
             "dateFormat": "yyyy-MM-dd"
           }
         }

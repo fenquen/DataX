@@ -59,8 +59,8 @@ public class RdbmsReader extends Reader {
     }
 
     public static class Task extends Reader.Task {
-
         private Configuration pluginJobReaderParamConf;
+
         private CommonRdbmsReader.Task commonRdbmsReaderSlave;
 
         @Override

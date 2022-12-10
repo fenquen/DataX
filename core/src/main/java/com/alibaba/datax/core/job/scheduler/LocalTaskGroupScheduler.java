@@ -24,15 +24,8 @@ public class LocalTaskGroupScheduler extends AbstractTaskGroupScheduler {
     }
 
     @Override
-    public void dealFailedStat(AbstractContainerCommunicator abstractContainerCommunicator, Throwable throwable) {
-        executorService.shutdownNow();
-        throw DataXException.build(FrameworkErrorCode.PLUGIN_RUNTIME_ERROR, throwable);
+    public void cancelSchedule(List<Configuration> taskGroupConfigList) {
+
     }
 
-    @Override
-    public void dealKillingStat(AbstractContainerCommunicator abstractContainerCommunicator, int totalTasks) {
-        // 通过进程退出返回码标示状态
-        executorService.shutdownNow();
-        throw DataXException.build(FrameworkErrorCode.KILLED_EXIT_VALUE);
-    }
 }

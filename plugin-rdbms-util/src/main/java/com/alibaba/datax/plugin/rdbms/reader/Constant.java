@@ -25,6 +25,6 @@ public final class Constant {
 
     public static String TABLE_NAME_PLACEHOLDER = "@table";
 
-    public static Integer SPLIT_FACTOR = 5;
+    public static Integer SPLIT_FACTOR = 1;
 
 }

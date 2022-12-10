@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -35,10 +36,15 @@ public class BusinessController {
     @Value("${server.port}")
     private String serverPort;
 
-    @RequestMapping(Constant.START_HTTP_PATH)
-    public void start(String json, @RequestParam("jobid") String jobIdStr, ExecuteMode mode) throws Exception {
+    @RequestMapping(Constant.SPRING_HTTP.START_HTTP_PATH)
+    public void start(String json,
+                      @RequestParam(Constant.COMMAND_PARAM.jobid) String jobIdStr,
+                      @RequestParam(Constant.COMMAND_PARAM.mode) ExecuteMode mode,
+                      @RequestParam(required = false, value = Constant.ENV_PARAM.masterNodeHost) String masterNodeHost,
+                      @RequestParam(required = false, value = Constant.ENV_PARAM.masterNodePort) String masterNodePort,
+                      @RequestParam(required = false, value = Constant.ENV_PARAM.masterNodeNettyHttpServerPort) String masterNodeNettyHttpServerPort) throws Exception {
         File jsonFile = new File(jsonDir, jobIdStr + ".json");
-        Files.write(Paths.get(jsonFile.getAbsolutePath()), json.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        Files.write(Paths.get(jsonFile.getAbsolutePath()), json.getBytes(StandardCharsets.UTF_8), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 
         List<String> commandList = new ArrayList<>();
         commandList.add("/bin/bash");
@@ -50,12 +56,25 @@ public class BusinessController {
         ProcessBuilder processBuilder = new ProcessBuilder(commandList);
         Map<String, String> envs = processBuilder.environment();
 
-        if (ExecuteMode.distribute.equals(mode)) {
-            envs.put(Constant.ENV_PARAM.masterNodeHost, serverAddress);
-            envs.put(Constant.ENV_PARAM.masterNodePort, serverPort);
-            envs.put(Constant.ENV_PARAM.nodeList, JSON.toJSONString(Global.HOST_PORT_DISPATCHER_INFO.values()));
-            envs.put(Constant.ENV_PARAM.masterNodeNettyHttpServerPort, "8181");
+        switch (mode) {
+            case taskGroup:
+                envs.put(Constant.ENV_PARAM.masterNodeHost, masterNodeHost);
+                envs.put(Constant.ENV_PARAM.masterNodePort, masterNodePort);
+                envs.put(Constant.ENV_PARAM.masterNodeNettyHttpServerPort, masterNodeNettyHttpServerPort);
+                break;
+            case distribute:
+                envs.put(Constant.ENV_PARAM.masterNodeHost, serverAddress);
+                envs.put(Constant.ENV_PARAM.masterNodePort, serverPort);
+                envs.put(Constant.ENV_PARAM.nodeList, JSON.toJSONString(Global.HOST_PORT_DISPATCHER_INFO.values()));
+                envs.put(Constant.ENV_PARAM.masterNodeNettyHttpServerPort, "8181");
+                break;
+            case local:
+            case standalone:
+                break;
+            default:
+                throw new DispatcherException("");
         }
+
         // processBuilder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
 
         processBuilder.redirectErrorStream(true);
@@ -75,11 +94,33 @@ public class BusinessController {
                 System.out.println(line);
             }
         }).start();
+
+
+        Global.JOB_ID_PROCESS.put(jobIdStr, process);
+
         // System.out.println(process.waitFor());
     }
 
+    /**
+     * 需要区分本node对于这个jobid来说是总的还是小弟
+     * 如果是小弟的话 那么直接杀死process 如果是总的话不能直接这么
+     */
     @RequestMapping("/stop")
-    public void stop() {
+    public void stop(@RequestParam("jobid") String jobIdStr) throws Exception {
+        Process process = Global.JOB_ID_PROCESS.remove(jobIdStr);
+        if (process == null) {
+            return;
+        }
 
+        int pid = getPid(process);
+
+        Runtime.getRuntime().exec("kill -15 " + pid);
+    }
+
+    private int getPid(Process process) throws Exception {
+        Class<?> clazz = Class.forName("java.lang.UNIXProcess");
+        Field field = clazz.getDeclaredField("pid");
+        field.setAccessible(true);
+        return field.getInt(process);
     }
 }

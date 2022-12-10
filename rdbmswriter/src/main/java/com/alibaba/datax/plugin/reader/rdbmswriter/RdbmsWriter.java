@@ -98,6 +98,8 @@ public class RdbmsWriter extends Writer {
     }
 
     public static void main(String[] args) throws Exception {
+
+      System.out.println( new String("浣滀笟閮ㄤ綅".getBytes("gb2312"),"utf-8"));
         // Class.forName("com.ibm.db2.jcc.DB2Driver");
         Class.forName("com.mysql.cj.jdbc.Driver");
 

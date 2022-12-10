@@ -1,7 +1,11 @@
 package com.alibaba.datax.common.constant;
 
 public class Constant {
-    public static final String START_HTTP_PATH = "/business/start";
+
+    public interface SPRING_HTTP {
+        String START_HTTP_PATH = "/business/start";
+        String STOP_HTTP_PATH = "/business/stop";
+    }
 
     public interface COMMAND_PARAM {
         String jobid = "jobid";
@@ -14,8 +18,8 @@ public class Constant {
     public interface ENV_PARAM {
         String nodeList = "node_list";
 
-        String masterNodeHost = "selfHost";
-        String masterNodePort = "selfPort";
+        String masterNodeHost = "masterNodeHost";
+        String masterNodePort = "masterNodePort";
 
         String masterNodeNettyHttpServerPort = "nettyHttpServerPort";
     }

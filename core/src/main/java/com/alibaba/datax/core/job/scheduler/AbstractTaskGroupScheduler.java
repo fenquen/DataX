@@ -59,7 +59,6 @@ public abstract class AbstractTaskGroupScheduler {
         startAllTaskGroup(taskGroupConfigList);
 
         Communication mergedAllTgCommLastRound = new Communication();
-
         long lastReportTimeStamp = System.currentTimeMillis();
 
         try {
@@ -70,7 +69,6 @@ public abstract class AbstractTaskGroupScheduler {
 
                 // 汇报周期
                 long now = System.currentTimeMillis();
-
                 if (now - lastReportTimeStamp > jobReportIntervalMs) {
                     Communication reportCommunication =
                             CommunicationTool.getReportComm(mergedAllTgComm, mergedAllTgCommLastRound, totalTasks);
@@ -107,9 +105,17 @@ public abstract class AbstractTaskGroupScheduler {
      */
     protected abstract void startAllTaskGroup(List<Configuration> taskGroupConfList);
 
-    protected abstract void dealFailedStat(AbstractContainerCommunicator abstractContainerCommunicator, Throwable throwable);
+    public abstract void cancelSchedule(List<Configuration> taskGroupConfigList);
 
-    protected abstract void dealKillingStat(AbstractContainerCommunicator abstractContainerCommunicator, int totalTasks);
+    protected void dealFailedStat(AbstractContainerCommunicator abstractContainerCommunicator, Throwable throwable) {
+        executorService.shutdownNow();
+        throw DataXException.build(FrameworkErrorCode.PLUGIN_RUNTIME_ERROR, throwable);
+    }
+
+    protected void dealKillingStat(AbstractContainerCommunicator abstractContainerCommunicator, int totalTasks) {
+        executorService.shutdownNow();
+        throw DataXException.build(FrameworkErrorCode.KILLED_EXIT_VALUE);
+    }
 
     private int calculateTaskCount(List<Configuration> taskGroupConfList) {
         int totalTasks = 0;
@@ -138,4 +144,5 @@ public abstract class AbstractTaskGroupScheduler {
     protected boolean isJobKilling(Long jobId) {
         return false;
     }
+
 }

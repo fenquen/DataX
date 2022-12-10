@@ -453,7 +453,7 @@ public class JobContainer extends AbstractContainer {
      */
     private void schedule() {
         // 这里的全局speed和每个channel的速度设置为B/s
-        int channelsPerTaskGroup = configuration.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL, 5);
+        int channelsPerTaskGroup = configuration.getInt(CoreConstant.DATAX_CORE_CONTAINER_TASKGROUP_CHANNEL, 1);
 
         // 这个时候的configuration是原始的尚未切的,然而content的element是已经split后的成果了
         int contentElementConfNumber = configuration.getList(CoreConstant.DATAX_JOB_CONTENT).size();
@@ -466,8 +466,7 @@ public class JobContainer extends AbstractContainer {
         // 把content包含的各个元素(切分后的各个小任务)分配到taskGroup
         List<Configuration> taskGroupConfigList =
                 JobAssignUtil.assignFairly(configuration, needChannelNumber, channelsPerTaskGroup);
-
-        LOG.info("Scheduler starts [{}] taskGroups.", taskGroupConfigList.size());
+        LOG.info("生成 {} 个taskGroup.", taskGroupConfigList.size());
 
         try {
             abstractContainerCommunicator = new JobContainerCommunicator(configuration);
@@ -491,6 +490,8 @@ public class JobContainer extends AbstractContainer {
                 taskGroupConfig.set(CoreConstant.DATAX_CORE_CONTAINER_JOB_MODE, Global.mode.name());
             }
 
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> abstractTaskGroupScheduler.cancelSchedule(taskGroupConfigList)));
+
             /*if (executeMode == ExecuteMode.local || executeMode == ExecuteMode.distribute) {
                 if (jobId <= 0) {
                     throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR,
@@ -501,7 +502,11 @@ public class JobContainer extends AbstractContainer {
             LOG.info("Running by {} Mode.", Global.mode);
 
             startTransferTimeStamp = System.currentTimeMillis();
-            abstractTaskGroupScheduler.schedule(taskGroupConfigList);
+            try {
+                abstractTaskGroupScheduler.schedule(taskGroupConfigList);
+            } catch (DataXException e) { // 之前纯本地的是抛异常到顶部直接进程结束,分布式需要另外让其它node知道
+                abstractTaskGroupScheduler.cancelSchedule(taskGroupConfigList);
+            }
             endTransferTimeStamp = System.currentTimeMillis();
         } catch (Exception e) {
             LOG.error("运行scheduler 模式[{}]出错.", Global.mode);
@@ -540,7 +545,7 @@ public class JobContainer extends AbstractContainer {
             return;
         }
 
-        Communication communication =abstractContainerCommunicator.collect();
+        Communication communication = abstractContainerCommunicator.collect();
         communication.setTimestamp(endTimeStamp);
 
         Communication tempComm = new Communication();

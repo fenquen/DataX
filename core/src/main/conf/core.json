@@ -42,7 +42,7 @@
                 "reportInterval": 10000
             },
             "taskGroup": {
-                "channel": 5
+                "channel": 1
             },
             "trace": {
                 "enable": "false"
