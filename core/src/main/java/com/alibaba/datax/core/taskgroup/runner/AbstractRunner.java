@@ -67,6 +67,7 @@ public abstract class AbstractRunner {
         mark(State.RUNNING);
     }
 
+    // writer调用
     public void markSuccess() {
         mark(State.SUCCEEDED);
     }

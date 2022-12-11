@@ -172,6 +172,7 @@ public class JobContainer extends AbstractContainer {
                     }
 
                     LOG.info(PerfTrace.getInstance().summarizeNoException());
+
                     logStatistics();
                 }
             }
@@ -509,7 +510,7 @@ public class JobContainer extends AbstractContainer {
             }
             endTransferTimeStamp = System.currentTimeMillis();
         } catch (Exception e) {
-            LOG.error("运行scheduler 模式[{}]出错.", Global.mode);
+            LOG.error("运行scheduler mode:{}出错", Global.mode);
             endTransferTimeStamp = System.currentTimeMillis();
             throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR, e);
         }
@@ -536,6 +537,7 @@ public class JobContainer extends AbstractContainer {
 
     private void logStatistics() {
         long totalCosts = (endTimeStamp - startTimeStamp) / 1000;
+
         long transferCosts = (endTransferTimeStamp - startTransferTimeStamp) / 1000;
         if (0L == transferCosts) {
             transferCosts = 1L;
@@ -562,7 +564,6 @@ public class JobContainer extends AbstractContainer {
 
         abstractContainerCommunicator.report(reportCommunication);
 
-
         LOG.info(String.format(
                 "\n" + "%-26s: %-18s\n" + "%-26s: %-18s\n" + "%-26s: %19s\n"
                         + "%-26s: %19s\n" + "%-26s: %19s\n" + "%-26s: %19s\n"
@@ -572,7 +573,7 @@ public class JobContainer extends AbstractContainer {
                 "任务总计耗时", totalCosts + "s",
                 "任务平均流量", StrUtil.stringify(byteSpeedPerSecond) + "/s",
                 "记录写入速度", recordSpeedPerSecond + "rec/s",
-                "读出记录总数", CommunicationTool.getTotalReadRecordCount(communication),
+                "读出记录总数(total read)", CommunicationTool.getTotalReadRecordCount(communication),
                 "读写失败总数", CommunicationTool.getTotalErrorRecords(communication)
         ));
 
@@ -583,16 +584,12 @@ public class JobContainer extends AbstractContainer {
                     "\n" + "%-26s: %19s\n" + "%-26s: %19s\n" + "%-26s: %19s\n",
                     "Transformer成功记录总数",
                     communication.getLongCounter(CommunicationTool.TRANSFORMER_SUCCEED_RECORDS),
-
                     "Transformer失败记录总数",
                     communication.getLongCounter(CommunicationTool.TRANSFORMER_FAILED_RECORDS),
-
                     "Transformer过滤记录总数",
                     communication.getLongCounter(CommunicationTool.TRANSFORMER_FILTER_RECORDS)
             ));
         }
-
-
     }
 
     /**

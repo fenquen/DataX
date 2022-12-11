@@ -1,5 +1,6 @@
 package com.alibaba.datax.core.statistics.communication;
 
+
 import com.alibaba.datax.common.statistics.PerfTrace;
 import com.alibaba.datax.common.util.StrUtil;
 import com.alibaba.fastjson.JSON;
@@ -48,6 +49,7 @@ public final class CommunicationTool {
     public static final String TRANSFORMER_SUCCEED_RECORDS = "totalTransformerSuccessRecords";
     public static final String TRANSFORMER_FAILED_RECORDS = "totalTransformerFailedRecords";
     public static final String TRANSFORMER_FILTER_RECORDS = "totalTransformerFilterRecords";
+
     public static final String TRANSFORMER_NAME_PREFIX = "usedTimeByTransformer_";
 
     /**
@@ -73,6 +75,7 @@ public final class CommunicationTool {
 
         newComm.setLongCounter(BYTE_SPEED, byteSpeed < 0 ? 0 : byteSpeed);
         newComm.setLongCounter(RECORD_SPEED, recordSpeed < 0 ? 0 : recordSpeed);
+
         newComm.setDoubleCounter(PERCENTAGE, newComm.getLongCounter(STAGE) / (double) totalStage);
 
         if (oldComm.getThrowable() != null) {
@@ -113,11 +116,12 @@ public final class CommunicationTool {
     }
 
     public static class Stringify {
-        private final static DecimalFormat df = new DecimalFormat("0.00");
+        private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0.00");
 
         public static String getSnapshot(final Communication communication) {
             StringBuilder sb = new StringBuilder();
-            sb.append("Total ");
+
+            sb.append("Total read ");
             sb.append(getTotal(communication));
             sb.append(" | ");
             sb.append("Speed ");
@@ -132,6 +136,7 @@ public final class CommunicationTool {
             sb.append(" All Task WaitReaderTime ");
             sb.append(PerfTrace.unitTime(communication.getLongCounter(WAIT_READER_TIME)));
             sb.append(" | ");
+
             if (communication.getLongCounter(CommunicationTool.TRANSFORMER_USED_TIME) > 0
                     || communication.getLongCounter(CommunicationTool.TRANSFORMER_SUCCEED_RECORDS) > 0
                     || communication.getLongCounter(CommunicationTool.TRANSFORMER_FAILED_RECORDS) > 0
@@ -149,8 +154,9 @@ public final class CommunicationTool {
                 sb.append(PerfTrace.unitTime(communication.getLongCounter(CommunicationTool.TRANSFORMER_USED_TIME)));
                 sb.append(" | ");
             }
-            sb.append("Percentage ");
-            sb.append(getPercentage(communication));
+
+            sb.append("Percentage ").append(getPercentage(communication));
+
             return sb.toString();
         }
 
@@ -173,7 +179,7 @@ public final class CommunicationTool {
         }
 
         private static String getPercentage(final Communication communication) {
-            return df.format(communication.getDoubleCounter(PERCENTAGE) * 100) + "%";
+            return DECIMAL_FORMAT.format(communication.getDoubleCounter(PERCENTAGE) * 100) + "%";
         }
     }
 

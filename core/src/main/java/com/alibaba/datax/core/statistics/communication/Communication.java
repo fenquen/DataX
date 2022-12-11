@@ -177,10 +177,18 @@ public class Communication extends BaseObject implements Cloneable {
             if (value == null) {
                 value = otherValue;
             } else {
-                if (value instanceof Long && otherValue instanceof Long) {
+                if ("stage".equals(key)) {
+                    System.out.println(value.getClass());
+                    System.out.println(otherValue.getClass());
+                }
+
+                boolean value整数 = value instanceof Long || value instanceof Integer;
+                boolean otherValue整数 = otherValue instanceof Long || otherValue instanceof Integer;
+                // 处理stage的时候因为远端的communication是json反序列化过来的 long变成了int
+                if (value整数 && otherValue整数) {
                     value = value.longValue() + otherValue.longValue();
                 } else {
-                    value = value.doubleValue() + value.doubleValue();
+                    value = value.doubleValue() + otherValue.doubleValue();
                 }
             }
 

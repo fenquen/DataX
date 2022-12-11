@@ -40,6 +40,15 @@ public class BusinessController {
     @Value("${server.port}")
     private String serverPort;
 
+    /**
+     * @param json datax的json配置
+     * @param jobIdStr datax体系的jobid
+     * @param mode datax体系的mode 如果用户想要分布式调度使用增加的distribute
+     * @param masterNodeHost 该node接收其它node调度来的task group时使用 普通用户无需理会
+     * @param masterNodePort 该node接收其它node调度来的task group时使用 普通用户无需理会
+     * @param masterNodeNettyHttpServerPort 该node接收其它node调度来的task group时使用 普通用户无需理会
+     * @throws Exception
+     */
     @RequestMapping(Constant.SPRING_HTTP.START_HTTP_PATH)
     public void start(String json,
                       @RequestParam(Constant.COMMAND_PARAM.jobid) String jobIdStr,
