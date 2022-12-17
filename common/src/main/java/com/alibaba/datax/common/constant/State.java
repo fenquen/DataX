@@ -1,18 +1,22 @@
 package com.alibaba.datax.common.constant;
 
+/**
+ * 目前使用的只有 failed running succeeded
+ */
 public enum State {
+    TASK_GROUP_TIME_OUT(80),
 
-    SUBMITTING(10),
-    WAITING(20),
+    //  SUBMITTING(10),
+    //  WAITING(20),
+
     RUNNING(30),
-    KILLING(40),
+
+    // KILLING(40),
     KILLED(50),
     FAILED(60),
     SUCCEEDED(70);
 
-
-    /* 一定会被初始化的 */
-    int value;
+    private int value;
 
     State(int value) {
         this.value = value;
@@ -21,7 +25,6 @@ public enum State {
     public int value() {
         return value;
     }
-
 
     public boolean isFinished() {
         return this == KILLED || this == FAILED || this == SUCCEEDED;

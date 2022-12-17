@@ -41,11 +41,11 @@ public class BusinessController {
     private String serverPort;
 
     /**
-     * @param json datax的json配置
-     * @param jobIdStr datax体系的jobid
-     * @param mode datax体系的mode 如果用户想要分布式调度使用增加的distribute
-     * @param masterNodeHost 该node接收其它node调度来的task group时使用 普通用户无需理会
-     * @param masterNodePort 该node接收其它node调度来的task group时使用 普通用户无需理会
+     * @param json                          datax的json配置
+     * @param jobIdStr                      datax体系的jobid
+     * @param mode                          datax体系的mode 如果用户想要分布式调度使用增加的distribute
+     * @param masterNodeHost                该node接收其它node调度来的task group时使用 普通用户无需理会
+     * @param masterNodePort                该node接收其它node调度来的task group时使用 普通用户无需理会
      * @param masterNodeNettyHttpServerPort 该node接收其它node调度来的task group时使用 普通用户无需理会
      * @throws Exception
      */
@@ -69,6 +69,8 @@ public class BusinessController {
         ProcessBuilder processBuilder = new ProcessBuilder(commandList);
         Map<String, String> envs = processBuilder.environment();
 
+        envs.put(Constant.ENV_PARAM.localNodeHost, serverAddress);
+        envs.put(Constant.ENV_PARAM.localNodePort, serverPort);
         switch (mode) {
             case taskGroup:
                 envs.put(Constant.ENV_PARAM.masterNodeHost, masterNodeHost);

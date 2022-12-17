@@ -2,11 +2,13 @@ package com.alibaba.datax.core.statistics.communication;
 
 import com.alibaba.datax.common.base.BaseObject;
 import com.alibaba.datax.common.constant.State;
+import com.alibaba.datax.core.util.Global;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,7 +20,21 @@ import java.util.concurrent.ConcurrentHashMap;
 @Data
 public class Communication extends BaseObject implements Cloneable {
 
+    /**
+     * 隶属对应的task group,如果是task group的communication的话
+     */
     public int taskGroupId;
+
+    /**
+     * 在哪个node上运行的
+     */
+    public String nodeHost = Global.localNodeHost;
+    public String nodePort = Global.localNodePort;
+
+    /**
+     * 记录各个的用来汇总的task group的communication情况
+     */
+    public Map<State, List<String>> taskGroupState_taskGroupNodeHostList = new HashMap<>();
 
     /**
      * 所有的数值key-value对
@@ -160,9 +176,12 @@ public class Communication extends BaseObject implements Cloneable {
         return communication;
     }
 
-    public synchronized Communication mergeFrom(Communication otherComm) {
+    /**
+     * 合并后的整个的更新时间其实的话用不着管,this便是最新的底
+     */
+    public synchronized void mergeFrom(Communication otherComm) {
         if (otherComm == null) {
-            return this;
+            return;
         }
 
         // counter的合并，将otherComm的值累加到this中，不存在的则创建同为long
@@ -173,7 +192,7 @@ public class Communication extends BaseObject implements Cloneable {
                 continue;
             }
 
-            Number value = this.key_number.get(key);
+            Number value = key_number.get(key);
             if (value == null) {
                 value = otherValue;
             } else {
@@ -202,7 +221,6 @@ public class Communication extends BaseObject implements Cloneable {
 
         throwable = throwable == null ? otherComm.getThrowable() : throwable;
 
-
         // message的合并采取求并的方式即全部累计在一起
         for (Entry<String, List<String>> entry : otherComm.getId_messageList().entrySet()) {
             String key = entry.getKey();
@@ -210,7 +228,6 @@ public class Communication extends BaseObject implements Cloneable {
             valueList.addAll(entry.getValue());
         }
 
-        return this;
     }
 
     /**
@@ -223,10 +240,8 @@ public class Communication extends BaseObject implements Cloneable {
             return retState;
         }
 
-        if (state == State.FAILED ||
-                otherComm.getState() == State.FAILED ||
-                state == State.KILLED ||
-                otherComm.getState() == State.KILLED) {
+        if (state == State.FAILED || otherComm.getState() == State.FAILED ||
+                state == State.KILLED || otherComm.getState() == State.KILLED) {
             retState = State.FAILED;
         } else if (state.isRunning() || otherComm.state.isRunning()) {
             retState = State.RUNNING;
@@ -238,9 +253,10 @@ public class Communication extends BaseObject implements Cloneable {
     }
 
     public synchronized boolean isFinished() {
-        return state == State.SUCCEEDED ||
-                state == State.FAILED ||
-                state == State.KILLED;
+        return state.isFinished();
     }
 
+    public synchronized boolean isRunning() {
+        return state.isRunning();
+    }
 }

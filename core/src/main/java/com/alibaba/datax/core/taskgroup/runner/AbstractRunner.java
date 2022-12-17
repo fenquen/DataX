@@ -55,6 +55,7 @@ public abstract class AbstractRunner {
     }
 
     private void mark(State state) {
+        communication.setTimestamp(System.currentTimeMillis());
         communication.setState(state);
 
         if (state == State.SUCCEEDED) {
@@ -74,7 +75,6 @@ public abstract class AbstractRunner {
 
     public void markFail(final Throwable throwable) {
         mark(State.FAILED);
-        communication.setTimestamp(System.currentTimeMillis());
         communication.setThrowable(throwable);
     }
 

@@ -99,8 +99,8 @@ public abstract class Channel {
     }
 
     public void setCommunication(Communication communication) {
-        this.currentCommunication = communication;
-        this.lastCommunication.reset();
+        currentCommunication = communication;
+        lastCommunication.reset();
     }
 
     public void push(final Record r) {

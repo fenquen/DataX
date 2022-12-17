@@ -13,6 +13,7 @@ import com.alibaba.datax.core.util.ErrorRecordChecker;
 import com.alibaba.datax.core.util.FrameworkErrorCode;
 import com.alibaba.datax.core.util.container.CoreConstant;
 import com.alibaba.datax.common.constant.State;
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,7 @@ public abstract class AbstractTaskGroupScheduler {
         long lastReportTimeStamp = System.currentTimeMillis();
 
         try {
+            a:
             while (true) {
                 // 是distribute要点 如何收集在远端调用的task group的状态
                 Communication mergedAllTgComm = jobContainerCommunicator.collect(); // collect的是 task group的
@@ -81,15 +83,23 @@ public abstract class AbstractTaskGroupScheduler {
 
                 errorLimit.checkRecordLimit(mergedAllTgComm);
 
-                if (mergedAllTgComm.getState() == State.SUCCEEDED) {
-                    LOG.info("accomplished all task group.");
-                    break;
+                if (isJobKilling(jobId)) {
+                    executorService.shutdownNow();
+                    throw DataXException.build(FrameworkErrorCode.KILLED_EXIT_VALUE);
                 }
 
-                if (isJobKilling(jobId)) {
-                    dealKillingStat(jobContainerCommunicator, totalTasks);
-                } else if (mergedAllTgComm.getState() == State.FAILED) {
-                    dealFailedStat(jobContainerCommunicator, mergedAllTgComm.getThrowable());
+                switch (mergedAllTgComm.getState()) {
+                    case SUCCEEDED:
+                        LOG.info("accomplished all task group.");
+                        break a;
+                    case TASK_GROUP_TIME_OUT:
+                        executorService.shutdown();
+                        List<String> timeoutTaskGroupNodeHostList = mergedAllTgComm.taskGroupState_taskGroupNodeHostList.get(State.TASK_GROUP_TIME_OUT);
+                        String str = JSON.toJSONString(timeoutTaskGroupNodeHostList);
+                        throw DataXException.build(String.format("node:%s上的task group上报的communication长时间未更新", str));
+                    case FAILED:
+                        executorService.shutdownNow();
+                        throw DataXException.build(FrameworkErrorCode.PLUGIN_RUNTIME_ERROR, mergedAllTgComm.getThrowable());
                 }
 
                 Thread.sleep(jobSleepIntervalMs);

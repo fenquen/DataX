@@ -24,7 +24,7 @@ public class Reporter {
         switch (Global.mode) {
             case local:
             case standalone:
-            case distribute: // distribute
+            case distribute: // 说明当前是主node
                 LocalTGCommunicationManager.update(taskGroupId, communication);
                 break;
             case taskGroup: // 需要上报

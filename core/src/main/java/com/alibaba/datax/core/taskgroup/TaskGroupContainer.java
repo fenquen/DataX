@@ -249,7 +249,6 @@ public class TaskGroupContainer extends AbstractContainer {
                     for (TaskExecutor taskExecutor : runningTaskExecutorList) {
                         taskMonitor.report(taskExecutor.taskId, abstractContainerCommunicator.getCommunication(taskExecutor.taskId));
                     }
-
                 }
 
                 Thread.sleep(sleepIntervalInMillSec);
@@ -266,8 +265,7 @@ public class TaskGroupContainer extends AbstractContainer {
             nowTaskGroupContainerCommunication.setState(State.FAILED);
             abstractContainerCommunicator.report(nowTaskGroupContainerCommunication);
 
-            throw DataXException.build(
-                    FrameworkErrorCode.RUNTIME_ERROR, e);
+            throw DataXException.build(FrameworkErrorCode.RUNTIME_ERROR, e);
         } finally {
             if (!PerfTrace.getInstance().isJob()) {
                 //最后打印cpu的平均消耗，GC的统计
@@ -281,6 +279,16 @@ public class TaskGroupContainer extends AbstractContainer {
             }
         }
     }
+
+    private Communication reportTaskGroupComm(Communication mergedAllTaskCommOld, int taskCount) {
+        Communication mergedAllTaskCommNew = abstractContainerCommunicator.collect();
+        mergedAllTaskCommNew.setTimestamp(System.currentTimeMillis());
+        Communication reportCommunication = CommunicationTool.getReportComm(mergedAllTaskCommNew, mergedAllTaskCommOld, taskCount);
+        // 更新到了 taskGroupId_communication
+        abstractContainerCommunicator.report(reportCommunication);
+        return reportCommunication;
+    }
+
 
     private Map<Integer, Configuration> buildTaskConfigMap(List<Configuration> contentConfigList) {
         Map<Integer, Configuration> taskId_ContentConfig = new HashMap<>();
@@ -314,15 +322,6 @@ public class TaskGroupContainer extends AbstractContainer {
             }
         }
         return true;
-    }
-
-    private Communication reportTaskGroupComm(Communication mergedAllTaskCommOld, int taskCount) {
-        Communication mergedAllTaskCommNew = abstractContainerCommunicator.collect();
-        mergedAllTaskCommNew.setTimestamp(System.currentTimeMillis());
-        Communication reportCommunication = CommunicationTool.getReportComm(mergedAllTaskCommNew, mergedAllTaskCommOld, taskCount);
-        // 更新到了 taskGroupId_communication
-        abstractContainerCommunicator.report(reportCommunication);
-        return reportCommunication;
     }
 
     private void markCommunicationFailed(Integer taskId) {

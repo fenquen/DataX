@@ -22,6 +22,10 @@ public class Constant {
         String masterNodePort = "masterNodePort";
 
         String masterNodeNettyHttpServerPort = "nettyHttpServerPort";
+
+
+        String localNodeHost = "localNodeHost";
+        String localNodePort = "localNodePort";
     }
 
     public static final int INVALID_ID = -1;

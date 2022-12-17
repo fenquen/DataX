@@ -12,6 +12,9 @@ public class Global {
 
     public static List<DispatcherInfo> nodeList;
 
+    public static String localNodeHost = System.getenv(Constant.ENV_PARAM.localNodeHost);
+    public static String localNodePort = System.getenv(Constant.ENV_PARAM.localNodePort);
+
     public static String masterNodeHost = System.getenv(Constant.ENV_PARAM.masterNodeHost);
     public static String masterNodePort = System.getenv(Constant.ENV_PARAM.masterNodePort);
 
@@ -21,4 +24,5 @@ public class Global {
     public static final DispatcherInfo masterNode = new DispatcherInfo(masterNodeHost, masterNodePort);
 
     public static Thread nettyThread;
+
 }
