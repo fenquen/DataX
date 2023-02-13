@@ -8,11 +8,16 @@ import com.alibaba.datax.plugin.rdbms.util.DBUtilErrorCode;
 import com.alibaba.datax.plugin.rdbms.util.DataBaseType;
 import com.alibaba.datax.plugin.rdbms.writer.CommonRdbmsWriter;
 import com.alibaba.datax.plugin.rdbms.writer.Key;
+import com.ibm.db2.jcc.t4.e;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -99,12 +104,13 @@ public class RdbmsWriter extends Writer {
 
     public static void main(String[] args) throws Exception {
 
-      System.out.println( new String("浣滀笟閮ㄤ綅".getBytes("gb2312"),"utf-8"));
-        // Class.forName("com.ibm.db2.jcc.DB2Driver");
-        Class.forName("com.mysql.cj.jdbc.Driver");
+        //System.out.println(new String("浣滀笟閮ㄤ綅".getBytes("gbk"), "utf-8"));
+
+        System.out.println(getEncoding("浣滀笟閮ㄤ綅"));
+
+      /*  Class.forName("com.mysql.cj.jdbc.Driver"); // com.ibm.db2.jcc.DB2Driver
 
         // DriverManager.getConnection("jdbc:db2://10.88.36.79:50000/testdb:currentSchema=T1;", "DB2INST1", "123456");
-
 
         for (int d = 0; d < 70; d++) {
             int d0 = d;
@@ -131,9 +137,44 @@ public class RdbmsWriter extends Writer {
                 }
                 System.out.println(d0);
             }).start();
-        }
+        }*/
 
     }
+
+    public static String getEncoding(String str) {
+        List<String> matchEncodingList = new ArrayList<>();
+
+        for (String encoding : Arrays.asList("ISO-8859-1", "GBK")) {
+
+            Charset cs;
+            try {
+                cs = Charset.forName(encoding);
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
+
+            if (cs.canEncode() && cs.newEncoder().canEncode(str)) {
+                matchEncodingList.add(encoding);
+            }
+/*
+            try {
+                if (str.equals(new String(str.getBytes(encoding), encoding))) {
+                    matchEncodingList.add(encoding);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
+        }
+
+        if (CollectionUtils.isNotEmpty(matchEncodingList)) {
+            return matchEncodingList.get(0);
+        }
+
+        return "UTF-8";
+
+    }
+
 
     public static String getRandomString2(int length) {
         Random random = new Random(System.currentTimeMillis());

@@ -1,0 +1,2070 @@
+<project version="4">
+  <component name="BookmarksManager">
+    <option name="groups">
+      <GroupState>
+        <option name="bookmarks">
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="474" />
+            </attributes>
+            <option name="description" value="AbstractTaskGroupScheduler abstractScheduler;" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/TaskGroupContainer.java" />
+              <entry key="line" value="72" />
+            </attributes>
+            <option name="description" value="abstractContainerCommunicator = new LocalTGContainerCommunicator(configuration);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/reporter/Reporter.java" />
+              <entry key="line" value="21" />
+            </attributes>
+            <option name="description" value="reportTGCommunication()" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+        </option>
+        <option name="name" value="分布式修改" />
+      </GroupState>
+      <GroupState>
+        <option name="bookmarks">
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/TaskGroupContainer.java" />
+              <entry key="line" value="378" />
+            </attributes>
+            <option name="description" value="task上的communication真正使用" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/AbstractRunner.java" />
+              <entry key="line" value="62" />
+            </attributes>
+            <option name="description" value="communication.setLongCounter(CommunicationTool.STAGE, communication.getLongCounter(CommunicationTool.STAGE) + 1);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/communication/CommunicationTool.java" />
+              <entry key="line" value="78" />
+            </attributes>
+            <option name="description" value="newComm.setDoubleCounter(PERCENTAGE, newComm.getLongCounter(STAGE) / (double) totalStage);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="598" />
+            </attributes>
+            <option name="description" value="不管在原始的content写了多少个只认首个" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/util/DBUtil.java" />
+              <entry key="line" value="76" />
+            </attributes>
+            <option name="description" value="jdbcurl list是用来candidate 其实只用1个的的" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/reader/util/OriginalConfPretreatmentUtil.java" />
+              <entry key="line" value="51" />
+            </attributes>
+            <option name="description" value="boolean isTableMode = recognizeTableOrQuerySqlMode(originalConfig);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/reader/util/OriginalConfPretreatmentUtil.java" />
+              <entry key="line" value="65" />
+            </attributes>
+            <option name="description" value="List&lt;Object&gt; conns = originalConfig.getList(Constant.CONN_MARK, Object.class);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/drdsreader/src/main/java/com/alibaba/datax/plugin/reader/drdsreader/DrdsReaderSplitUtil.java" />
+              <entry key="line" value="31" />
+            </attributes>
+            <option name="description" value="// 注意：这里的 jdbcUrl 不是数组中，因为之前的 master init 方法已经进行过预处理" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/Engine.java" />
+              <entry key="line" value="136" />
+            </attributes>
+            <option name="description" value="-读取命令的mode得到RUNTIME_MODE" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/Engine.java" />
+              <entry key="line" value="153" />
+            </attributes>
+            <option name="description" value="-configuration = ConfigParser.parse(jobPath)" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/ConfigParser.java" />
+              <entry key="line" value="54" />
+            </attributes>
+            <option name="description" value="--configuration.merge()" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/Engine.java" />
+              <entry key="line" value="184" />
+            </attributes>
+            <option name="description" value="-engine().start(configuration)" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/Engine.java" />
+              <entry key="line" value="93" />
+            </attributes>
+            <option name="description" value="--abstractContainer.start()" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="110" />
+            </attributes>
+            <option name="description" value="---preHandle();" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="119" />
+            </attributes>
+            <option name="description" value="---splitCount = split();" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="377" />
+            </attributes>
+            <option name="description" value="----doReaderSplit(needChannelNumber)" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="371" />
+            </attributes>
+            <option name="description" value="----adjustChannelNumber();" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="113" />
+            </attributes>
+            <option name="description" value="---init()" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="298" />
+            </attributes>
+            <option name="description" value="----initJobReader(jobPluginCollector)" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="299" />
+            </attributes>
+            <option name="description" value="----initJobWriter(jobPluginCollector)" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="122" />
+            </attributes>
+            <option name="description" value="---schedule();" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="506" />
+            </attributes>
+            <option name="description" value="----abstractTaskGroupScheduler.schedule(taskGroupConfigList);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="461" />
+            </attributes>
+            <option name="description" value="----needChannelNumber = Math.min(needChannelNumber, contentElementConfNumber);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="468" />
+            </attributes>
+            <option name="description" value="----taskGroupConfigList = JobAssignUtil.assignFairly()" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/container/util/JobAssignUtil.java" />
+              <entry key="line" value="28" />
+            </attributes>
+            <option name="description" value="-----taskGroupNumber = (int) Math.ceil(1.0 * channelNumber / channelCountPerTaskGroup);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/container/util/JobAssignUtil.java" />
+              <entry key="line" value="53" />
+            </attributes>
+            <option name="description" value="-----split得到的对个content的{}元素再分到多个task group" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/scheduler/AbstractTaskGroupScheduler.java" />
+              <entry key="line" value="59" />
+            </attributes>
+            <option name="description" value="-----startAllTaskGroup(taskGroupConfigList);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/TaskGroupContainerRunner.java" />
+              <entry key="line" value="22" />
+            </attributes>
+            <option name="description" value="-------taskGroupContainer.start();" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/TaskGroupContainer.java" />
+              <entry key="line" value="214" />
+            </attributes>
+            <option name="description" value="--------taskExecutor = new TaskExecutor(contentElemConf, attemptCount);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/TaskGroupContainer.java" />
+              <entry key="line" value="384" />
+            </attributes>
+            <option name="description" value="---------writerRunner = (WriterRunner) generateRunner(PluginType.WRITER);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/TaskGroupContainer.java" />
+              <entry key="line" value="390" />
+            </attributes>
+            <option name="description" value="---------readerRunner = (ReaderRunner) generateRunner(PluginType.READER, transformerInfoExecs);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/TaskGroupContainer.java" />
+              <entry key="line" value="216" />
+            </attributes>
+            <option name="description" value="--------taskExecutor.doStart()" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+              <entry key="line" value="676" />
+            </attributes>
+            <option name="description" value="writer也要和reader的split数量相同" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/reader/util/SingleTableSplitUtil.java" />
+              <entry key="line" value="66" />
+            </attributes>
+            <option name="description" value="对string进行切分的应对的" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/reader/util/ReaderSplitUtil.java" />
+              <entry key="line" value="79" />
+            </attributes>
+            <option name="description" value="List&lt;Configuration&gt; splittedSlices = SingleTableSplitUtil.splitSingleTable(readerConfigCopyCopy, eachTableSplittedNumber);" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/container/CoreConstant.java" />
+              <entry key="line" value="104" />
+            </attributes>
+            <option name="description" value="public static final String DATAX_JOB_SETTING_SPEED_BYTE = &quot;job.setting.speed.byte&quot;;" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/writer/CommonRdbmsWriter.java" />
+              <entry key="line" value="300" />
+            </attributes>
+            <option name="description" value="public void startWrite(RecordReceiver recordReceiver," />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/postgresqlwriter/src/main/java/com/alibaba/datax/plugin/writer/postgresqlwriter/PostgresqlWriter.java" />
+              <entry key="line" value="86" />
+            </attributes>
+            <option name="description" value="commonRdbmsWriterSlave.startWrite(recordReceiver, this.writerSliceConfig, super.getTaskPluginCollector());" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+          <BookmarkState>
+            <attributes>
+              <entry key="url" value="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/ReaderRunner.java" />
+              <entry key="line" value="44" />
+            </attributes>
+            <option name="description" value="taskReader.init();" />
+            <option name="provider" value="com.intellij.ide.bookmark.providers.LineBookmarkProvider" />
+          </BookmarkState>
+        </option>
+        <option name="name" value="DataX" />
+      </GroupState>
+      <GroupState>
+        <option name="name" value="a" />
+      </GroupState>
+    </option>
+  </component>
+  <component name="CoverageViewManager">
+    <option name="myColumnSize">
+      <list>
+        <option value="105" />
+        <option value="110" />
+        <option value="123" />
+        <option value="270" />
+      </list>
+    </option>
+  </component>
+  <component name="DatabaseView">
+    <expand />
+    <select />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="-1">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/communication/Communication.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="30" column="34" selection-start-line="30" selection-start-column="34" selection-end-line="30" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://$USER_HOME$/program/azul/src.zip!/java/lang/Throwable.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2902">
+              <caret line="376" column="18" selection-start-line="376" selection-start-column="18" selection-end-line="376" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/drdsreader/src/main/java/com/alibaba/datax/plugin/reader/drdsreader/DrdsReaderSplitUtil.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="31" selection-start-line="31" selection-end-line="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="365">
+              <caret line="479" column="63" selection-start-line="479" selection-start-column="63" selection-end-line="479" selection-end-column="63" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/plugin/Pluginable.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="11" column="9" selection-start-line="11" selection-start-column="9" selection-end-line="11" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/container/LoadUtil.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="416">
+              <caret line="116" column="30" selection-start-line="116" selection-start-column="30" selection-end-line="116" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/util/Configuration.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="297">
+              <caret line="191" column="25" selection-start-line="191" selection-start-column="25" selection-end-line="191" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://$USER_HOME$/program/azul/src.zip!/java/lang/ClassLoader.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="297">
+              <caret line="350" column="20" selection-start-line="350" selection-start-column="20" selection-end-line="350" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/constant/PluginType.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="9" column="4" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/container/JarLoader.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="357">
+              <caret line="31" column="33" selection-start-line="31" selection-start-column="33" selection-end-line="31" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/container/ClassLoaderSwapper.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="408">
+              <caret line="24" column="32" selection-start-line="24" selection-start-column="32" selection-end-line="24" selection-end-column="32" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/spi/Writer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="31" column="29" selection-start-line="31" selection-start-column="29" selection-end-line="31" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/WriterRunner.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="416">
+              <caret line="54" column="19" selection-start-line="54" selection-start-column="19" selection-end-line="54" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/statistics/PerfRecord.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="297">
+              <caret line="102" column="16" selection-start-line="102" selection-start-column="16" selection-end-line="102" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/AbstractRunner.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="21" column="11" selection-start-line="21" selection-start-column="11" selection-end-line="21" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/ReaderRunner.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="314">
+              <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rdbmswriter/src/main/java/com/alibaba/datax/plugin/reader/rdbmswriter/RdbmsWriter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="36" column="20" selection-start-line="36" selection-start-column="20" selection-end-line="36" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/writer/CommonRdbmsWriter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="26" column="13" selection-start-line="26" selection-start-column="13" selection-end-line="26" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rdbmsreader/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-816" />
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/writer/util/WriterUtil.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="23" column="38" selection-start-line="23" selection-start-column="38" selection-end-line="23" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/container/util/JobAssignUtil.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="799">
+              <caret line="53" column="64" selection-start-line="53" selection-start-column="64" selection-end-line="53" selection-end-column="64" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rdbmsreader/src/main/resources/plugin.json">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/scheduler/AbstractTaskGroupScheduler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="570">
+              <caret line="141" column="30" selection-start-line="141" selection-start-column="30" selection-end-line="141" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/TaskGroupContainerRunner.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="22" column="33" selection-start-line="22" selection-start-column="33" selection-end-line="22" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/TaskGroupContainer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="263">
+              <caret line="424" column="53" selection-start-line="424" selection-start-column="53" selection-end-line="424" selection-end-column="53" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dispatcher/json/70.json">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/learn/datax.sh">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/readme.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SHOW_EDITOR" is_vertical_split="false">
+              <first_editor relative-caret-position="136">
+                <caret line="8" column="20" selection-start-line="8" selection-start-column="20" selection-end-line="8" selection-end-column="20" />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/scheduler/LocalTaskGroupScheduler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="22" column="16" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/scheduler/DistributeTaskGroupScheduler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1122">
+              <caret line="84" column="15" selection-start-line="84" selection-start-column="15" selection-end-line="84" selection-end-column="15" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/Engine.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="340">
+              <caret line="47" column="56" selection-start-line="47" selection-start-column="56" selection-end-line="47" selection-end-column="56" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/container/CoreConstant.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="859">
+              <caret line="78" column="31" selection-start-line="78" selection-start-column="31" selection-end-line="78" selection-end-column="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/ClassUtil.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/ClassSize.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/HttpUtil.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/Global.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="8" column="19" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/constant/Constant.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="15" selection-start-line="5" selection-start-column="15" selection-end-line="5" selection-end-column="15" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/NettyServer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1173">
+              <caret line="90" column="41" selection-start-line="90" selection-start-column="41" selection-end-line="90" selection-end-column="41" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dispatcher/src/main/java/com/fenquen/datax/distribute/dispatcher/Global.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dispatcher/src/main/java/com/fenquen/datax/distribute/dispatcher/LifeCycle.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1207">
+              <caret line="82" column="24" selection-start-line="82" selection-start-column="24" selection-end-line="82" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dispatcher/src/main/java/com/fenquen/datax/distribute/dispatcher/BusinessController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="816">
+              <caret line="69" column="11" selection-start-line="69" selection-start-column="11" selection-end-line="69" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/learn/db2_mysql.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="834">
+              <caret line="51" column="24" selection-start-line="51" selection-start-column="24" selection-end-line="51" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/learn/record.txt">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/learn/原始的config.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1122">
+              <caret line="66" column="24" selection-start-line="66" selection-start-column="24" selection-end-line="66" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rdbmsreader/doc/rdbmsreader.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SHOW_PREVIEW" is_vertical_split="false">
+              <first_editor />
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rdbmsreader/src/main/java/com/alibaba/datax/plugin/reader/rdbmsreader/RdbmsReader.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="13" column="35" selection-start-line="13" selection-start-column="35" selection-end-line="13" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/spi/Reader.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="13" column="26" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/plugin/AbstractPlugin.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="366">
+              <caret line="75" column="16" selection-start-line="75" selection-start-column="16" selection-end-line="75" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/plugin/JobPluginCollector.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/plugin/AbstractJobPlugin.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="22" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/spi/Hook.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/learn/切分后的以taskGroup为单元的对应各个taskGroup的config.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-391">
+              <caret line="64" column="7" selection-start-line="64" selection-start-column="7" selection-end-line="64" selection-end-column="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/transport/exchanger/BufferedRecordExchanger.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2125">
+              <caret line="140" column="16" selection-start-line="140" selection-start-column="16" selection-end-line="140" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/transport/channel/Channel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/transport/channel/memory/MemoryChannel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dispatcher/src/main/resources/application.properties">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/container/AbstractContainer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/util/ExecuteMode.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTypeUsageLocalSummary">
+    <fileType name="AUTO_DETECTED">
+      <summary usageCount="2" lastUsed="1669681047359" />
+    </fileType>
+    <fileType name="CLASS">
+      <summary usageCount="46" lastUsed="1670381390455" />
+    </fileType>
+    <fileType name="Database Element">
+      <summary usageCount="1" lastUsed="1669010555348" />
+    </fileType>
+    <fileType name="GitIgnore file">
+      <summary usageCount="8" lastUsed="1670199066939" />
+    </fileType>
+    <fileType name="Image">
+      <summary usageCount="1" lastUsed="1669855767021" />
+    </fileType>
+    <fileType name="JAVA">
+      <summary usageCount="1936" lastUsed="1675755668869" />
+    </fileType>
+    <fileType name="JSON">
+      <summary usageCount="100" lastUsed="1675738510236" />
+    </fileType>
+    <fileType name="Markdown">
+      <summary usageCount="55" lastUsed="1675738510233" />
+    </fileType>
+    <fileType name="PLAIN_TEXT">
+      <summary usageCount="17" lastUsed="1675738510223" />
+    </fileType>
+    <fileType name="Properties">
+      <summary usageCount="30" lastUsed="1675738510253" />
+    </fileType>
+    <fileType name="SQL">
+      <summary usageCount="6" lastUsed="1669016936304" />
+    </fileType>
+    <fileType name="Shell Script">
+      <summary usageCount="23" lastUsed="1675738510158" />
+    </fileType>
+    <fileType name="XML">
+      <summary usageCount="74" lastUsed="1675755268769" />
+    </fileType>
+    <fileType name="textmate">
+      <summary usageCount="19" lastUsed="1670647985737" />
+    </fileType>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>buildStartCommand</find>
+      <find>DEFAULT_JVM</find>
+      <find>ENGINE_COMMAND</find>
+      <find>mode</find>
+      <find>jobid</find>
+      <find>db2</find>
+      <find>speed</find>
+      <find>在有总bps限速条件下</find>
+      <find>fetchSize</find>
+      <find>370</find>
+      <find>core.json</find>
+      <find>contentConfigList</find>
+      <find>entry</find>
+      <find>jvm</find>
+      <find>请联系您的运维解决</find>
+      <find>this.</find>
+      <find>setPluginConf</find>
+      <find>All Task WaitReaderTime</find>
+      <find>All Task WaitWriterTime</find>
+      <find>batchsize</find>
+      <find>7001</find>
+      <find>collections4</find>
+      <find>jdbcUrl</find>
+      <find>Running by</find>
+      <find>datax.home</find>
+      <find>/netty_http/report_task_group_communication</find>
+      <find>PerfTrace not enable!</find>
+      <find>write runner mark success</find>
+      <find>byMillionSecond</find>
+      <find>parent</find>
+    </findStrings>
+    <dirStrings>
+      <dir>$PROJECT_DIR$</dir>
+      <dir>$PROJECT_DIR$/postgresqlwriter/src/main/java/com/alibaba/datax/plugin/writer/postgresqlwriter</dir>
+      <dir>$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/reader/util</dir>
+      <dir>$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/transport/channel/memory</dir>
+      <dir>$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/container</dir>
+      <dir>$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/writer</dir>
+      <dir>$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/scheduler/processinner</dir>
+      <dir>$PROJECT_DIR$/dispatcher</dir>
+      <dir>$PROJECT_DIR$/learn</dir>
+      <dir>$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core</dir>
+      <dir>$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup</dir>
+    </dirStrings>
+  </component>
+  <component name="GitSEFilterConfiguration">{
+}</component>
+  <component name="IdeDocumentHistory">
+    <changedPaths>
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/collector/AbstractCollector.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/communicator/AbstractContainerCommunicator.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/collector/Collector.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/communicator/JobContainerCommunicator.java" />
+      <option value="$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/distribute/AjaxResponse.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/TaskMonitor.java" />
+      <option value="$PROJECT_DIR$/core/src/main/conf/core.json" />
+      <option value="$PROJECT_DIR$/.gitignore" />
+      <option value="$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/distribute/DispatcherInfo.java" />
+      <option value="$PROJECT_DIR$/ftpreader/src/main/java/com/alibaba/datax/plugin/reader/ftpreader/Constant.java" />
+      <option value="$PROJECT_DIR$/ftpreader/src/main/java/com/alibaba/datax/plugin/reader/ftpreader/FtpReader.java" />
+      <option value="$PROJECT_DIR$/ftpreader/doc/ftpreader.md" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/scheduler/LocalTaskGroupScheduler.java" />
+      <option value="$PROJECT_DIR$/plugin-unstructured-storage-util/src/main/java/com/alibaba/datax/plugin/unstructuredstorage/reader/UnstructuredStorageReaderUtil.java" />
+      <option value="$PROJECT_DIR$/ftpreader/src/main/java/com/alibaba/datax/plugin/reader/ftpreader/StandardFtpHelper.java" />
+      <option value="$PROJECT_DIR$/ftpreader/src/main/java/com/alibaba/datax/plugin/reader/ftpreader/FtpHelper.java" />
+      <option value="$PROJECT_DIR$/learn/datax.sh" />
+      <option value="$PROJECT_DIR$/pom.xml" />
+      <option value="$PROJECT_DIR$/dispatcher/src/main/java/com/fenquen/datax/distribute/dispatcher/Global.java" />
+      <option value="$PROJECT_DIR$/dispatcher/src/main/java/com/fenquen/datax/distribute/dispatcher/Main.java" />
+      <option value="$PROJECT_DIR$/dispatcher/src/main/java/com/fenquen/datax/distribute/dispatcher/LifeCycle.java" />
+      <option value="$PROJECT_DIR$/learn/mysql_txt.json" />
+      <option value="$PROJECT_DIR$/target/datax/datax/conf/logback.xml" />
+      <option value="$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/reader/Constant.java" />
+      <option value="$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/reader/CommonRdbmsReader.java" />
+      <option value="$PROJECT_DIR$/rdbmsreader/src/main/java/com/alibaba/datax/plugin/reader/rdbmsreader/RdbmsReader.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/Engine.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/scheduler/DistributeTaskGroupScheduler.java" />
+      <option value="$PROJECT_DIR$/dispatcher/src/main/java/com/fenquen/datax/distribute/dispatcher/DispatcherException.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/WriterRunner.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/NettyServer.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/communication/CommunicationTool.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/container/CoreConstant.java" />
+      <option value="$PROJECT_DIR$/dispatcher/src/main/resources/application.properties" />
+      <option value="$PROJECT_DIR$/readme.md" />
+      <option value="$USER_HOME$/repository/org/springframework/boot/spring-boot-starter-web/2.5.12/spring-boot-starter-web-2.5.12.pom" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/AbstractRunner.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/reporter/Reporter.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/transport/channel/Channel.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/communicator/TGContainerCommunicator.java" />
+      <option value="$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/constant/Constant.java" />
+      <option value="$PROJECT_DIR$/dispatcher/src/main/java/com/fenquen/datax/distribute/dispatcher/BusinessController.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/TaskGroupContainer.java" />
+      <option value="$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/constant/State.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/communication/LocalTGCommunicationManager.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/scheduler/AbstractTaskGroupScheduler.java" />
+      <option value="$PROJECT_DIR$/rdbmswriter/src/main/java/com/alibaba/datax/plugin/reader/rdbmswriter/RdbmsWriter.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/Global.java" />
+      <option value="$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/statistics/communication/Communication.java" />
+      <option value="$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/exception/DataXException.java" />
+    </changedPaths>
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="$PROJECT_DIR$/.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="LanguageUsageStatistics">
+    <language id="GitIgnore">
+      <summary usageCount="8" lastUsage="1670199066939" />
+    </language>
+    <language id="JAVA">
+      <summary usageCount="1936" lastUsage="1675755668869" />
+    </language>
+    <language id="JSON">
+      <summary usageCount="100" lastUsage="1675738510236" />
+    </language>
+    <language id="Markdown">
+      <summary usageCount="55" lastUsage="1675738510233" />
+    </language>
+    <language id="Properties">
+      <summary usageCount="30" lastUsage="1675738510253" />
+    </language>
+    <language id="SQL">
+      <summary usageCount="6" lastUsage="1669016936304" />
+    </language>
+    <language id="Shell Script">
+      <summary usageCount="23" lastUsage="1675738510158" />
+    </language>
+    <language id="TEXT">
+      <summary usageCount="17" lastUsage="1675738510223" />
+    </language>
+    <language id="XML">
+      <summary usageCount="74" lastUsage="1675755268769" />
+    </language>
+    <language id="textmate">
+      <summary usageCount="19" lastUsage="1670647985737" />
+    </language>
+  </component>
+  <component name="MavenProjectNavigator">
+    <option name="groupStructurally" value="true" />
+    <treeState>
+      <expand />
+      <select />
+    </treeState>
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1" />
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="plugin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="spi" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="spi" type="462c0819:PsiDirectoryNode" />
+              <item name="Reader" type="1a9f42e2:ClassTreeNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="common" type="462c0819:PsiDirectoryNode" />
+              <item name="statistics" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="job" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+              <item name="container" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="rdbmsreader" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="rdbmsreader" type="462c0819:PsiDirectoryNode" />
+              <item name="doc" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="rdbmsreader" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="rdbmsreader" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="rdbmsreader" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="assembly" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="rdbmsreader" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="rdbmsreader" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="rdbmsreader" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="rdbmsreader" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="DataX" type="b2602c69:ProjectViewProjectNode" />
+              <item name="DataX" type="462c0819:PsiDirectoryNode" />
+              <item name="rdbmsreader" type="462c0819:PsiDirectoryNode" />
+              <item name="target" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="RunConfigurationStartHistory">
+    <history>
+      <element setting="Application.RdbmsWriter" executorId="Debug" />
+      <element setting="Spring Boot.Main" executorId="Debug" />
+      <element setting="Application.Engine" executorId="Debug" />
+      <element setting="Application.RdbmsWriter" executorId="Run" />
+      <element setting="Spring Boot.Main" executorId="Coverage" />
+      <element setting="Spring Boot.Main" executorId="Run" />
+    </history>
+  </component>
+  <component name="TerminalArrangementManager">
+    <option name="myTabStates">
+      <TerminalTabState tabName="Local" currentWorkingDirectory="$PROJECT_DIR$" commandHistoryFileName="DataX-history" />
+    </option>
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="464074000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <editor active="true" />
+    <layout>
+      <window_info id="Commit" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27299786" />
+      <window_info id="Web" order="1" show_stripe_button="false" side_tool="true" />
+      <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
+      <window_info anchor="bottom" id="TypeScript" />
+      <window_info anchor="bottom" id="Internal Method Tracing" />
+      <window_info anchor="bottom" id="Version Control" order="0" weight="0.45915353" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" show_stripe_button="false" weight="0.39911416" />
+      <window_info anchor="bottom" id="Services" order="3" />
+      <window_info anchor="bottom" id="TODO" order="4" weight="0.33021653" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Terminal" order="6" weight="0.33021653" />
+      <window_info anchor="bottom" id="Build" order="7" weight="0.27017716" />
+      <window_info anchor="bottom" id="Problems View" order="8" show_stripe_button="false" weight="0.33021653" />
+      <window_info anchor="bottom" id="Debug" order="9" weight="0.33316928" />
+      <window_info anchor="bottom" id="Structure" order="10" show_stripe_button="false" weight="0.33021653" />
+      <window_info anchor="bottom" id="Statistic" order="11" weight="0.33021653" />
+      <window_info anchor="bottom" id="Dependencies" order="12" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Notifications" order="13" weight="0.22588582" />
+      <window_info anchor="bottom" id="Duplicates" order="14" weight="0.3636811" />
+      <window_info anchor="bottom" id="Database" order="15" weight="0.27214566" />
+      <window_info anchor="bottom" id="Java Enterprise" order="16" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Spring" order="17" />
+      <window_info anchor="bottom" id="Coverage" order="18" weight="0.32981604" />
+      <window_info anchor="bottom" id="Tool Output" order="19" />
+      <window_info anchor="bottom" id="Profiler" order="20" show_stripe_button="false" />
+      <window_info anchor="bottom" id="ANTLR Preview" order="21" />
+      <window_info anchor="right" id="documentation.v2" side_tool="true" />
+      <window_info anchor="right" id="Maven" order="0" weight="0.28652596" />
+      <window_info anchor="right" id="Bean Validation" order="1" show_stripe_button="false" />
+      <window_info anchor="right" id="Bookmarks" order="2" weight="0.3141234" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="Commit" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2470238" />
+      <window_info id="Web" order="1" show_stripe_button="false" side_tool="true" />
+      <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
+      <window_info anchor="bottom" id="TypeScript" />
+      <window_info anchor="bottom" id="Internal Method Tracing" />
+      <window_info anchor="bottom" id="Version Control" order="0" weight="0.45915353" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.39911416" />
+      <window_info anchor="bottom" id="Services" order="3" />
+      <window_info anchor="bottom" id="TODO" order="4" weight="0.33021653" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Terminal" order="6" weight="0.33021653" />
+      <window_info anchor="bottom" id="Build" order="7" weight="0.27017716" />
+      <window_info anchor="bottom" id="Problems View" order="8" show_stripe_button="false" weight="0.33021653" />
+      <window_info anchor="bottom" id="Debug" order="9" weight="0.33316928" />
+      <window_info anchor="bottom" id="Structure" order="10" show_stripe_button="false" weight="0.33021653" />
+      <window_info anchor="bottom" id="Statistic" order="11" weight="0.33021653" />
+      <window_info anchor="bottom" id="Dependencies" order="12" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Notifications" order="13" weight="0.22588582" />
+      <window_info anchor="bottom" id="Duplicates" order="14" weight="0.3636811" />
+      <window_info anchor="bottom" id="Database" order="15" weight="0.27214566" />
+      <window_info anchor="bottom" id="Java Enterprise" order="16" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Spring" order="17" />
+      <window_info anchor="bottom" id="Coverage" order="18" weight="0.32981604" />
+      <window_info anchor="bottom" id="Profiler" order="19" show_stripe_button="false" />
+      <window_info anchor="right" id="documentation.v2" side_tool="true" />
+      <window_info anchor="right" id="Maven" order="0" weight="0.28652596" />
+      <window_info anchor="right" id="Bean Validation" order="1" show_stripe_button="false" />
+      <window_info anchor="right" id="Bookmarks" order="2" weight="0.3141234" />
+    </layout-to-restore>
+    <recentWindows>
+      <value>Project</value>
+      <value>Bookmarks</value>
+      <value>Terminal</value>
+      <value>Debug</value>
+      <value>Version Control</value>
+      <value>Statistic</value>
+      <value>Notifications</value>
+      <value>Maven</value>
+      <value>Run</value>
+      <value>Database</value>
+      <value>Structure</value>
+      <value>Build</value>
+      <value>Coverage</value>
+      <value>TODO</value>
+      <value>Problems View</value>
+      <value>Duplicates</value>
+    </recentWindows>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="550" y="300" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1670579081655">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="550" y="300" key="#com.intellij.execution.impl.EditConfigurationsDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1670579081655" />
+    <state x="633" y="327" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1670199435673">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="633" y="327" key="#com.intellij.fileTypes.FileTypeChooser/72.27.1848.1053@72.27.1848.1053" timestamp="1670199435673" />
+    <state x="919" y="339" width="424" height="591" key="#com.intellij.ide.macro.MacrosDialog" timestamp="1669107673396">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="919" y="339" width="424" height="591" key="#com.intellij.ide.macro.MacrosDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1669107673396" />
+    <state x="793" y="247" width="396" height="634" key="#com.intellij.ide.util.MemberChooser" timestamp="1670376533659">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="793" y="247" width="396" height="634" key="#com.intellij.ide.util.MemberChooser/72.27.1848.1053@72.27.1848.1053" timestamp="1670376533659" />
+    <state x="596" y="235" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1669560609878">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="596" y="235" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1669560609878" />
+    <state x="756" y="390" key="#com.intellij.refactoring.move.moveInner.MoveInnerDialog" timestamp="1669522562890">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="756" y="390" key="#com.intellij.refactoring.move.moveInner.MoveInnerDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1669522562890" />
+    <state x="733" y="472" key="#com.intellij.refactoring.move.moveMembers.MoveMembersDialog" timestamp="1670401839981">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="733" y="472" key="#com.intellij.refactoring.move.moveMembers.MoveMembersDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1670401839981" />
+    <state x="394" y="296" width="1211" height="330" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1669970072719">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="394" y="296" width="1211" height="330" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1669970072719" />
+    <state x="734" y="299" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1669822935082">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="734" y="299" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1669822935082" />
+    <state x="759" y="295" width="853" height="516" key="#xdebugger.evaluate" timestamp="1671089792943">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="759" y="295" width="853" height="516" key="#xdebugger.evaluate/72.27.1848.1053@72.27.1848.1053" timestamp="1671089792943" />
+    <state width="596" height="121" key="DebuggerActiveHint" timestamp="1670647452274">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="596" height="121" key="DebuggerActiveHint/72.27.1848.1053@72.27.1848.1053" timestamp="1670647452274" />
+    <state x="886" y="381" key="EnvironmentVariablesDialog" timestamp="1669106524593">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="886" y="381" key="EnvironmentVariablesDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1669106524593" />
+    <state x="784" y="308" width="424" height="491" key="FileChooserDialogImpl" timestamp="1674391483740">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="784" y="308" width="424" height="491" key="FileChooserDialogImpl/72.27.1848.1053@72.27.1848.1053" timestamp="1674391483740" />
+    <state width="1804" height="310" key="GridCell.Tab.0.bottom" timestamp="1671090022650">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="310" key="GridCell.Tab.0.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1671090022650" />
+    <state width="1804" height="310" key="GridCell.Tab.0.center" timestamp="1671090022650">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="310" key="GridCell.Tab.0.center/72.27.1848.1053@72.27.1848.1053" timestamp="1671090022650" />
+    <state width="1804" height="310" key="GridCell.Tab.0.left" timestamp="1671090022650">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="310" key="GridCell.Tab.0.left/72.27.1848.1053@72.27.1848.1053" timestamp="1671090022650" />
+    <state width="1804" height="310" key="GridCell.Tab.0.right" timestamp="1671090022650">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="310" key="GridCell.Tab.0.right/72.27.1848.1053@72.27.1848.1053" timestamp="1671090022650" />
+    <state width="1804" height="310" key="GridCell.Tab.1.bottom" timestamp="1671090022650">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="310" key="GridCell.Tab.1.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1671090022650" />
+    <state width="1804" height="310" key="GridCell.Tab.1.center" timestamp="1671090022650">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="310" key="GridCell.Tab.1.center/72.27.1848.1053@72.27.1848.1053" timestamp="1671090022650" />
+    <state width="1804" height="310" key="GridCell.Tab.1.left" timestamp="1671090022650">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="310" key="GridCell.Tab.1.left/72.27.1848.1053@72.27.1848.1053" timestamp="1671090022650" />
+    <state width="1804" height="310" key="GridCell.Tab.1.right" timestamp="1671090022650">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="310" key="GridCell.Tab.1.right/72.27.1848.1053@72.27.1848.1053" timestamp="1671090022650" />
+    <state width="1804" height="499" key="GridCell.Tab.2.bottom" timestamp="1671074932394">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="499" key="GridCell.Tab.2.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1671074932394" />
+    <state width="1804" height="499" key="GridCell.Tab.2.center" timestamp="1671074932394">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="499" key="GridCell.Tab.2.center/72.27.1848.1053@72.27.1848.1053" timestamp="1671074932394" />
+    <state width="1804" height="499" key="GridCell.Tab.2.left" timestamp="1671074932394">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="499" key="GridCell.Tab.2.left/72.27.1848.1053@72.27.1848.1053" timestamp="1671074932394" />
+    <state width="1804" height="499" key="GridCell.Tab.2.right" timestamp="1671074932394">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1804" height="499" key="GridCell.Tab.2.right/72.27.1848.1053@72.27.1848.1053" timestamp="1671074932394" />
+    <state width="267" height="505" key="HiddenNamespacesPopup" timestamp="1669014493637">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="267" height="505" key="HiddenNamespacesPopup/72.27.1848.1053@72.27.1848.1053" timestamp="1669014493637" />
+    <state x="308" y="182" width="1255" height="737" key="SettingsEditor" timestamp="1671415667099">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="308" y="182" width="1255" height="737" key="SettingsEditor/72.27.1848.1053@72.27.1848.1053" timestamp="1671415667099" />
+    <state width="919" height="394" key="XDebugger.FullValuePopup" timestamp="1669186074985">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="919" height="394" key="XDebugger.FullValuePopup/72.27.1848.1053@72.27.1848.1053" timestamp="1669186074985" />
+    <state x="621" y="281" width="1167" height="544" key="caller.chooser.dialog" timestamp="1669822479723">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="621" y="281" width="1167" height="544" key="caller.chooser.dialog/72.27.1848.1053@72.27.1848.1053" timestamp="1669822479723" />
+    <state x="637" y="268" key="com.intellij.database.actions.ddl.DbModifyObjectDialog" timestamp="1669010450086">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="637" y="268" key="com.intellij.database.actions.ddl.DbModifyObjectDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1669010450086" />
+    <state x="172" y="127" width="1648" height="853" maximized="true" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1669251067431">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="172" y="127" width="1648" height="853" maximized="true" key="com.intellij.history.integration.ui.views.FileHistoryDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1669251067431" />
+    <state x="293" y="354" width="1212" height="726" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1670208296359">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="293" y="354" width="1212" height="726" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/72.27.1848.1053@72.27.1848.1053" timestamp="1670208296359" />
+    <state x="164" y="27" width="1369" height="600" key="dock-window-1" timestamp="1669106835506">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="164" y="27" width="1369" height="600" key="dock-window-1/72.27.1848.1053@72.27.1848.1053" timestamp="1669106835506" />
+    <state x="734" y="288" key="extract.method.dialog" timestamp="1669181589224">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="734" y="288" key="extract.method.dialog/72.27.1848.1053@72.27.1848.1053" timestamp="1669181589224" />
+    <state x="862" y="335" width="1015" height="744" key="find.popup" timestamp="1670659329670">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="862" y="335" width="1015" height="744" key="find.popup/72.27.1848.1053@72.27.1848.1053" timestamp="1670659329670" />
+    <state x="596" y="253" key="new project wizard" timestamp="1670318139763">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="596" y="253" key="new project wizard/72.27.1848.1053@72.27.1848.1053" timestamp="1670318139763" />
+    <state x="660" y="252" width="672" height="685" key="run.anything.popup" timestamp="1670632226374">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="660" y="252" width="672" height="685" key="run.anything.popup/72.27.1848.1053@72.27.1848.1053" timestamp="1670632226374" />
+    <state x="659" y="259" width="742" height="686" key="search.everywhere.popup" timestamp="1673519062276">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="659" y="259" width="742" height="686" key="search.everywhere.popup/72.27.1848.1053@72.27.1848.1053" timestamp="1673519062276" />
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>cs.newEncoder().canEncode(text)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>cs.canEncode()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>cs.canEncode() &amp;&amp; cs.newEncoder().canEncode(text)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>channelsPerTaskGroup=1</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>buildQuerySql(column, table, where)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Configuration.from(JSON.toJSONString(taskGroupConfList.get(0)))</expression-string>
+        <language-id>JAVA</language-id>
+        <custom-info>com.alibaba.fastjson.JSON</custom-info>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>JSON.toJSONString(taskGroupConfList.get(0))</expression-string>
+        <language-id>JAVA</language-id>
+        <custom-info>com.alibaba.fastjson.JSON</custom-info>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>commandLine.getOptionValue(&quot;node&quot;)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>jsonFile.getAbsolutePath()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>new Random().nextInt(10000000)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>getRandomString2(20)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>DataBaseType.parseIpFromJdbcUrl(jdbcUrl)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>pluginConf.getString(&quot;class&quot;) + &quot;$&quot;
+                            + pluginRunType.value()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>pluginRunType.value()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>generatePluginKey(pluginType, pluginName)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>getContainerCommunicator()</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>totalConfig.getString(CoreConstant.DATAX_CORE_CONTAINER_MODEL)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>totalConfig.getString(CoreConstant.DATAX_CORE_CONTAINER_MODEL))</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>SingleTableSplitUtil.buildQuerySql(queryColumn, table, where)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>readerConfig.get(Key.COLUMN)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>totalConf.getString(CoreConstant.DATAX_CORE_CONTAINER_MODEL)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/readme.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SHOW_EDITOR" is_vertical_split="false">
+          <first_editor relative-caret-position="136">
+            <caret line="8" column="20" selection-start-line="8" selection-start-column="20" selection-end-line="8" selection-end-column="20" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/scheduler/DistributeTaskGroupScheduler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1122">
+          <caret line="84" column="15" selection-start-line="84" selection-start-column="15" selection-end-line="84" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/Engine.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="47" column="56" selection-start-line="47" selection-start-column="56" selection-end-line="47" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/Global.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="8" column="19" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/constant/Constant.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="15" selection-start-line="5" selection-start-column="15" selection-end-line="5" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/NettyServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1173">
+          <caret line="90" column="41" selection-start-line="90" selection-start-column="41" selection-end-line="90" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dispatcher/src/main/java/com/fenquen/datax/distribute/dispatcher/Global.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dispatcher/src/main/java/com/fenquen/datax/distribute/dispatcher/LifeCycle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1207">
+          <caret line="82" column="24" selection-start-line="82" selection-start-column="24" selection-end-line="82" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dispatcher/src/main/java/com/fenquen/datax/distribute/dispatcher/BusinessController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="816">
+          <caret line="69" column="11" selection-start-line="69" selection-start-column="11" selection-end-line="69" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/learn/record.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/learn/原始的config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1122">
+          <caret line="66" column="24" selection-start-line="66" selection-start-column="24" selection-end-line="66" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/transport/exchanger/BufferedRecordExchanger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2125">
+          <caret line="140" column="16" selection-start-line="140" selection-start-column="16" selection-end-line="140" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/transport/channel/Channel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="18" column="22" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/transport/channel/memory/MemoryChannel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dispatcher/src/main/resources/application.properties">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/container/AbstractContainer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/util/ExecuteMode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="12" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rdbmsreader/src/main/java/com/alibaba/datax/plugin/reader/rdbmsreader/RdbmsReader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="13" column="35" lean-forward="true" selection-start-line="13" selection-start-column="35" selection-end-line="13" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/plugin/JobPluginCollector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/spi/Hook.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/spi/Reader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="13" column="26" lean-forward="true" selection-start-line="13" selection-start-column="26" selection-end-line="13" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/program/azul/src.zip!/java/lang/ClassLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="350" column="20" selection-start-line="350" selection-start-column="20" selection-end-line="350" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/constant/PluginType.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="4" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rdbmsreader/doc/rdbmsreader.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SHOW_PREVIEW" is_vertical_split="false">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/plugin/AbstractJobPlugin.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="22" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rdbmsreader/src/main/resources/plugin.json">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/learn/db2_mysql.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="834">
+          <caret line="51" column="24" selection-start-line="51" selection-start-column="24" selection-end-line="51" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/util/Configuration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="191" column="25" selection-start-line="191" selection-start-column="25" selection-end-line="191" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/learn/切分后的以taskGroup为单元的对应各个taskGroup的config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-391">
+          <caret line="64" column="7" selection-start-line="64" selection-start-column="7" selection-end-line="64" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/HttpUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/ClassSize.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/ClassUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/container/CoreConstant.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="859">
+          <caret line="78" column="31" selection-start-line="78" selection-start-column="31" selection-end-line="78" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/container/JarLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="31" column="33" lean-forward="true" selection-start-line="31" selection-start-column="33" selection-end-line="31" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/plugin/AbstractPlugin.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="366">
+          <caret line="75" column="16" selection-start-line="75" selection-start-column="16" selection-end-line="75" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/ReaderRunner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="314">
+          <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/container/ClassLoaderSwapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="24" column="32" selection-start-line="24" selection-start-column="32" selection-end-line="24" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rdbmsreader/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-816" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plugin-rdbms-util/src/main/java/com/alibaba/datax/plugin/rdbms/writer/CommonRdbmsWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="26" column="13" selection-start-line="26" selection-start-column="13" selection-end-line="26" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rdbmswriter/src/main/java/com/alibaba/datax/plugin/reader/rdbmswriter/RdbmsWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="36" column="20" selection-start-line="36" selection-start-column="20" selection-end-line="36" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/plugin/Pluginable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="9" selection-start-line="11" selection-start-column="9" selection-end-line="11" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/JobContainer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="365">
+          <caret line="479" column="63" lean-forward="true" selection-start-line="479" selection-start-column="63" selection-end-line="479" selection-end-column="63" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/scheduler/LocalTaskGroupScheduler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="22" column="16" lean-forward="true" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/job/scheduler/AbstractTaskGroupScheduler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="141" column="30" selection-start-line="141" selection-start-column="30" selection-end-line="141" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/TaskGroupContainerRunner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="22" column="33" selection-start-line="22" selection-start-column="33" selection-end-line="22" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/TaskGroupContainer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="263">
+          <caret line="424" column="53" selection-start-line="424" selection-start-column="53" selection-end-line="424" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/util/container/LoadUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="116" column="30" lean-forward="true" selection-start-line="116" selection-start-column="30" selection-end-line="116" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/AbstractRunner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="21" column="11" selection-start-line="21" selection-start-column="11" selection-end-line="21" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/statistics/PerfRecord.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="102" column="16" selection-start-line="102" selection-start-column="16" selection-end-line="102" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/src/main/java/com/alibaba/datax/common/spi/Writer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="31" column="29" selection-start-line="31" selection-start-column="29" selection-end-line="31" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/main/java/com/alibaba/datax/core/taskgroup/runner/WriterRunner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="54" column="19" selection-start-line="54" selection-start-column="19" selection-end-line="54" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI" />
+      <state key="GlobalLibrariesConfigurable.UI" />
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.21799308" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>dispatcher</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.21799308" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Maven: antlr:antlr:2.7.7</last-edited>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
